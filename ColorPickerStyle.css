@@ -1,0 +1,142 @@
+.colorPickerBody {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  min-width: 400px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.header span {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.header.active svg {
+  transform: rotate(-180deg);
+}
+
+.content {
+  display: none;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+}
+
+.versions-container {
+  display: none;
+  flex-direction: column;
+}
+
+.versionInput {
+  padding: 6px 12px;
+  font-size: 14px;
+  max-height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  border: 1px solid rgb(107, 114, 128);
+  border-radius: 6px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  width: 100%;
+}
+
+.versionBtn {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.versionsContainer {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  line-height: 24px;
+  border: 1px solid black;
+}
+
+.labelInput {
+  color: rgb(17, 24, 39);
+  font-size: 14px;
+  line-height: 24px;
+  margin-bottom: 4px;
+}
+
+.inputContainer {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 14px;
+  max-height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  border: 1px solid rgb(107, 114, 128);
+  border-radius: 6px;
+}
+
+.gradient-border {
+  padding: 10px; /* Adjusts the distance between the SVG and its border */
+  background: linear-gradient(
+    60deg,
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #7fff00,
+    #00ff00,
+    #00ff7f,
+    #00ffff,
+    #007fff,
+    #0000ff,
+    #7f00ff,
+    #ff00ff,
+    #ff007f
+  );
+  -webkit-background-clip: padding-box; /* For WebKit browsers */
+  background-clip: padding-box; /* For Firefox 4+, IE 9+, and Opera */
+  border: solid 5px transparent; /* Makes the gradient visible as a border */
+  border-radius: 100px; /* Optional: Rounds the corners of the border */
+  display: inline-block; /* Adjusts the div's size to that of the SVG */
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.colorTab {
+  width: 100%;
+  height: 25px;
+  background-color: red;
+  border-right: 1px solid black;
+}
+
+.colorTab:hover {
+  border: none;
+  transform: scale(1.13);
+}

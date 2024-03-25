@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     headers.forEach(header => {
         header.addEventListener('click', () => {
             const content = header.nextElementSibling;
-            console.log('content', content )
             content.style.display = content.style.display === 'flex' ? 'none' : 'flex';
             header.classList.toggle('active');
         });
@@ -20,9 +19,18 @@ document.getElementById('toggleButton').addEventListener('click', function() {
     }
 });
 
+
+// document.getElementById('pickColor').addEventListener('click', function() {
+//     console.log('clicked')
+//     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//       chrome.tabs.sendMessage(tabs[0].id, {action: "activateZoom"});
+//     });
+//   });
+
+
 document.getElementById('pickColor').addEventListener('click', function() {
-    console.log('activateZoom')
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {action: "activateZoom"});
+        // This sends a message to the background script to capture the screen
+        chrome.runtime.sendMessage({action: "capturePage", tabId: tabs[0].id});
     });
 });

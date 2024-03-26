@@ -10,10 +10,10 @@
   align-items: center;
   cursor: pointer;
   padding: 10px;
-  background-color: #f1f1f1;
-  border: 1px solid #ddd;
+  background: linear-gradient(9deg,#F4F4F4 0%,#EFEFEF 100%);
+  border: 1px solid #ececec;
   border-radius: 5px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.3px;
 }
 
@@ -100,6 +100,29 @@
   border-radius: 6px;
 }
 
+.inputContainerBottom{
+  display: none;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 14px;
+  max-height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  border: 1px solid rgb(107, 114, 128);
+  border-radius: 6px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+
+}
+
+.inputContainerBottom.showInput{
+  display: block;
+}
+
+.showInput{
+  display: block;
+}
+
 .gradient-border {
   padding: 10px; /* Adjusts the distance between the SVG and its border */
   background: linear-gradient(
@@ -138,5 +161,6 @@
 
 .colorTab:hover {
   border: none;
+  box-shadow: 0px 0px 1px black;
   transform: scale(1.13);
 }

@@ -47,12 +47,25 @@ function injectUI() {
   lens.style.backgroundPosition = "center";
   document.body.appendChild(lens);
 
-  return { canvas, lens };
+
+  const gridSquares =  document.createElement("div");
+  gridSquares.id = "zoomGridSquares";
+  gridSquares.style.overflow = "hidden";
+  gridSquares.style.zIndex = "100000000";
+  gridSquares.style.width = "100px";
+  gridSquares.style.height = "100px";
+  gridSquares.style.borderRadius = "50%";
+  gridSquares.style.position = "fixed";
+  gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='12' height='12' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='12' height='12' fill='none' stroke='black' stroke-width='1'/%3E%3Crect x='1' y='1' width='10' height='10' fill='transparent'/%3E%3C/svg%3E")`;
+  gridSquares.style.backgroundPosition = "center";
+  document.body.appendChild(gridSquares);
+
+  return { canvas, lens, gridSquares };
 }
 
 // Activates the zoom and color picking functionality
 function activateZoom(dataUrl) {
-  const { canvas, lens } = injectUI();
+  const { canvas, lens, gridSquares } = injectUI();
   const ctx = canvas.getContext("2d", { willreadfrequently: true });
   const img = new Image();
 
@@ -82,6 +95,12 @@ function activateZoom(dataUrl) {
       lens.style.backgroundImage = `${backgroundImage}`;
       lens.style.backgroundSize = `${backgroundSize}, 100px 100px`;
       lens.style.backgroundPosition = `${backgroundPosition}, 0 0`;
+
+
+      gridSquares.style.left = `${x - lens.offsetWidth / 2}px`;
+      gridSquares.style.top = `${y - lens.offsetHeight / 2}px`;
+      gridSquares.style.backgroundSize = `10px 10px`;
+      gridSquares.style.backgroundPosition = `3px 3px`;
 
       console.log(rgba); // Log or use the RGBA value as needed
     });

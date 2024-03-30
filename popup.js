@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-
   document
     .getElementById("toggleButton")
     .addEventListener("click", function () {
@@ -33,122 +32,188 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    const hexInput = document.querySelector("#hex");
-    const rgbaInput = document.querySelector("#rgba");
-    const hslInput = document.querySelector("#hls"); // Ensure the ID is corrected to 'hls' from 'hsl'
+  const hexInput = document.querySelector("#hex");
+  const rgbaInput = document.querySelector("#rgba");
+  const hslInput = document.querySelector("#hls"); // Ensure the ID is corrected to 'hls' from 'hsl'
 
-    // HEX to RGBA conversion and update
-    hexInput.addEventListener("input", () => {
-        const {r, g, b, a} = hexToRgba(hexInput.value);
-        rgbaInput.value = `rgba(${r}, ${g}, ${b}, ${a})`;
-        const [h, s, l] = rgbToHsl(r, g, b);
-        hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
-    });
+  // HEX to RGBA conversion and update
+  hexInput.addEventListener("input", () => {
+    const { r, g, b, a } = hexToRgba(hexInput.value);
+    rgbaInput.value = `rgba(${r}, ${g}, ${b}, ${a})`;
+    const [h, s, l] = rgbToHsl(r, g, b);
+    hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+  });
 
-    // RGBA to HEX and HSL conversion and update
-    rgbaInput.addEventListener("input", () => {
-        const rgba = rgbaInput.value.match(/\d+/g).map(Number);
-        hexInput.value = rgbaToHex(...rgba);
-        const [h, s, l] = rgbToHsl(...rgba);
-        hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
-    });
+  // RGBA to HEX and HSL conversion and update
+  rgbaInput.addEventListener("input", () => {
+    const rgba = rgbaInput.value.match(/\d+/g).map(Number);
+    hexInput.value = rgbaToHex(...rgba);
+    const [h, s, l] = rgbToHsl(...rgba);
+    hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+  });
 
-    // HSL to HEX and RGBA conversion and update
-    hslInput.addEventListener("input", () => {
-        const hsl = hslInput.value.match(/\d+/g).map(Number);
-        const [r, g, b] = hslToRgb(...hsl);
-        rgbaInput.value = `rgba(${r}, ${g}, ${b}, 1)`;
-        hexInput.value = rgbaToHex(r, g, b, 1);
-    });
+  // HSL to HEX and RGBA conversion and update
+  hslInput.addEventListener("input", () => {
+    const hsl = hslInput.value.match(/\d+/g).map(Number);
+    const [r, g, b] = hslToRgb(...hsl);
+    rgbaInput.value = `rgba(${r}, ${g}, ${b}, 1)`;
+    hexInput.value = rgbaToHex(r, g, b, 1);
+  });
 
-    function hexToRgba(hex) {
-        let r = 0, g = 0, b = 0, a = 1;
-        if (hex.length === 7) {
-            r = parseInt(hex.slice(1, 3), 16);
-            g = parseInt(hex.slice(3, 5), 16);
-            b = parseInt(hex.slice(5, 7), 16);
-        }
-        return {r, g, b, a};
+  function hexToRgba(hex) {
+    let r = 0,
+      g = 0,
+      b = 0,
+      a = 1;
+    if (hex.length === 7) {
+      r = parseInt(hex.slice(1, 3), 16);
+      g = parseInt(hex.slice(3, 5), 16);
+      b = parseInt(hex.slice(5, 7), 16);
     }
+    return { r, g, b, a };
+  }
 
-    function rgbaToHex(r, g, b, a) {
-        return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('') + (a < 1 ? Math.round(a * 255).toString(16).padStart(2, '0') : '');
+  function rgbaToHex(r, g, b, a) {
+    return (
+      "#" +
+      [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("") +
+      (a < 1
+        ? Math.round(a * 255)
+            .toString(16)
+            .padStart(2, "0")
+        : "")
+    );
+  }
+
+  function rgbToHsl(r, g, b) {
+    (r /= 255), (g /= 255), (b /= 255);
+    let max = Math.max(r, g, b),
+      min = Math.min(r, g, b);
+    let h,
+      s,
+      l = (max + min) / 2;
+
+    if (max === min) {
+      h = s = 0;
+    } else {
+      let d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0);
+          break;
+        case g:
+          h = (b - r) / d + 2;
+          break;
+        case b:
+          h = (r - g) / d + 4;
+          break;
+      }
+      h /= 6;
     }
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+  }
 
-    function rgbToHsl(r, g, b){
-        r /= 255, g /= 255, b /= 255;
-        let max = Math.max(r, g, b), min = Math.min(r, g, b);
-        let h, s, l = (max + min) / 2;
+  function hslToRgb(h, s, l) {
+    let r, g, b;
 
-        if(max === min){
-            h = s = 0;
-        } else {
-            let d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch(max){
-                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
-            }
-            h /= 6;
-        }
-        return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-    }
-
-    function hslToRgb(h, s, l){
-        let r, g, b;
-
-        if(s === 0){
-            r = g = b = l; // achromatic
-        }else{
-            function hue2rgb(p, q, t){
-                if(t < 0) t += 1;
-                if(t > 1) t -= 1;
-                if(t < 1/6) return p + (q - p) * 6 * t;
-                if(t < 1/2) return q;
-                if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-                return p;
-            }
-
-            let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-            let p = 2 * l - q;
-            h /= 360;
-            r = hue2rgb(p, q, h + 1/3);
-            g = hue2rgb(p, q, h);
-            // b = hue
-            b = hue2rgb(p, q, h - 1/3);
-          }
-          return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    if (s === 0) {
+      r = g = b = l; // achromatic
+    } else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
       }
 
+      let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      let p = 2 * l - q;
+      h /= 360;
+      r = hue2rgb(p, q, h + 1 / 3);
+      g = hue2rgb(p, q, h);
+      // b = hue
+      b = hue2rgb(p, q, h - 1 / 3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
 
-      const stars = document.querySelectorAll('svg[id="star"]');
+  const stars = document.querySelectorAll('svg[id="star"]');
 
-      // Function to handle the click on any of the SVG icons
-      const handleStarClick = function(event) {
-          // Find the parent container of the clicked SVG
-          const parentDiv = event.target.closest('div');
-          // Within this container, find the input field
-          const input = parentDiv.querySelector('input[type="text"]');
-          // Get the input's value
-          const colorValue = input.value;
-  
-          // Find the next .colorTab that hasn't been filled (not white)
-          const colorTabs = document.querySelectorAll('.colorTab');
-          for (let tab of colorTabs) {
-              const currentColor = tab.style.backgroundColor;
-              if (currentColor === 'rgb(241, 241, 241)' || currentColor === '') { // Checking for the default or unset color
-                  tab.style.backgroundColor = colorValue;
-                  break; // Exit the loop after setting the color
-              }
-          }
-      };
-  
-      // Add click event listeners to all the SVGs
-      stars.forEach(star => {
-          star.addEventListener('click', handleStarClick);
-      });
-     
+  const handleStarClick = function (event) {
+    const input = document.querySelector('#hex');
+    const colorValue = input.value;
+
+    const colorTabs = document.querySelectorAll(".colorTab");
+    for (let tab of colorTabs) {
+      const currentColor = tab.style.backgroundColor;
+      if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
+        tab.style.backgroundColor = colorValue;
+        break; // Exit the loop after setting the color
+      }
+    }
+  };
+
+  // Add click event listeners to all the SVGs
+  stars.forEach((star) => {
+    star.addEventListener("click", handleStarClick);
+  });
+
+  const colorCanvas = document.getElementById("colorCanvas");
+  const ctx = colorCanvas.getContext("2d");
+  const hueRange = document.getElementById("hueRange");
+  const alphaRange = document.getElementById("alphaRange");
+  const selectedColorDiv = document.getElementById("selectedColor");
+
+  let currentHue = 0;
+  let currentAlpha = 1;
+
+  function drawColorSpectrum(hue, alpha) {
+    // Clear the canvas
+    ctx.clearRect(0, 0, colorCanvas.width, colorCanvas.height);
+
+    // Color gradient (horizontal)
+    const colorGradient = ctx.createLinearGradient(0, 0, colorCanvas.width, 0);
+    colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+    colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
+
+    // Apply color gradient
+    ctx.fillStyle = colorGradient;
+    ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
+
+    // Saturation to black gradient (vertical)
+    const hueGradient = ctx.createLinearGradient(0, 0, 0, colorCanvas.height);
+    hueGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
+    hueGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
+
+    // Apply saturation gradient
+    ctx.fillStyle = hueGradient;
+    ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
+  }
+
+  function pickColor(e) {
+    const x = e.offsetX;
+    const y = e.offsetY;
+    const imageData = ctx.getImageData(x, y, 1, 1).data;
+    selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+  }
+
+  hueRange.addEventListener("input", function () {
+    currentHue = this.value;
+    drawColorSpectrum(currentHue, currentAlpha);
+  });
+
+  alphaRange.addEventListener("input", function () {
+    currentAlpha = this.value;
+    drawColorSpectrum(currentHue, currentAlpha);
+  });
+
+  colorCanvas.addEventListener("click", pickColor);
+
+  // Initialize with the default hue and full alpha
+  drawColorSpectrum(currentHue, currentAlpha);
 });
 
 document.getElementById("pickColor").addEventListener("click", function () {
@@ -156,5 +221,13 @@ document.getElementById("pickColor").addEventListener("click", function () {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     // This sends a message to the background script to capture the screen
     chrome.runtime.sendMessage({ action: "capturePage", tabId: tabs[0].id });
+  });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('here')
+  chrome.runtime.sendMessage({type: 'getColor'}, function(response) {
+      document.getElementById("hex").value = response.color;
   });
 });

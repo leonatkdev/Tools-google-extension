@@ -11,3 +11,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
   }
 });
+
+let lastPickedColor = '#000000'; // Default color
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type === 'colorPicked') {
+      console.log('lastPickedColor', request.color)
+        lastPickedColor = request.color;
+    }
+});
+
+// Listen for a message from the popup
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.type === 'getColor') {
+    console.log('idk');
+        sendResponse({color: lastPickedColor});
+    }
+});

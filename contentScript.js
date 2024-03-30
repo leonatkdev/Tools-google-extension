@@ -1,22 +1,17 @@
-document.addEventListener('keydown', function(event) {
+document.addEventListener("keydown", function (event) {
   if (event.key === "Escape") {
-      // Remove the canvas
-      const canvas = document.getElementById('colorPickerCanvas');
-      if (canvas) {
-          canvas.remove();
+    // Remove the canvas, zoom lens, and grid squares
+    ["colorPickerCanvas", "zoomLens", "zoomGridSquares"].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.remove();
       }
-      
-      // Remove the zoom lens div
-      const zoomLens = document.getElementById('zoomLens');
-      if (zoomLens) {
-          zoomLens.remove();
-      }
-      
-      // Optionally, remove the event listener for mousemove if you added one for the zoom functionality
-      document.removeEventListener('mousemove', handleMouseMove);
+    });
+
+    // Optionally, remove the event listener for mousemove if you added one for the zoom functionality
+    document.removeEventListener("mousemove", handleMouseMove);
   }
 });
-
 
 // Injects the canvas and lens into the webpage
 function injectUI() {
@@ -47,8 +42,7 @@ function injectUI() {
   lens.style.backgroundPosition = "center";
   document.body.appendChild(lens);
 
-
-  const gridSquares =  document.createElement("div");
+  const gridSquares = document.createElement("div");
   gridSquares.id = "zoomGridSquares";
   gridSquares.style.overflow = "hidden";
   gridSquares.style.zIndex = "100000000";
@@ -69,24 +63,25 @@ function activateZoom(dataUrl) {
   const ctx = canvas.getContext("2d", { willreadfrequently: true });
   const img = new Image();
 
-
   img.onload = () => {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     document.addEventListener("mousemove", (event) => {
       const x = event.clientX;
       const y = event.clientY;
-      const pixel = ctx.getImageData(x, y, 1, 1, {willreadfrequently: true});
+      const pixel = ctx.getImageData(x, y, 1, 1, { willreadfrequently: true });
       const data = pixel.data;
       const rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`;
 
       // Update the lens position and background for zoom effect
       lens.style.left = `${x - lens.offsetWidth / 2}px`;
       lens.style.top = `${y - lens.offsetHeight / 2}px`;
-      
+
       // The zoomed image as the background
       const backgroundImage = `url('${dataUrl}')`;
-      const backgroundSize = `${canvas.width * 20}px ${canvas.height * 20}px`;
-      const backgroundPosition = `-${x * 20 - lens.offsetWidth / 20}px -${y * 20 - lens.offsetHeight / 20}px`;
+      const backgroundSize = `${canvas.width * 10}px ${canvas.height * 10}px`;
+      const backgroundPosition = `-${x * 10 - lens.offsetWidth / 10}px -${
+        y * 10 - lens.offsetHeight / 10
+      }px`;
 
       // SVG grid pattern
       // const gridPattern = "data:image/svg+xml,%3Csvg width='30' height='30' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='30' height='30' fill='black'/%3E%3C/svg%3E";
@@ -96,18 +91,55 @@ function activateZoom(dataUrl) {
       lens.style.backgroundSize = `${backgroundSize}, 100px 100px`;
       lens.style.backgroundPosition = `${backgroundPosition}, 0 0`;
 
-
       gridSquares.style.left = `${x - lens.offsetWidth / 2}px`;
       gridSquares.style.top = `${y - lens.offsetHeight / 2}px`;
       gridSquares.style.backgroundSize = `10px 10px`;
       gridSquares.style.backgroundPosition = `3px 3px`;
 
-      console.log(rgba); // Log or use the RGBA value as needed
+      // console.log(rgba); // Log or use the RGBA value as needed
     });
   };
-    img.src = dataUrl;
-}
 
+  // canvas.addEventListener("click", function (event) {
+  //   console.log("click");
+  //   const x = event.clientX;
+  //   const y = event.clientY;
+  //   const pixel = ctx.getImageData(x, y, 1, 1);
+  //   const data = pixel.data;
+  //   const hex =
+  //     "#" +
+  //     ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2])
+  //       .toString(16)
+  //       .slice(1);
+
+  //   // Send message to background script
+  //   chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
+  // });
+
+
+  // lens.addEventListener("click", function (event) {
+  //   console.log('lens')
+  // })
+
+  gridSquares.addEventListener("click", function (event) {
+    console.log('grid')
+    const x = event.clientX;
+    const y = event.clientY;
+    const pixel = ctx.getImageData(x, y, 1, 1);
+    const data = pixel.data;
+    const hex =
+      "#" +
+      ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2])
+        .toString(16)
+        .slice(1);
+
+    // Send message to background script
+    chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
+
+  })
+
+  img.src = dataUrl;
+}
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("messageContent", message);

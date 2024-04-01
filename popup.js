@@ -1,3 +1,4 @@
+"use strict";
 document.addEventListener("DOMContentLoaded", () => {
   const headers = document.querySelectorAll(".header");
 
@@ -10,13 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  document.querySelectorAll(".versionBtn").forEach((button) => {
+  document.querySelectorAll("#font-container").forEach((parentDiv) => {
+    const button = parentDiv.querySelector(".versionBtn");
     button.addEventListener("click", function () {
-      const parentDiv = this.closest('div[style*="flex-direction: column"]');
-      const inputs = parentDiv.querySelectorAll('input[type="text"]');
-      inputs.forEach((input) => input.classList.toggle("showInput"));
+      const inputs = parentDiv.querySelectorAll("input");
+      inputs?.forEach((input) => {
+        input.classList.toggle("showInput");
+      });
     });
   });
+
 
   document
     .getElementById("toggleButton")
@@ -140,10 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
   }
 
-  const stars = document.querySelectorAll('svg[id="star"]');
+  const stars = document.querySelectorAll('span[id="star"]');
 
   const handleStarClick = function (event) {
-    const input = document.querySelector('#hex');
+    const input = document.querySelector("#hex");
     const colorValue = input.value;
 
     const colorTabs = document.querySelectorAll(".colorTab");
@@ -162,13 +166,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const colorCanvas = document.getElementById("colorCanvas");
-  const ctx = colorCanvas.getContext("2d");
+  const ctx = colorCanvas.getContext("2d", { willreadfrequently: true });
   const hueRange = document.getElementById("hueRange");
   const alphaRange = document.getElementById("alphaRange");
   const selectedColorDiv = document.getElementById("selectedColor");
 
   let currentHue = 0;
   let currentAlpha = 1;
+
+  // Initial ball position
+  let ballPosition = { x: colorCanvas.width / 2, y: colorCanvas.height / 2 };
+  let isDragging = false; // Track if the ball is being dragged
 
   function drawColorSpectrum(hue, alpha) {
     // Clear the canvas
@@ -178,8 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const colorGradient = ctx.createLinearGradient(0, 0, colorCanvas.width, 0);
     colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
     colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
-
-    // Apply color gradient
     ctx.fillStyle = colorGradient;
     ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
 
@@ -187,33 +193,69 @@ document.addEventListener("DOMContentLoaded", () => {
     const hueGradient = ctx.createLinearGradient(0, 0, 0, colorCanvas.height);
     hueGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
     hueGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
-
-    // Apply saturation gradient
     ctx.fillStyle = hueGradient;
     ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
+
+    // Draw the ball
+    drawBall();
   }
 
-  function pickColor(e) {
-    const x = e.offsetX;
-    const y = e.offsetY;
-    const imageData = ctx.getImageData(x, y, 1, 1).data;
+  function drawBall() {
+    ctx.beginPath();
+    ctx.arc(ballPosition.x, ballPosition.y, 10, 0, 2 * Math.PI); // Ball radius
+    ctx.fillStyle = "black"; // Ball color
+    ctx.fill();
+  }
+
+  function pickColor() {
+    const imageData = ctx.getImageData(
+      ballPosition.x,
+      ballPosition.y,
+      1,
+      1
+    ).data;
     selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
   }
+
+  colorCanvas.addEventListener("mousedown", function (e) {
+    const rect = colorCanvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    // Check if the click is inside the ball
+    if (Math.sqrt((x - ballPosition.x) ** 2 + (y - ballPosition.y) ** 2) < 10) {
+      isDragging = true;
+    }
+  });
+
+  window.addEventListener("mousemove", function (e) {
+    if (isDragging) {
+      const rect = colorCanvas.getBoundingClientRect();
+      ballPosition.x = e.clientX - rect.left;
+      ballPosition.y = e.clientY - rect.top;
+      drawColorSpectrum(currentHue, currentAlpha);
+      pickColor(); // Update the selected color based on the new ball position
+    }
+  });
+
+  window.addEventListener("mouseup", function () {
+    isDragging = false;
+  });
 
   hueRange.addEventListener("input", function () {
     currentHue = this.value;
     drawColorSpectrum(currentHue, currentAlpha);
+    pickColor(); // Also update the selected color based on the new hue
   });
 
   alphaRange.addEventListener("input", function () {
     currentAlpha = this.value;
     drawColorSpectrum(currentHue, currentAlpha);
+    pickColor(); // Update the selected color based on the new alpha
   });
 
-  colorCanvas.addEventListener("click", pickColor);
-
-  // Initialize with the default hue and full alpha
+  // Initialize with the default hue, full alpha, and selected color
   drawColorSpectrum(currentHue, currentAlpha);
+  pickColor(); // Initialize the selected color based on the ball's starting position
 });
 
 document.getElementById("pickColor").addEventListener("click", function () {
@@ -224,10 +266,26 @@ document.getElementById("pickColor").addEventListener("click", function () {
   });
 });
 
+document.getElementById("pickColor").addEventListener("click", function () {
+  console.log("click");
+  chrome.runtime.sendMessage({ action: "activatePicker" });
+});
 
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('here')
-  chrome.runtime.sendMessage({type: 'getColor'}, function(response) {
-      document.getElementById("hex").value = response.color;
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("here");
+  chrome.runtime.sendMessage({ type: "getColor" }, function (response) {
+    document.getElementById("hex").value = response.color;
   });
+});
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  // Assuming the popup is open and can directly receive messages
+
+  console.log("recive request", request);
+
+  document.querySelector("#input-1-size").value = request.fontSize;
+  document.querySelector("#input-1-line").value = request.lineHeight;
+  document.querySelector("#input-1-weight").value = request.fontWeight;
+
+  sendResponse({ status: "Updated popup inputs" });
 });

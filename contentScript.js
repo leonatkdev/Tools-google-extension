@@ -68,7 +68,7 @@ function activateZoom(dataUrl) {
     document.addEventListener("mousemove", (event) => {
       const x = event.clientX;
       const y = event.clientY;
-      const pixel = ctx.getImageData(x, y, 1, 1, { willreadfrequently: true });
+      const pixel = ctx.getImageData(x, y, 1, 1);
       const data = pixel.data;
       const rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`;
 
@@ -116,13 +116,12 @@ function activateZoom(dataUrl) {
   //   chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
   // });
 
-
   // lens.addEventListener("click", function (event) {
   //   console.log('lens')
   // })
 
   gridSquares.addEventListener("click", function (event) {
-    console.log('grid')
+    console.log("grid");
     const x = event.clientX;
     const y = event.clientY;
     const pixel = ctx.getImageData(x, y, 1, 1);
@@ -136,7 +135,14 @@ function activateZoom(dataUrl) {
     // Send message to background script
     chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
 
-  })
+    // Remove the canvas, zoom lens, and grid squares
+    ["colorPickerCanvas", "zoomLens", "zoomGridSquares"].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.remove();
+      }
+    });
+  });
 
   img.src = dataUrl;
 }
@@ -145,5 +151,109 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("messageContent", message);
   if (message.action === "capture") {
     activateZoom(message.screenshotUrl);
+  }
+});
+
+
+//tooltip
+document.addEventListener("mouseup", function (e) {
+  const selection = window.getSelection().toString();
+  if (selection.length > 0) {
+    let style = window.getComputedStyle(
+      window.getSelection().anchorNode.parentNode
+    );
+    let fontSize = style.fontSize;
+    let fontWeight = style.fontWeight;
+    let lineHeight = style.lineHeight;
+
+    chrome.runtime.sendMessage({
+      action: "saveFontProperties",
+      data: {
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        lineHeight: lineHeight,
+      },
+    });
+  }
+});
+
+/// Tooltip
+document.addEventListener("mouseup", function (e) {
+  let selection = window.getSelection();
+  let selectedText = selection.toString();
+  if (selectedText.length > 0) {
+    // Get the selection's properties
+    let style = window.getComputedStyle(selection.anchorNode.parentNode);
+    let fontSize = style.fontSize;
+    let fontWeight = style.fontWeight;
+    let lineHeight = style.lineHeight;
+
+    // Create or update tooltip
+    let tooltip = document.getElementById("extension-tooltip");
+    let textSpan = document.createElement("span");
+    let actionButton = document.createElement("button");
+    if (!tooltip) {
+      tooltip = document.createElement("div");
+      tooltip.id = "extension-tooltip";
+      tooltip.style.position = "absolute";
+      tooltip.style.zIndex = "10000";
+      tooltip.style.backgroundColor = "#FFF";
+      tooltip.style.border = "1px solid #000";
+      tooltip.style.borderRadius = "24px";
+      tooltip.style.fontSize = "12px";
+      tooltip.style.fontFamily = "Arial, sans-serif";
+      document.body.appendChild(tooltip);
+
+      textSpan.style.padding = "6px 12px";
+      textSpan.style.display = "block";
+      textSpan.textContent = `Size: ${fontSize}, Weight: ${fontWeight}, Line: ${lineHeight}`;
+
+      actionButton.textContent = "Save";
+      actionButton.style.border = "none";
+      actionButton.style.borderTopRightRadius = "24px";
+      actionButton.style.borderBottomRightRadius = "24px";
+      actionButton.style.backgroundColor = "#007bff";
+      actionButton.style.color = "white";
+      // Handle button click event
+      actionButton.onclick = function () {
+        console.log("Button clicked!");
+      };
+    }
+
+    actionButton.onclick = function () {
+      // Prepare the data to send
+      let dataToSend = {
+        fontSize: fontSize,
+        lineHeight: lineHeight,
+        fontWeight: fontWeight,
+      };
+
+      chrome.runtime.sendMessage(dataToSend, function (response) {
+        console.log("Response from extension:", response);
+      });
+    };
+
+    // Set the tooltip text
+
+    // Append elements to the tooltip
+    tooltip.appendChild(textSpan);
+    tooltip.appendChild(actionButton);
+
+    // Position the tooltip
+    let rect = selection.getRangeAt(0).getBoundingClientRect();
+    let top = window.scrollY + rect.top - tooltip.offsetHeight - 5; // 5px above the selection
+    let left =
+      window.scrollX + rect.left + (rect.width - tooltip.offsetWidth) / 2; // Centered above the selection
+    tooltip.style.top = `${top}px`;
+    tooltip.style.left = `${left}px`;
+
+    // Show the tooltip
+    tooltip.style.display = "flex";
+  } else {
+    // Hide the tooltip if there's no selection
+    let tooltip = document.getElementById("extension-tooltip");
+    if (tooltip) {
+      tooltip.style.display = "none";
+    }
   }
 });

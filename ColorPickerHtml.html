@@ -14,165 +14,7 @@
 
 <body class="colorPickerBody">
 
-    <div class="section">
-        <div class="header">
-            <span>Typography</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24px"
-                width="24px" xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
-            </svg>
-        </div>
-        <div class="content" style="flex-direction: column;">
-            <div style="position: relative;">
-                <div style="display: flex; align-items: center;">
-                    <input type="text" id="inputText" value="version 0" class="versionInput">
-                    <button id="toggleButton" class="versionBtn">
-                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
-                            height="24px" width="24px" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="none" d="M0 0h24v24H0V0z"></path>
-                            <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <div id="versionsContainer" class="versionsContainer">
-                    <span style="margin: 5px 0; cursor: pointer;">Version one</span>
-                    <span style="margin: 5px 0; cursor: pointer;">Version two</span>
-                    <span style="margin: 5px 0; cursor: pointer;">Version three</span>
-                </div>
-            </div>
-
-
-            <div style="display: grid; grid-template-columns: repeat(3, 116px); margin-top: 12px; gap: 8px;">
-                <div style="display: flex; flex-direction: column;  ">
-                    <label for="fontSize1" class="labelInput" style="display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    font-weight: 500;
-                    font-size: 13px;">
-                        Font
-                        Size#1
-                        <span style="display: flex;">
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0.25px" viewBox="0 0 16 16"
-                                height="16px" width="16px" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M4 4l1-1h5.414L14 6.586V14l-1 1H5l-1-1V4zm9 3l-3-3H5v10h8V7z"></path>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3 1L2 2v10l1 1V2h6.414l-1-1H3z">
-                                </path>
-                            </svg>
-                        </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="number" id="fontSize1" value="16" class="inputContainer" style="border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;">
-                        <button class="versionBtn" id="versionBtn">
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
-                                height="24px" width="16px" xmlns="http://www.w3.org/2000/svg">
-                                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
-                            </svg>
-                        </button>
-
-                        </svg>
-                    </div>
-                    <input type="text" id="input-1" value="line-height" class="inputContainerBottom"
-                        style="border-radius: 0; margin-top: -4px;">
-                    <input type="text" id="input-1" value="font-weight" class="inputContainerBottom"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                </div>
-
-                <div style="display: flex; flex-direction: column;  ">
-                    <label for="fontSize1" class="labelInput" style="display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    font-weight: 500;
-                    font-size: 13px;">
-                        Font
-                        Size#2
-                        <span style="display: flex;">
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0.25px" viewBox="0 0 16 16"
-                                height="16px" width="16px" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M4 4l1-1h5.414L14 6.586V14l-1 1H5l-1-1V4zm9 3l-3-3H5v10h8V7z"></path>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3 1L2 2v10l1 1V2h6.414l-1-1H3z">
-                                </path>
-                            </svg>
-                        </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="number" id="fontSize1" value="16" class="inputContainer" style="border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;">
-                        <button class="versionBtn" id="versionBtn">
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
-                                height="24px" width="16px" xmlns="http://www.w3.org/2000/svg">
-                                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
-                            </svg>
-                        </button>
-
-                        </svg>
-                    </div>
-                    <input type="text" id="input-2" value="line-height" class="inputContainerBottom"
-                        style="border-radius: 0; margin-top: -4px;">
-                    <input type="text" id="input-2" value="font-weight" class="inputContainerBottom"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                </div>
-
-                <div style="display: flex; flex-direction: column;  ">
-                    <label for="fontSize1" class="labelInput" style="display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    font-weight: 500;
-                    font-size: 13px;">
-                        Font
-                        Size#3
-                        <span style="display: flex;">
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0.25px" viewBox="0 0 16 16"
-                                height="16px" width="16px" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M4 4l1-1h5.414L14 6.586V14l-1 1H5l-1-1V4zm9 3l-3-3H5v10h8V7z"></path>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3 1L2 2v10l1 1V2h6.414l-1-1H3z">
-                                </path>
-                            </svg>
-                        </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="number" id="fontSize1" value="16" class="inputContainer" style="border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;">
-                        <button class="versionBtn" id="versionBtn-3">
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
-                                height="24px" width="16px" xmlns="http://www.w3.org/2000/svg">
-                                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
-                            </svg>
-                        </button>
-
-                        </svg>
-                    </div>
-                    <input type="text" id="input-3" value="line-height" class="inputContainerBottom"
-                        style="border-radius: 0; margin-top: -4px;">
-                    <input type="text" id="input-3" value="font-weight" class="inputContainerBottom"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                </div>
-
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                <span style=" font-size: 14px;     display: flex;
-                align-items: center;
-                gap: 4px;">
-                    Reset
-                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em"
-                        width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="none" stroke-width="2"
-                            d="M20,8 C18.5974037,5.04031171 15.536972,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 L12,21 C16.9705627,21 21,16.9705627 21,12 M21,3 L21,9 L15,9">
-                        </path>
-                    </svg>
-                </span>
-                <span
-                    style=" font-size: 14px; display: flex; justify-content: center; align-items: center; padding: 12px 16px; background-color: #007bff; color: white; border: none; border-radius: 6px;">
-                    Save Version
-                </span>
-            </div>
-        </div>
-    </div>
+   
 
 
     <!-- ///Colors -->
@@ -187,7 +29,7 @@
             </svg>
         </div>
 
-        <div class="content" style="flex-direction: column;">
+        <div class="content" style="display: flex; flex-direction: column;">
 
             <!-- //Color Tabs Pick and Favorite -->
             <div style="display: flex; gap: 24px;">
@@ -203,10 +45,10 @@
                     </svg>
                 </span>
 
-                <span
+                <span id="star"
                     style=" margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border-radius: 30px; width: 100%; height: 32px; border: 1px solid black; ">
-                    <svg id="star" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512"
-                        height="24px" width="24px" xmlns="http://www.w3.org/2000/svg">
+                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="24px"
+                        width="24px" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z">
                         </path>
@@ -218,7 +60,8 @@
             <!-- Color Picker -->
             <div style="flex-direction: row; gap: 24px; display: flex;">
                 <div id="colorPicker">
-                    <canvas id="colorCanvas" width="180" height="120"></canvas>
+                    <canvas id="colorCanvas" width="180" height="120"
+                        style="box-shadow: 0px 0px 1px 1px black;"></canvas>
                     <input type="range" id="hueRange" min="0" max="360" value="0">
                     <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
                     <!-- <div id="selectedColor" style="display: block; width: 50px; height: 50px;"></div> -->
@@ -227,8 +70,11 @@
                 <!-- //Color Inputs -->
                 <div class="">
                     <div>
-                        <label for="fontSize1" style="color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
+                        <label for="fontSize1" style="display: flex; justify-content: space-between; align-items: center; color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
                         letter-spacing: 0.5px;">Hex
+                            <span style="display: flex;">
+                                <img src="images/copy.svg" alt="Copy Icon" />
+                            </span>
                         </label>
                         <div style="display: flex; flex-direction: row; align-items: center; gap: 8px; ">
                             <input type="text" value="#000000" id="hex"
@@ -238,8 +84,11 @@
                     </div>
 
                     <div>
-                        <label for="fontSize1" style="color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
+                        <label for="fontSize1" style="display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
                         letter-spacing: 0.5px;">hls
+                            <span style="display: flex;">
+                                <img src="images/copy.svg" alt="Copy Icon" />
+                            </span>
                         </label>
                         <div style="display: flex; flex-direction: row; align-items: center; gap: 8px; ">
                             <input type="text" value="hsl(0, 0%, 0%)" id="hls"
@@ -249,8 +98,11 @@
                     </div>
 
                     <div>
-                        <label for="fontSize1" style="color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
+                        <label for="fontSize1" style=" display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
                         letter-spacing: 0.5px;">rgba
+                            <span style="display: flex;">
+                                <img src="images/copy.svg" alt="Copy Icon" />
+                            </span>
                         </label>
                         <div style="display: flex; flex-direction: row; align-items: center; gap: 8px; ">
                             <input id="rgba" type="text" value="rgba(0, 0, 0, 1)"
@@ -271,6 +123,8 @@
                 <span class="colorTab" style=" background-color: #f1f1f1;
                     "></span>
                 <span class="colorTab" style=" background-color: #f1f1f1;
+                      "></span>
+                <span class="colorTab" style=" background-color: #f1f1f1;
                     "></span>
                 <span class="colorTab"
                     style="background-color:  #f1f1f1;  border-top-right-radius: 16px;border-bottom-right-radius: 16px; border: none;"></span>
@@ -280,8 +134,132 @@
     </div>
 
     <!-- <button id="pickColor">Pick Color</button> -->
+ <div class="section">
+        <div class="header">
+            <span>Typography</span>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24px"
+                width="24px" xmlns="http://www.w3.org/2000/svg">
+                <path fill="none" d="M0 0h24v24H0V0z"></path>
+                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
+            </svg>
+        </div>
+        <div class="content" style="display: flex; flex-direction: column;">
+            <div style="position: relative;">
+                <div style="display: flex; align-items: center;">
+                    <input type="text" id="inputText" value="version 0" class="versionInput">
+                    <button id="toggleButton" class="versionBtn">
+                        <img src="images/arrowWhite.svg" alt="Arrow Icon" />
+                    </button>
+                </div>
 
-    <script src="popup.js"></script>
+                <div id="versionsContainer" class="versionsContainer">
+                    <span style="margin: 5px 0; cursor: pointer;">Version one</span>
+                    <span style="margin: 5px 0; cursor: pointer;">Version two</span>
+                    <span style="margin: 5px 0; cursor: pointer;">Version three</span>
+                </div>
+            </div>
+
+
+            <div style="display: grid; grid-template-columns: repeat(3, 116px); margin-top: 12px; gap: 8px;">
+                <div id="font-container" style="display: flex; flex-direction: column;">
+                    <label for="input-1-size" class="labelInput" style="display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-weight: 500;
+                    font-size: 13px;">
+                        Font #1
+                        <span style="display: flex;">
+                            <img src="images/copy.svg" alt="Copy Icon" />
+                        </span></label>
+                    <div style="display: flex; flex-direction: row; align-items: center;">
+                        <input type="text" id="input-1-size" placeholder="Size" class="inputContainer" style="border-top-right-radius: 0;
+                        border-bottom-right-radius: 0;">
+                        <button class="versionBtn" id="versionBtn">
+                            <img src="images/inputArrow.svg" alt="Arrow Icon" />
+                        </button>
+                    </div>
+                    <input type="text" id="input-1-line" placeholder="Line-Height" class="inputContainerBottom"
+                        style="border-radius: 0; margin-top: -4px;">
+                    <input type="text" id="input-1-weight" placeholder="Weight" class="inputContainerBottom"
+                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                </div>
+
+                <div id="font-container" style="display: flex; flex-direction: column;">
+                    <label for="input-2-size" class="labelInput" style="display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-weight: 500;
+                    font-size: 13px;">
+                        Font #2
+                        <span style="display: flex;">
+                            <img src="images/copy.svg" alt="Copy Icon" />
+                        </span></label>
+                    <div style="display: flex; flex-direction: row; align-items: center;">
+                        <input type="text" id="input-2-size" placeholder="Size" class="inputContainer" style="border-top-right-radius: 0;
+                        border-bottom-right-radius: 0;">
+                        <button class="versionBtn" id="versionBtn">
+                            <img src="images/inputArrow.svg" alt="Arrow Icon" />
+                        </button>
+                    </div>
+                    <input type="text" id="input-2-line" placeholder="Line-Height" class="inputContainerBottom"
+                        style="border-radius: 0; margin-top: -4px;">
+                    <input type="text" id="input-2-weight" placeholder="Weight" class="inputContainerBottom"
+                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                </div>
+
+                <div id="font-container" style="display: flex; flex-direction: column;  ">
+                    <label for="input-3-size" class="labelInput" style="display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-weight: 500;
+                    font-size: 13px;">
+                        Font #3
+                        <span style="display: flex;">
+                            <img src="images/copy.svg" alt="Copy Icon" />
+                        </span></label>
+                    <div style="display: flex; flex-direction: row; align-items: center;">
+                        <input type="text" id="input-3-size" placeholder="Size" class="inputContainer" style="border-top-right-radius: 0;
+                        border-bottom-right-radius: 0;">
+                        <button class="versionBtn" id="versionBtn-3">
+                            <img src="images/inputArrow.svg" alt="Arrow Icon" />
+                        </button>
+
+
+                    </div>
+                    <input type="text" id="input-3-line" placeholder="Line-Height" class="inputContainerBottom"
+                        style="border-radius: 0; margin-top: -4px;">
+                    <input type="text" id="input-3-weight" placeholder="Weight" class="inputContainerBottom"
+                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                </div>
+
+            </div>
+
+
+            <!-- // Reset and Save -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span style=" font-size: 14px;  display: flex;
+                align-items: center;
+                gap: 4px;">
+                    Reset
+                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em"
+                        width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="none" stroke-width="2"
+                            d="M20,8 C18.5974037,5.04031171 15.536972,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 L12,21 C16.9705627,21 21,16.9705627 21,12 M21,3 L21,9 L15,9">
+                        </path>
+                    </svg>
+                </span>
+                <span
+                    style="margin-right: 12px; margin-left: auto; font-size: 14px; display: flex; justify-content: center; align-items: center; padding: 12px 16px; background-color: #007bff; color: white; border: none; border-radius: 6px;">
+                    Activate the copy
+                </span>
+                <span id="saveBtn"
+                    style=" font-size: 14px; display: flex; justify-content: center; align-items: center; padding: 12px 16px; background-color: #007bff; color: white; border: none; border-radius: 6px;">
+                    Save
+                </span>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="popup.js"></script>
 </body>
 
 </html>

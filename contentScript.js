@@ -1,6 +1,5 @@
 document.addEventListener("keydown", function (event) {
   if (event.key === "Escape") {
-    // Remove the canvas, zoom lens, and grid squares
     ["colorPickerCanvas", "zoomLens", "zoomGridSquares"].forEach((id) => {
       const element = document.getElementById(id);
       if (element) {
@@ -8,12 +7,10 @@ document.addEventListener("keydown", function (event) {
       }
     });
 
-    // Optionally, remove the event listener for mousemove if you added one for the zoom functionality
     document.removeEventListener("mousemove", handleMouseMove);
   }
 });
 
-// Injects the canvas and lens into the webpage
 function injectUI() {
   if (document.getElementById("colorPickerCanvas")) return;
 
@@ -155,30 +152,44 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
-//tooltip
-document.addEventListener("mouseup", function (e) {
-  const selection = window.getSelection().toString();
-  if (selection.length > 0) {
-    let style = window.getComputedStyle(
-      window.getSelection().anchorNode.parentNode
-    );
-    let fontSize = style.fontSize;
-    let fontWeight = style.fontWeight;
-    let lineHeight = style.lineHeight;
 
-    chrome.runtime.sendMessage({
-      action: "saveFontProperties",
-      data: {
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        lineHeight: lineHeight,
-      },
-    });
-  }
+let isExtensionActive = false;
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === "enable") {
+        isExtensionActive = true;
+        sendResponse({status: "Extension enabled"});
+    } else if (request.action === "disable") {
+        isExtensionActive = false;
+        sendResponse({status: "Extension disabled"});
+    }
+});
+
+
+document.addEventListener("mouseup", function (e) {
+  if (!isExtensionActive) return; 
+  let selection = window.getSelection();
+  if (!selection.rangeCount) return; // No selection made
+  
+  let style = window.getComputedStyle(selection.anchorNode.parentElement);
+  let fontSize = style.fontSize;
+  let fontWeight = style.fontWeight;
+  let lineHeight = style.lineHeight;
+
+  chrome.runtime.sendMessage({
+    action: "updateSelection",
+    data: {
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      lineHeight: lineHeight,
+    },
+  });
 });
 
 /// Tooltip
 document.addEventListener("mouseup", function (e) {
+  if (!isExtensionActive) return; 
+
   let selection = window.getSelection();
   let selectedText = selection.toString();
   if (selectedText.length > 0) {
@@ -192,6 +203,11 @@ document.addEventListener("mouseup", function (e) {
     let tooltip = document.getElementById("extension-tooltip");
     let textSpan = document.createElement("span");
     let actionButton = document.createElement("button");
+
+    if (tooltip) {
+      
+    } 
+
     if (!tooltip) {
       tooltip = document.createElement("div");
       tooltip.id = "extension-tooltip";
@@ -221,7 +237,8 @@ document.addEventListener("mouseup", function (e) {
     }
 
     actionButton.onclick = function () {
-      // Prepare the data to send
+      if (!isExtensionActive) return; // Stop if the extension is not active
+
       let dataToSend = {
         fontSize: fontSize,
         lineHeight: lineHeight,
@@ -257,3 +274,50 @@ document.addEventListener("mouseup", function (e) {
     }
   }
 });
+
+
+
+// document.addEventListener("mouseup", function (e) {
+//   let selection = window.getSelection();
+//   let selectedText = selection.toString();
+//   if (selectedText.length > 0) {
+//     let style = window.getComputedStyle(selection.anchorNode.parentNode);
+//     let fontSize = style.fontSize;
+//     let fontWeight = style.fontWeight;
+//     let lineHeight = style.lineHeight;
+
+//     let tooltip = document.getElementById("extension-tooltip");
+//     if (tooltip) {
+//       tooltip.innerHTML = '';
+//     } else {
+//       tooltip = document.createElement("div");
+//       tooltip.id = "extension-tooltip";
+//     }
+
+//     let textSpan = document.createElement("span");
+//     textSpan.textContent = `Size: ${fontSize}, Weight: ${fontWeight}, Line: ${lineHeight}`;
+//     tooltip.appendChild(textSpan);
+
+
+//     if (!document.body.contains(tooltip)) {
+//       document.body.appendChild(tooltip);
+//     }
+
+//     positionTooltip(selection, tooltip);
+
+//     tooltip.style.display = "flex";
+//   } else {
+//     let tooltip = document.getElementById("extension-tooltip");
+//     if (tooltip) {
+//       tooltip.style.display = "none";
+//     }
+//   }
+// });
+
+// function positionTooltip(selection, tooltip) {
+//   let rect = selection.getRangeAt(0).getBoundingClientRect();
+//   let top = window.scrollY + rect.top - tooltip.offsetHeight - 5; 
+//   let left = window.scrollX + rect.left + (rect.width - tooltip.offsetWidth) / 2;
+//   tooltip.style.top = `${top}px`;
+//   tooltip.style.left = `${left}px`;
+// }

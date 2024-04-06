@@ -1,11 +1,9 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("messageBackground", message);
   if (message.action === "capturePage") {
-    // Now capture the visible tab
 
     console.log("messageBackground2");
     chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
-      // And send it to the content script
       console.log("messageBackgrounddataUrl", dataUrl);
       chrome.tabs.sendMessage(message.tabId, {
         action: "capture",
@@ -15,7 +13,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-let lastPickedColor = "#000000"; // Default color
+let lastPickedColor = "#000000"; 
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.type === "colorPicked") {
@@ -24,7 +22,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 });
 
-// Listen for a message from the popup
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.type === "getColor") {
     console.log("idk");
@@ -35,7 +32,43 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   console.log("Received from content script:", request);
 
-  // You can also relay this message to your popup script if needed
-  // For now, let's just send a simple response back
   sendResponse({ status: "Received by background script" });
+});
+
+let extensionData = {
+  isActive: false,
+  fontSize: '',
+  lineHeight: '',
+  fontWeight: ''
+};
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'updateFontProperties') {
+    extensionData = { ...extensionData, ...message.data };
+    chrome.storage.local.set({extensionData}, () => {
+      console.log('Font properties updated and saved.');
+    });
+  } else if (message.type === 'toggleActivation') {
+    extensionData.isActive = !extensionData.isActive;
+    chrome.storage.local.set({extensionData}, () => {
+      console.log('Activation state updated and saved.');
+    });
+  }
+  
+  else if (message.type === 'fetchData') {
+    chrome.storage.local.get('extensionData', (result) => {
+      if (result.extensionData) {
+        sendResponse(result.extensionData);
+      }
+    });
+    return true; 
+  }
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  chrome.storage.local.get('extensionData', (result) => {
+    if (result.extensionData) {
+      extensionData = result.extensionData;
+    }
+  });
 });

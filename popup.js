@@ -38,9 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hexInput = document.querySelector("#hex");
   const rgbaInput = document.querySelector("#rgba");
-  const hslInput = document.querySelector("#hls"); // Ensure the ID is corrected to 'hls' from 'hsl'
+  const hslInput = document.querySelector("#hls"); 
 
-  // HEX to RGBA conversion and update
   hexInput.addEventListener("input", () => {
     const { r, g, b, a } = hexToRgba(hexInput.value);
     rgbaInput.value = `rgba(${r}, ${g}, ${b}, ${a})`;
@@ -48,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
   });
 
-  // RGBA to HEX and HSL conversion and update
   rgbaInput.addEventListener("input", () => {
     const rgba = rgbaInput.value.match(/\d+/g).map(Number);
     hexInput.value = rgbaToHex(...rgba);
@@ -56,7 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
     hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
   });
 
-  // HSL to HEX and RGBA conversion and update
   hslInput.addEventListener("input", () => {
     const hsl = hslInput.value.match(/\d+/g).map(Number);
     const [r, g, b] = hslToRgb(...hsl);
@@ -160,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Add click event listeners to all the SVGs
   stars.forEach((star) => {
     star.addEventListener("click", handleStarClick);
   });
@@ -174,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentHue = 0;
   let currentAlpha = 1;
 
-  // Initial ball position
   let ballPosition = { x: colorCanvas.width / 2, y: colorCanvas.height / 2 };
   let isDragging = false; // Track if the ball is being dragged
 
@@ -214,7 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
       1,
       1
     ).data;
+    if (selectedColorDiv) {
     selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+    }
   }
 
   colorCanvas.addEventListener("mousedown", function (e) {
@@ -278,14 +275,3 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  // Assuming the popup is open and can directly receive messages
-
-  console.log("recive request", request);
-
-  document.querySelector("#input-1-size").value = request.fontSize;
-  document.querySelector("#input-1-line").value = request.lineHeight;
-  document.querySelector("#input-1-weight").value = request.fontWeight;
-
-  sendResponse({ status: "Updated popup inputs" });
-});

@@ -35,24 +35,12 @@
             <div style="display: flex; gap: 24px;">
                 <span id="pickColor"
                     style=" margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border-radius: 30px; width: 100%; height: 32px; border: 1px solid black; ">
-                    <svg stroke="black" fill="black" stroke-width="0" viewBox="0 0 24 24" height="24px" width="24px"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <g id="Picker_Half">
-                            <path
-                                d="M20.936,5.889a2.825,2.825,0,0,0-4.81-2.02l-2.21,2.22-.75-.75a.771.771,0,0,0-.55-.22.8.8,0,0,0-.55.22.785.785,0,0,0,0,1.1l.75.75-8.76,8.76a3.154,3.154,0,0,0-.92,2.13l-.07,1.52a1.316,1.316,0,0,0,1.28,1.35h.06l1.52-.07a3.21,3.21,0,0,0,2.13-.93l8.76-8.76.75.75a.8.8,0,0,0,1.1,0,.785.785,0,0,0,0-1.1l-.75-.75,2.18-2.18A2.845,2.845,0,0,0,20.936,5.889Zm-8.56,8.33H7.2l6.33-6.32,2.59,2.59ZM19.4,7.2l-2.18,2.19L14.626,6.8l2.21-2.22a1.823,1.823,0,0,1,2.56,0,1.859,1.859,0,0,1,0,2.62Z">
-                            </path>
-                        </g>
-                    </svg>
+                    <img src="images/ColorPicker.svg" alt="Copy Icon" />
                 </span>
 
                 <span id="star"
                     style=" margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border-radius: 30px; width: 100%; height: 32px; border: 1px solid black; ">
-                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="24px"
-                        width="24px" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z">
-                        </path>
-                    </svg>
+                    <img src="images/star.svg" alt="Copy Icon" />
                 </span>
             </div>
 
@@ -146,7 +134,7 @@
         <div class="content" style="display: flex; flex-direction: column;">
             <div style="position: relative;">
                 <div style="display: flex; align-items: center;">
-                    <input type="text" id="inputText" value="version 0" class="versionInput">
+                    <input type="text" id="inputText" placeholder="Write Name and Save" class="versionInput">
                     <button id="toggleButton" class="versionBtn">
                         <img src="images/arrowWhite.svg" alt="Arrow Icon" />
                     </button>
@@ -261,7 +249,6 @@
     </div>
     <script src="popup.js"></script>
     <script src="fontProperties.js"></script>
-    
 </body>
 
 </html>

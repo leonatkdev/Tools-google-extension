@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const colorCanvas = document.getElementById("colorCanvas");
-  const ctx = colorCanvas.getContext("2d", { willreadfrequently: true });
+  const ctx = colorCanvas.getContext("2d", { willReadFrequently: true });
   const hueRange = document.getElementById("hueRange");
   const alphaRange = document.getElementById("alphaRange");
   const selectedColorDiv = document.getElementById("selectedColor");

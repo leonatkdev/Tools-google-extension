@@ -7,7 +7,7 @@ document.addEventListener("keydown", function (event) {
       }
     });
 
-    document.removeEventListener("mousemove", handleMouseMove);
+    //document.removeEventListener("mousemove", handleMouseMove);
   }
 });
 
@@ -57,7 +57,7 @@ function injectUI() {
 // Activates the zoom and color picking functionality
 function activateZoom(dataUrl) {
   const { canvas, lens, gridSquares } = injectUI();
-  const ctx = canvas.getContext("2d", { willreadfrequently: true });
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
   const img = new Image();
 
   img.onload = () => {

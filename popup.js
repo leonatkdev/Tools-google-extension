@@ -256,7 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.getElementById("pickColor").addEventListener("click", function () {
-  console.log("click");
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     // This sends a message to the background script to capture the screen
     chrome.runtime.sendMessage({ action: "capturePage", tabId: tabs[0].id });
@@ -264,12 +263,10 @@ document.getElementById("pickColor").addEventListener("click", function () {
 });
 
 document.getElementById("pickColor").addEventListener("click", function () {
-  console.log("click");
   chrome.runtime.sendMessage({ action: "activatePicker" });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("here");
   chrome.runtime.sendMessage({ type: "getColor" }, function (response) {
     document.getElementById("hex").value = response.color;
   });

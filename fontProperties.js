@@ -36,33 +36,30 @@ function updateFontInputs(newFontSize, newLineHeight, newFontWeight) {
         
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {action: isActive ? "enable" : "disable"}, function(response) {
-                console.log(response);
+                // console.log(response);
             });
         });
   
         activateButton.textContent = isActive ? 'Disable on the tab' : 'Activate on the tab';
     });
   });
-  
-//   document.addEventListener('DOMContentLoaded', function () {
-//     const activateButton = document.getElementById('activateButton');
-  
-//     // Fetch the current activation state and update the button text accordingly
-//     chrome.runtime.sendMessage({type: 'fetchData'}, (response) => {
-//       if (response && response.isActive) {
-//         activateButton.textContent = 'Disable on the tab';
-//       } else {
-//         activateButton.textContent = 'Activate on the tab';
-//       }
-//     });
-  
-//     activateButton.addEventListener('click', function () {
-//       let isActive = activateButton.textContent.includes('Activate');
-      
-//       // Toggle activation state in the background script
-//       chrome.runtime.sendMessage({type: 'toggleActivation'}, () => {
-//         // Update button text based on the new state
-//         activateButton.textContent = isActive ? 'Disable on the tab' : 'Activate on the tab';
-//       });
-//     });
-//   });
+
+document.addEventListener('DOMContentLoaded', function () {
+  chrome.storage.local.get(["fontData"], function(data) {
+      if (data.fontData) {
+            updateFontInputs(data.fontData.fontSize, data.fontData.lineHeight, data.fontData.fontWeight);
+      }
+  });
+
+  // Save data on input change
+  document.querySelectorAll('.inputContainer').forEach(input => {
+      input.addEventListener('input', function() {
+          const fontData = {};
+          document.querySelectorAll('.inputContainer').forEach(input => {
+              fontData[input.id] = input.value;
+          });
+          chrome.storage.local.set({fontData});
+      });
+  });
+});
+

@@ -93,12 +93,10 @@ function activateZoom(dataUrl) {
       gridSquares.style.backgroundSize = `10px 10px`;
       gridSquares.style.backgroundPosition = `3px 3px`;
 
-      // console.log(rgba); // Log or use the RGBA value as needed
     });
   };
 
   // canvas.addEventListener("click", function (event) {
-  //   console.log("click");
   //   const x = event.clientX;
   //   const y = event.clientY;
   //   const pixel = ctx.getImageData(x, y, 1, 1);
@@ -114,11 +112,9 @@ function activateZoom(dataUrl) {
   // });
 
   // lens.addEventListener("click", function (event) {
-  //   console.log('lens')
   // })
 
   gridSquares.addEventListener("click", function (event) {
-    console.log("grid");
     const x = event.clientX;
     const y = event.clientY;
     const pixel = ctx.getImageData(x, y, 1, 1);
@@ -151,173 +147,103 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-
-
+/// Tooltip
 let isExtensionActive = false;
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action === "enable") {
-        isExtensionActive = true;
-        sendResponse({status: "Extension enabled"});
-    } else if (request.action === "disable") {
-        isExtensionActive = false;
-        sendResponse({status: "Extension disabled"});
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === "enable") {
+    isExtensionActive = true;
+    // sendResponse({status: "Extension enabled"});
+  } else if (request.action === "disable") {
+    isExtensionActive = false; 
+    const element = document.getElementById("extension-tooltip");
+    if (element) {
+      element.remove();
     }
-});
-
-
-document.addEventListener("mouseup", function (e) {
-  if (!isExtensionActive) return; 
-  let selection = window.getSelection();
-  if (!selection.rangeCount) return; // No selection made
-  
-  let style = window.getComputedStyle(selection.anchorNode.parentElement);
-  let fontSize = style.fontSize;
-  let fontWeight = style.fontWeight;
-  let lineHeight = style.lineHeight;
-
-  chrome.runtime.sendMessage({
-    action: "updateSelection",
-    data: {
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      lineHeight: lineHeight,
-    },
-  });
-});
-
-/// Tooltip
-document.addEventListener("mouseup", function (e) {
-  if (!isExtensionActive) return; 
-
-  let selection = window.getSelection();
-  let selectedText = selection.toString();
-  if (selectedText.length > 0) {
-    // Get the selection's properties
-    let style = window.getComputedStyle(selection.anchorNode.parentNode);
-    let fontSize = style.fontSize;
-    let fontWeight = style.fontWeight;
-    let lineHeight = style.lineHeight;
-
-    // Create or update tooltip
-    let tooltip = document.getElementById("extension-tooltip");
-    let textSpan = document.createElement("span");
-    let actionButton = document.createElement("button");
-
-    if (tooltip) {
-      
-    } 
-
-    if (!tooltip) {
-      tooltip = document.createElement("div");
-      tooltip.id = "extension-tooltip";
-      tooltip.style.position = "absolute";
-      tooltip.style.zIndex = "10000";
-      tooltip.style.backgroundColor = "#FFF";
-      tooltip.style.border = "1px solid #000";
-      tooltip.style.borderRadius = "24px";
-      tooltip.style.fontSize = "12px";
-      tooltip.style.fontFamily = "Arial, sans-serif";
-      document.body.appendChild(tooltip);
-
-      textSpan.style.padding = "6px 12px";
-      textSpan.style.display = "block";
-      textSpan.textContent = `Size: ${fontSize}, Weight: ${fontWeight}, Line: ${lineHeight}`;
-
-      actionButton.textContent = "Save";
-      actionButton.style.border = "none";
-      actionButton.style.borderTopRightRadius = "24px";
-      actionButton.style.borderBottomRightRadius = "24px";
-      actionButton.style.backgroundColor = "#007bff";
-      actionButton.style.color = "white";
-      // Handle button click event
-      actionButton.onclick = function () {
-        console.log("Button clicked!");
-      };
-    }
-
-    actionButton.onclick = function () {
-      if (!isExtensionActive) return; // Stop if the extension is not active
-
-      let dataToSend = {
-        fontSize: fontSize,
-        lineHeight: lineHeight,
-        fontWeight: fontWeight,
-      };
-
-      chrome.runtime.sendMessage(dataToSend, function (response) {
-        console.log("Response from extension:", response);
-      });
-    };
-
-    // Set the tooltip text
-
-    // Append elements to the tooltip
-    tooltip.appendChild(textSpan);
-    tooltip.appendChild(actionButton);
-
-    // Position the tooltip
-    let rect = selection.getRangeAt(0).getBoundingClientRect();
-    let top = window.scrollY + rect.top - tooltip.offsetHeight - 5; // 5px above the selection
-    let left =
-      window.scrollX + rect.left + (rect.width - tooltip.offsetWidth) / 2; // Centered above the selection
-    tooltip.style.top = `${top}px`;
-    tooltip.style.left = `${left}px`;
-
-    // Show the tooltip
-    tooltip.style.display = "flex";
-  } else {
-    // Hide the tooltip if there's no selection
-    let tooltip = document.getElementById("extension-tooltip");
-    if (tooltip) {
-      tooltip.style.display = "none";
-    }
+    // sendResponse({status: "Extension disabled"});
   }
 });
 
 
 
-// document.addEventListener("mouseup", function (e) {
-//   let selection = window.getSelection();
-//   let selectedText = selection.toString();
-//   if (selectedText.length > 0) {
-//     let style = window.getComputedStyle(selection.anchorNode.parentNode);
-//     let fontSize = style.fontSize;
-//     let fontWeight = style.fontWeight;
-//     let lineHeight = style.lineHeight;
+document.addEventListener("mouseup", function (e) {
+  if (!isExtensionActive) return; // Exit if extension is not active
 
-//     let tooltip = document.getElementById("extension-tooltip");
-//     if (tooltip) {
-//       tooltip.innerHTML = '';
-//     } else {
-//       tooltip = document.createElement("div");
-//       tooltip.id = "extension-tooltip";
-//     }
+  let selection = window.getSelection();
+  let selectedText = selection.toString();
+  if (!selection.rangeCount || selectedText.length === 0) return; // No selection made
 
-//     let textSpan = document.createElement("span");
-//     textSpan.textContent = `Size: ${fontSize}, Weight: ${fontWeight}, Line: ${lineHeight}`;
-//     tooltip.appendChild(textSpan);
+  let style = window.getComputedStyle(selection.anchorNode.parentNode);
+  let fontSize = style.fontSize;
+  let fontWeight = style.fontWeight;
+  let lineHeight = style.lineHeight;
+
+  let tooltip = document.getElementById("extension-tooltip");
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    document.body.appendChild(tooltip);
+    tooltip.id = "extension-tooltip";
+    tooltip.style.position = "absolute";
+    tooltip.style.zIndex = "10000";
+    tooltip.style.backgroundColor = "#FFF";
+    tooltip.style.border = "1px solid #000";
+    tooltip.style.borderRadius = "24px";
+    tooltip.style.fontSize = "12px";
+    tooltip.style.fontFamily = "Arial, sans-serif";
+    tooltip.style.display = "flex";
+  } else {
+    tooltip.innerHTML = "";
+  }
 
 
-//     if (!document.body.contains(tooltip)) {
-//       document.body.appendChild(tooltip);
-//     }
+  let textSpan = document.createElement("span");
+  textSpan.style.padding = "6px 12px";
+  textSpan.textContent = `Size: ${fontSize}, Weight: ${fontWeight}, Line: ${lineHeight}`;
+  tooltip.appendChild(textSpan);
 
-//     positionTooltip(selection, tooltip);
+  let actionButton = document.createElement("div");
+  actionButton.id = "extension-save-button";
+  actionButton.textContent = "Save";
+  actionButton.style.border = "none";
+  actionButton.style.padding = "6px 12px";
+  actionButton.style.cursor = "pointer";
+  actionButton.style.zIndex = "10000000000 !important";
+  actionButton.style.backgroundColor = "#007bff";
+  actionButton.style.color = "black";
+  actionButton.style.color = "white";
 
-//     tooltip.style.display = "flex";
-//   } else {
-//     let tooltip = document.getElementById("extension-tooltip");
-//     if (tooltip) {
-//       tooltip.style.display = "none";
-//     }
-//   }
-// });
+  actionButton.addEventListener("click", function (event) {
+    console.log("Button !", { fontSize, fontWeight, lineHeight });
+    chrome.runtime.sendMessage({
+      action: "updateSelection",
+      data: {
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        lineHeight: lineHeight,
+      },
+    });
+  });
 
-// function positionTooltip(selection, tooltip) {
-//   let rect = selection.getRangeAt(0).getBoundingClientRect();
-//   let top = window.scrollY + rect.top - tooltip.offsetHeight - 5; 
-//   let left = window.scrollX + rect.left + (rect.width - tooltip.offsetWidth) / 2;
-//   tooltip.style.top = `${top}px`;
-//   tooltip.style.left = `${left}px`;
-// }
+  tooltip.appendChild(actionButton);
+
+  let closeButton = document.createElement("div");
+  closeButton.id = "close-tooltip-button";
+  closeButton.textContent = "Close";
+  closeButton.style.color = "black";
+  closeButton.style.padding = "6px 12px";
+
+  closeButton.addEventListener("click", function (event) {
+    tooltip.remove();
+  });
+
+  tooltip.appendChild(closeButton);
+
+  // Position the tooltip
+  let rect = selection.getRangeAt(0).getBoundingClientRect();
+  tooltip.style.top = `${
+    window.scrollY + rect.top - tooltip.offsetHeight - 5
+  }px`; // 5px above the selection
+  tooltip.style.left = `${
+    window.scrollX + rect.left + (rect.width - tooltip.offsetWidth) / 2
+  }px`; // Centered above the selection
+});

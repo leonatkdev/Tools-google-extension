@@ -14,9 +14,6 @@
 
 <body class="colorPickerBody">
 
-
-
-
     <!-- ///Colors -->
 
     <div class="section">
@@ -58,7 +55,7 @@
                 <!-- //Color Inputs -->
                 <div class="">
                     <div>
-                        <label for="fontSize1" style="display: flex; justify-content: space-between; align-items: center; color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
+                        <label for="hex" style="display: flex; justify-content: space-between; align-items: center; color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
                         letter-spacing: 0.5px;">Hex
                             <span style="display: flex;">
                                 <img src="images/copy.svg" alt="Copy Icon" />
@@ -72,7 +69,7 @@
                     </div>
 
                     <div>
-                        <label for="fontSize1" style="display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
+                        <label for="hls" style="display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
                         letter-spacing: 0.5px;">hls
                             <span style="display: flex;">
                                 <img src="images/copy.svg" alt="Copy Icon" />
@@ -86,7 +83,7 @@
                     </div>
 
                     <div>
-                        <label for="fontSize1" style=" display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
+                        <label for="rgba" style=" display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
                         letter-spacing: 0.5px;">rgba
                             <span style="display: flex;">
                                 <img src="images/copy.svg" alt="Copy Icon" />
@@ -149,85 +146,65 @@
 
 
             <div style="display: grid; grid-template-columns: repeat(3, 116px); margin-top: 12px; gap: 8px;">
-                <div id="font-container" style="display: flex; flex-direction: column;">
-                    <label for="input-1-size" class="labelInput" style="display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    font-weight: 500;
-                    font-size: 13px;">
+                <div id="font-container" class="fontBox">
+                    <label for="input-1-size" class="labelInput">
                         Font #1
                         <span style="display: flex;">
                             <img src="images/copy.svg" alt="Copy Icon" />
                         </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="text" id="input-1-size" placeholder="Size" class="inputContainer" style="border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;">
+                    <div class="fontInputBox">
+                        <input type="text" id="input-1-size" placeholder="Size" class="inputContainer">
                         <button class="versionBtn" id="versionBtn">
                             <img src="images/inputArrow.svg" alt="Arrow Icon" />
                         </button>
                     </div>
-                    <input type="text" id="input-1-line" placeholder="Line-Height" class="inputContainerBottom"
-                        style="border-radius: 0; margin-top: -4px;">
-                    <input type="text" id="input-1-weight" placeholder="Weight" class="inputContainerBottom"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <input type="text" id="input-1-line" placeholder="Line-Height"
+                        class="inputContainer inputContainerMiddle">
+                    <input type="text" id="input-1-weight" placeholder="Weight"
+                        class="inputContainer inputContainerEnd">
                 </div>
 
-                <div id="font-container" style="display: flex; flex-direction: column;">
-                    <label for="input-2-size" class="labelInput" style="display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    font-weight: 500;
-                    font-size: 13px;">
+                <div id="font-container" class="fontBox">
+                    <label for="input-2-size" class="labelInput">
                         Font #2
                         <span style="display: flex;">
                             <img src="images/copy.svg" alt="Copy Icon" />
                         </span></label>
                     <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="text" id="input-2-size" placeholder="Size" class="inputContainer" style="border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;">
+                        <input type="text" id="input-2-size" placeholder="Size" class="inputContainer">
                         <button class="versionBtn" id="versionBtn">
                             <img src="images/inputArrow.svg" alt="Arrow Icon" />
                         </button>
                     </div>
-                    <input type="text" id="input-2-line" placeholder="Line-Height" class="inputContainerBottom"
-                        style="border-radius: 0; margin-top: -4px;">
-                    <input type="text" id="input-2-weight" placeholder="Weight" class="inputContainerBottom"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <input type="text" id="input-2-line" placeholder="Line-Height"
+                        class="inputContainer inputContainerMiddle">
+                    <input type="text" id="input-2-weight" placeholder="Weight"
+                        class="inputContainer inputContainerEnd">
                 </div>
 
-                <div id="font-container" style="display: flex; flex-direction: column;  ">
-                    <label for="input-3-size" class="labelInput" style="display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    font-weight: 500;
-                    font-size: 13px;">
+                <div id="font-container" class="fontBox">
+                    <label for="input-3-size" class="labelInput">
                         Font #3
                         <span style="display: flex;">
                             <img src="images/copy.svg" alt="Copy Icon" />
                         </span></label>
                     <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="text" id="input-3-size" placeholder="Size" class="inputContainer" style="border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;">
+                        <input type="text" id="input-3-size" placeholder="Size" class="inputContainer">
                         <button class="versionBtn" id="versionBtn-3">
                             <img src="images/inputArrow.svg" alt="Arrow Icon" />
                         </button>
-
-
                     </div>
-                    <input type="text" id="input-3-line" placeholder="Line-Height" class="inputContainerBottom"
-                        style="border-radius: 0; margin-top: -4px;">
-                    <input type="text" id="input-3-weight" placeholder="Weight" class="inputContainerBottom"
-                        style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <input type="text" id="input-3-line" placeholder="Line-Height"
+                        class="inputContainer inputContainerMiddle">
+                    <input type="text" id="input-3-weight" placeholder="Weight"
+                        class="inputContainer inputContainerEnd">
                 </div>
-
             </div>
 
 
             <!-- // Reset and Save -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                <span style=" font-size: 14px;  display: flex;
-                align-items: center;
-                gap: 4px;">
+            <div class="saveResetTab">
+                <span class="reset">
                     Reset
                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em"
                         width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -236,12 +213,10 @@
                         </path>
                     </svg>
                 </span>
-                <span id="activateButton"
-                    style="margin-right: 12px; margin-left: auto; font-size: 14px; display: flex; justify-content: center; align-items: center; padding: 12px 16px; background-color: #007bff; color: white; border: none; border-radius: 6px;">
+                <span id="activateButton">
                     Activate on the tab
                 </span>
-                <span id="saveBtn"
-                    style=" font-size: 14px; display: flex; justify-content: center; align-items: center; padding: 12px 16px; background-color: #007bff; color: white; border: none; border-radius: 6px;">
+                <span id="saveBtn">
                     Save
                 </span>
             </div>

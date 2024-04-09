@@ -4,6 +4,21 @@
   min-width: 400px;
 }
 
+#errorMessage {
+  position: absolute;
+  background-color: #ffffffb0;
+  /* top: 0; */
+  right: 0;
+  left: 0;
+  bottom: 0;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  backdrop-filter: blur(2px);
+  display: none;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -28,6 +43,7 @@
 
 .content {
   display: none;
+  position: relative;
   padding: 12px 16px;
   border: 1px solid #ddd;
   border-top: none;
@@ -192,6 +208,11 @@
   border-radius: 4px;
   line-height: 24px;
   border: 1px solid black;
+}
+
+.versionLabel {
+  margin: 5px 0;
+  cursor: pointer;
 }
 
 .labelInput {

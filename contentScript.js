@@ -7,7 +7,7 @@ document.addEventListener("keydown", function (event) {
       }
     });
 
-    //document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mousemove", () => {});
   }
 });
 
@@ -80,10 +80,7 @@ function activateZoom(dataUrl) {
         y * 10 - lens.offsetHeight / 10
       }px`;
 
-      // SVG grid pattern
-      // const gridPattern = "data:image/svg+xml,%3Csvg width='30' height='30' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='30' height='30' fill='black'/%3E%3C/svg%3E";
-
-      // Layering the grid pattern over the zoomed background
+    
       lens.style.backgroundImage = `${backgroundImage}`;
       lens.style.backgroundSize = `${backgroundSize}, 100px 100px`;
       lens.style.backgroundPosition = `${backgroundPosition}, 0 0`;
@@ -95,24 +92,6 @@ function activateZoom(dataUrl) {
 
     });
   };
-
-  // canvas.addEventListener("click", function (event) {
-  //   const x = event.clientX;
-  //   const y = event.clientY;
-  //   const pixel = ctx.getImageData(x, y, 1, 1);
-  //   const data = pixel.data;
-  //   const hex =
-  //     "#" +
-  //     ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2])
-  //       .toString(16)
-  //       .slice(1);
-
-  //   // Send message to background script
-  //   chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
-  // });
-
-  // lens.addEventListener("click", function (event) {
-  // })
 
   gridSquares.addEventListener("click", function (event) {
     const x = event.clientX;
@@ -165,7 +144,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 
-
 document.addEventListener("mouseup", function (e) {
   if (!isExtensionActive) return; // Exit if extension is not active
 
@@ -198,6 +176,7 @@ document.addEventListener("mouseup", function (e) {
 
   let textSpan = document.createElement("span");
   textSpan.style.padding = "6px 12px";
+  textSpan.style.color = "black";
   textSpan.textContent = `Size: ${fontSize}, Weight: ${fontWeight}, Line: ${lineHeight}`;
   tooltip.appendChild(textSpan);
 

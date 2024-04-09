@@ -26,8 +26,7 @@
             </svg>
         </div>
 
-        <div class="content" style="display: flex; flex-direction: column;">
-
+        <div class="content" style="display: flex; flex-direction: column;"> 
             <!-- //Color Tabs Pick and Favorite -->
             <div style="display: flex; gap: 24px;">
                 <span id="pickColor"
@@ -49,7 +48,7 @@
                         style="box-shadow: 0px 0px 1px 1px black;"></canvas>
                     <input type="range" id="hueRange" min="0" max="360" value="0">
                     <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
-                    <!-- <div id="selectedColor" style="display: block; width: 50px; height: 50px;"></div> -->
+                    <div id="selectedColor" style="display: block; width: 50px; height: 50px;"></div>
                 </div>
 
                 <!-- //Color Inputs -->
@@ -114,7 +113,9 @@
                 <span class="colorTab"
                     style="background-color:  #f1f1f1;  border-top-right-radius: 16px;border-bottom-right-radius: 16px; border: none;"></span>
             </div>
-
+            <div id="errorMessage">
+                <p></p>
+            </div>
         </div>
     </div>
 
@@ -129,23 +130,23 @@
             </svg>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
-            <div style="position: relative;">
+            <!-- <div style="position: relative;">
                 <div style="display: flex; align-items: center;">
-                    <input type="text" id="inputText" placeholder="Write Name and Save" class="versionInput">
+                    <input type="text" id="versionInput" placeholder="Write Name and Save" class="versionInput">
                     <button id="toggleButton" class="versionBtn">
                         <img src="images/arrowWhite.svg" alt="Arrow Icon" />
                     </button>
                 </div>
 
                 <div id="versionsContainer" class="versionsContainer">
-                    <span style="margin: 5px 0; cursor: pointer;">Version one</span>
-                    <span style="margin: 5px 0; cursor: pointer;">Version two</span>
-                    <span style="margin: 5px 0; cursor: pointer;">Version three</span>
+                    <span class="versionLabel">Version one</span>
+                    <span class="versionLabel">Version two</span>
+                    <span class="versionLabel">Version three</span>
                 </div>
-            </div>
+            </div> -->
 
 
-            <div style="display: grid; grid-template-columns: repeat(3, 116px); margin-top: 12px; gap: 8px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 116px); gap: 8px;">
                 <div id="font-container" class="fontBox">
                     <label for="input-1-size" class="labelInput">
                         Font #1
@@ -204,7 +205,7 @@
 
             <!-- // Reset and Save -->
             <div class="saveResetTab">
-                <span class="reset">
+                <span id="reset" class="reset">
                     Reset
                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em"
                         width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -220,10 +221,13 @@
                     Save
                 </span>
             </div>
+            <div id="errorMessage">
+                <p></p>
+            </div>
         </div>
     </div>
-    <script src="popup.js"></script>
-    <script src="fontProperties.js"></script>
+    <script src="js/popup.js"></script>
+    <script src="js/fontProperties.js"></script>
 </body>
 
 </html>

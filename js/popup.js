@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeUI();
   setupColorConversionListeners();
   // setupColorPickListener();
-  fetchInitialColor();
+  // fetchInitialColor();
 });
 
 function initializeUI() {
@@ -47,13 +47,13 @@ function setupStarClicks() {
   });
 }
 
-function fetchInitialColor() {
-  // Fetch and set the initial color from storage or a default
-  chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
-    document.getElementById("hex").value = response.color;
-    // You might want to trigger conversion here to update other inputs
-  });
-}
+// function fetchInitialColor() {
+//   // Fetch and set the initial color from storage or a default
+//   chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
+//     document.getElementById("hex").value = response.color;
+//     // You might want to trigger conversion here to update other inputs
+//   });
+// }
 
 function setupColorConversionListeners() {
   const hexInput = document.querySelector("#hex");
@@ -63,15 +63,15 @@ function setupColorConversionListeners() {
   hexInput.addEventListener("input", () => {
     const { r, g, b, a } = hexToRgba(hexInput.value);
     rgbaInput.value = `rgba(${r}, ${g}, ${b}, ${a})`;
-    // const [h, s, l] = rgbToHsl(r, g, b);
-    // hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+    const [h, s, l] = rgbToHsl(r, g, b);
+    hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
   });
 
   rgbaInput.addEventListener("input", () => {
     const rgba = rgbaInput.value.match(/\d+/g).map(Number);
     hexInput.value = rgbaToHex(...rgba);
-    // const [h, s, l] = rgbToHsl(...rgba);
-    // hslInput.value = `hsl(${h}, ${s}%,  ${l}%)`;
+    const [h, s, l] = rgbToHsl(...rgba);
+    hslInput.value = `hsl(${h}, ${s}%,  ${l}%)`;
   });
 
   hslInput.addEventListener("input", () => {
@@ -197,11 +197,15 @@ function setupColorCanvas() {
   const selectedColorDiv = document.getElementById("selectedColor");
   const hexInput = document.getElementById("hex");
 
+  let manualHexInput = false;
+
   // Create an offscreen canvas for color picking
-  let offscreenCanvas = document.createElement('canvas');
+  let offscreenCanvas = document.createElement("canvas");
   offscreenCanvas.width = colorCanvas.width;
   offscreenCanvas.height = colorCanvas.height;
-  let offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+  let offscreenCtx = offscreenCanvas.getContext("2d", {
+    willReadFrequently: true,
+  });
 
   let currentHue = 0;
   let currentAlpha = 1;
@@ -213,13 +217,23 @@ function setupColorCanvas() {
   function drawOffscreenColorSpectrum(hue, alpha) {
     offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-    const colorGradient = offscreenCtx.createLinearGradient(0, 0, offscreenCanvas.width, 0);
+    const colorGradient = offscreenCtx.createLinearGradient(
+      0,
+      0,
+      offscreenCanvas.width,
+      0
+    );
     colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
     colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
     offscreenCtx.fillStyle = colorGradient;
     offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-    const hueGradient = offscreenCtx.createLinearGradient(0, 0, 0, offscreenCanvas.height);
+    const hueGradient = offscreenCtx.createLinearGradient(
+      0,
+      0,
+      0,
+      offscreenCanvas.height
+    );
     hueGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
     hueGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
     offscreenCtx.fillStyle = hueGradient;
@@ -258,15 +272,33 @@ function setupColorCanvas() {
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
     // Use the offscreen canvas to pick the color
-    const imageData = offscreenCtx.getImageData(ballPosition.x, ballPosition.y, 1, 1).data;
-    const hex = rgbaToHex(imageData[0], imageData[1], imageData[2], currentAlpha);
+    const imageData = offscreenCtx.getImageData(
+      ballPosition.x,
+      ballPosition.y,
+      1,
+      1
+    ).data;
 
-    hexInput.value = hex; // Update HEX input with the newly picked color
+    const hex = rgbaToHex(
+      imageData[0],
+      imageData[1],
+      imageData[2],
+      currentAlpha
+    );
+
+    console.log('manualHexInput', manualHexInput)
+
+    if (!manualHexInput) {
+      hexInput.value = hex;
+  }
+
+    // hexInput.value = hexInput.value; // Update HEX input with the newly picked color
 
     selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
   }
 
   colorCanvas.addEventListener("mousedown", function (e) {
+    manualHexInput = false;
     const rect = colorCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -278,8 +310,14 @@ function setupColorCanvas() {
   window.addEventListener("mousemove", function (e) {
     if (isDragging) {
       const rect = colorCanvas.getBoundingClientRect();
-      ballPosition.x = Math.max(0, Math.min(colorCanvas.width, e.clientX - rect.left));
-      ballPosition.y = Math.max(0, Math.min(colorCanvas.height, e.clientY - rect.top));
+      ballPosition.x = Math.max(
+        0,
+        Math.min(colorCanvas.width, e.clientX - rect.left)
+      );
+      ballPosition.y = Math.max(
+        0,
+        Math.min(colorCanvas.height, e.clientY - rect.top)
+      );
       drawColorSpectrum(currentHue, currentAlpha);
       pickColor(); // Update the selected color
     }
@@ -290,23 +328,40 @@ function setupColorCanvas() {
   });
 
   hueRange.addEventListener("input", function () {
+    manualHexInput = false;
     currentHue = this.value;
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor(); // Update the selected color based on hue
   });
 
   alphaRange.addEventListener("input", function () {
+    manualHexInput = false;
     currentAlpha = this.value;
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor(); // Update based on alpha
   });
 
   hexInput.addEventListener("input", (e) => {
-    console.log('e.target.value', e.target.value)
+    manualHexInput = true;
     setColorFromHex(e.target.value);
   });
 
+  // function isValidHex(hex) {
+  //   return /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3}|[a-fA-F0-9]{8}|[a-fA-F0-9]{4})$/.test(
+  //     hex
+  //   );
+  // }
+
   function setColorFromHex(hexColor) {
+    console.log("hex", hexColor);
+
+    // if (!isValidHex(hexColor)) {
+    //   // Optionally, provide feedback or simply return without updating
+    //   console.log("Invalid HEX code:", hexColor);
+    //   hexInput.style.borderColor = "red";
+    //   return;
+    // }
+
     // Assuming hexToRgba and rgbToHsl are already defined
     const { r, g, b, a } = hexToRgba(hexColor);
     const [h, s, l] = rgbToHsl(r, g, b);
@@ -323,7 +378,15 @@ function setupColorCanvas() {
   }
 
   // Initial setup
+    chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
+      console.log('response.color', response.color)
+      if(response.color){
+        setColorFromHex(response.color);
+      }
+      else{
+        setColorFromHex("#000000");
+      }
+      // You might want to trigger conversion here to update other inputs
+  });
   setColorFromHex("#000000"); // Set a default HEX color if needed
 }
-
-

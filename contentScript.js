@@ -127,14 +127,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 /// Tooltip
-let isExtensionActive = false;
+let enabledOnTab = false;
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "enable") {
-    isExtensionActive = true;
+    enabledOnTab = true;
     // sendResponse({status: "Extension enabled"});
   } else if (request.action === "disable") {
-    isExtensionActive = false; 
+    enabledOnTab = false; 
     const element = document.getElementById("extension-tooltip");
     if (element) {
       element.remove();
@@ -145,7 +145,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
 document.addEventListener("mouseup", function (e) {
-  if (!isExtensionActive) return; // Exit if extension is not active
+  // console.log('enabledOnTab', enabledOnTab)
+  if (!enabledOnTab) return; // Exit if extension is not active
 
   let selection = window.getSelection();
   let selectedText = selection.toString();

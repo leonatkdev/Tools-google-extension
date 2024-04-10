@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function initializeUI() {
   setupToggleHeaders();
 
-  setupStarClicks();
+  // setupStarClicks();
   setupColorCanvas();
   setupPickColorButton();
 }
@@ -27,25 +27,25 @@ function toggleContent(header) {
   header.classList.toggle("active");
 }
 
-const handleStarClick = function (event) {
-  const input = document.querySelector("#hex");
-  const colorValue = input.value;
+// const handleStarClick = function (event) {
+//   const input = document.querySelector("#hex");
+//   const colorValue = input.value;
 
-  const colorTabs = document.querySelectorAll(".colorTab");
-  for (let tab of colorTabs) {
-    const currentColor = tab.style.backgroundColor;
-    if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
-      tab.style.backgroundColor = colorValue;
-      break; // Exit the loop after setting the color
-    }
-  }
-};
+//   const colorTabs = document.querySelectorAll(".colorTab");
+//   for (let tab of colorTabs) {
+//     const currentColor = tab.style.backgroundColor;
+//     if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
+//       tab.style.backgroundColor = colorValue;
+//       break; // Exit the loop after setting the color
+//     }
+//   }
+// };
 
-function setupStarClicks() {
-  document.querySelectorAll('span[id="star"]').forEach((star) => {
-    star.addEventListener("click", handleStarClick);
-  });
-}
+// function setupStarClicks() {
+//   document.querySelectorAll('span[id="star"]').forEach((star) => {
+//     star.addEventListener("click", handleStarClick);
+//   });
+// }
 
 // function fetchInitialColor() {
 //   // Fetch and set the initial color from storage or a default
@@ -56,31 +56,74 @@ function setupStarClicks() {
 // }
 
 function setupColorConversionListeners() {
-  const hexInput = document.querySelector("#hex");
-  const rgbaInput = document.querySelector("#rgba");
-  const hslInput = document.querySelector("#hls");
+  const colorTypeSpans = document.querySelectorAll("#colorType");
+  const colorInput = document.getElementById("hex"); // Initial input ID is 'hex'
 
-  hexInput.addEventListener("input", () => {
-    const { r, g, b, a } = hexToRgba(hexInput.value);
-    rgbaInput.value = `rgba(${r}, ${g}, ${b}, ${a})`;
-    const [h, s, l] = rgbToHsl(r, g, b);
-    hslInput.value = `hsl(${h}, ${s}%, ${l}%)`;
-  });
+  colorTypeSpans.forEach((span) => {
+    span.addEventListener("click", function () {
+      const activeTypeSpan = document.querySelector("span.activeType");
 
-  rgbaInput.addEventListener("input", () => {
-    const rgba = rgbaInput.value.match(/\d+/g).map(Number);
-    hexInput.value = rgbaToHex(...rgba);
-    const [h, s, l] = rgbToHsl(...rgba);
-    hslInput.value = `hsl(${h}, ${s}%,  ${l}%)`;
-  });
+      if (activeTypeSpan.textContent === span.textContent) return;
 
-  hslInput.addEventListener("input", () => {
-    const hsl = hslInput.value.match(/\d+/g).map(Number);
-    const [r, g, b] = hslToRgb(...hsl);
-    rgbaInput.value = `rgba(${r}, ${g}, ${b}, 1)`;
-    hexInput.value = rgbaToHex(r, g, b, 1);
+      activeTypeSpan.classList.remove("activeType");
+      span.classList.add("activeType");
+
+      const newInputId = span.textContent.trim().toLowerCase();
+      colorInput.id = newInputId;
+
+      convertColorInput(colorInput.value, newInputId);
+    });
   });
 }
+
+function convertColorInput(value, type) {
+  switch (type) {
+    case "hex":
+      const { r, g, b, a } = value.startsWith("rgba")
+        ? parseRgba(value)
+        : hslToRgba(parseHsl(value));
+      document.getElementById(type).value = rgbaToHex(r, g, b, a);
+      break;
+    case "rgba":
+      const rgba = value.startsWith("#")
+        ? hexToRgba(value)
+        : hslToRgba(parseHsl(value));
+      document.getElementById(
+        type
+      ).value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+      break;
+    case "hls": 
+      const {
+        r: hr,
+        g: hg,
+        b: hb,
+      } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
+      const [h, s, l] = rgbToHsl(hr, hg, hb);
+      document.getElementById(type).value = `hsl(${h}, ${s}%, ${l}%)`;
+      break;
+    default:
+      console.error("Unsupported type for conversion.");
+  }
+}
+
+function parseRgba(rgbaString) {
+  const [r, g, b, a] = rgbaString.match(/\d+\.?\d*/g).map(Number);
+  return { r, g, b, a };
+}
+
+function parseHsl(hslString) {
+  const [h, s, l] = hslString.match(/\d+\.?\d*/g).map(Number);
+  return { h, s, l };
+}
+
+function hslToRgba({ h, s, l }) {
+  s /= 100;
+  l /= 100;
+  const [r, g, b] = hslToRgb(h, s, l);
+  console.log(`Converted RGB: r=${r}, g=${g}, b=${b}`);
+  return { r, g, b, a: 1 }; 
+}
+
 function hslToRgb(h, s, l) {
   let r, g, b;
 
@@ -199,6 +242,9 @@ function setupColorCanvas() {
 
   let manualHexInput = false;
 
+  console.log("colorCanvas.width", colorCanvas.width);
+  console.log(" colorCanvas.height", colorCanvas.height);
+
   // Create an offscreen canvas for color picking
   let offscreenCanvas = document.createElement("canvas");
   offscreenCanvas.width = colorCanvas.width;
@@ -286,11 +332,11 @@ function setupColorCanvas() {
       currentAlpha
     );
 
-    console.log('manualHexInput', manualHexInput)
+    console.log("manualHexInput", manualHexInput);
 
     if (!manualHexInput) {
       hexInput.value = hex;
-  }
+    }
 
     // hexInput.value = hexInput.value; // Update HEX input with the newly picked color
 
@@ -378,15 +424,14 @@ function setupColorCanvas() {
   }
 
   // Initial setup
-    chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
-      console.log('response.color', response.color)
-      if(response.color){
-        setColorFromHex(response.color);
-      }
-      else{
-        setColorFromHex("#000000");
-      }
-      // You might want to trigger conversion here to update other inputs
+  chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
+    console.log("response.color", response.color);
+    if (response.color) {
+      setColorFromHex(response.color);
+    } else {
+      setColorFromHex("#000000");
+    }
+    // You might want to trigger conversion here to update other inputs
   });
   setColorFromHex("#000000"); // Set a default HEX color if needed
 }

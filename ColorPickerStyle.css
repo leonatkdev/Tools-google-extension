@@ -5,12 +5,12 @@
 }
 
 #errorMessage {
-  position: absolute;
+  /* position: absolute; */
   background-color: #ffffffb0;
-  /* top: 0; */
+  top: 0;
   right: 0;
   left: 0;
-  bottom: 0;
+  /* bottom: 0; */
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -77,6 +77,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#colorCanvas{
+  width: 366px;
+  height: 120px;
+
 }
 
 .colorTab {
@@ -163,6 +169,14 @@
   cursor: pointer;
 }
 
+
+.activeType{
+  background-color: #007bff;
+    padding: 4px 6px;
+    border-radius: 4px;
+    color: white;
+}
+
 .versions-container {
   display: none;
   flex-direction: column;
@@ -186,7 +200,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6px;
+  padding: 0 6px; 
+  height: 36px;
   background-color: #007bff;
   color: white;
   border: none;

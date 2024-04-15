@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function initializeUI() {
   setupToggleHeaders();
 
-  // setupStarClicks();
+  setupStarClicks();
   setupColorCanvas();
   setupPickColorButton();
 }
@@ -41,11 +41,21 @@ function toggleContent(header) {
 //   }
 // };
 
-// function setupStarClicks() {
-//   document.querySelectorAll('span[id="star"]').forEach((star) => {
-//     star.addEventListener("click", handleStarClick);
-//   });
-// }
+function setupStarClicks() {
+  document.getElementById('star').addEventListener('click', function() {
+    const input = document.querySelector("#hex");
+    const colorValue = input.value;
+
+    const colorTabs = document.querySelectorAll(".colorTabFavorite");
+    for (let tab of colorTabs) {
+      const currentColor = tab.style.backgroundColor;
+      if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
+        tab.style.backgroundColor = colorValue;
+        break; // Exit the loop after setting the color
+      }
+    }
+  });
+}
 
 // function fetchInitialColor() {
 //   // Fetch and set the initial color from storage or a default

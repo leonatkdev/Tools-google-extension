@@ -11,6 +11,13 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("messageContent", message);
+  if (message.action === "capture") {
+    activateZoom(message.screenshotUrl);
+  }
+});
+
 function injectUI() {
   if (document.getElementById("colorPickerCanvas")) return;
 
@@ -18,82 +25,96 @@ function injectUI() {
   canvas.id = "colorPickerCanvas";
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  canvas.style.position = "fixed";
-  canvas.style.top = "0";
-  canvas.style.left = "0";
-  canvas.style.zIndex = "999999";
-  canvas.style.pointerEvents = "none";
+  canvas.style.cssText =
+    "position: fixed; top: 0; left: 0; z-index: 999999; pointer-events: none;";
   document.body.appendChild(canvas);
 
   const lens = document.createElement("div");
   lens.id = "zoomLens";
-  lens.style.position = "fixed";
-  lens.style.border = "1px solid #000";
-  lens.style.borderRadius = "50%";
-  lens.style.width = "100px";
-  lens.style.height = "100px";
-  lens.style.overflow = "hidden";
-  lens.style.pointerEvents = "none";
-  lens.style.zIndex = "100000000";
-  lens.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='12' height='12' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='12' height='12' fill='none' stroke='black' stroke-width='1'/%3E%3Crect x='1' y='1' width='10' height='10' fill='transparent'/%3E%3C/svg%3E")`;
-  lens.style.backgroundPosition = "center";
+  lens.style.cssText =
+    "position: fixed; border: 1px solid #000; border-radius: 50%; width: 100px; height: 100px; overflow: hidden; pointer-events: none; z-index: 100000000;  background-position: center;";
+
   document.body.appendChild(lens);
 
   const gridSquares = document.createElement("div");
   gridSquares.id = "zoomGridSquares";
-  gridSquares.style.overflow = "hidden";
-  gridSquares.style.zIndex = "100000000";
-  gridSquares.style.width = "100px";
-  gridSquares.style.height = "100px";
-  gridSquares.style.borderRadius = "50%";
-  gridSquares.style.position = "fixed";
+  gridSquares.style.cssText =
+    "overflow: hidden; z-index: 100000000; width: 100px; height: 100px; border-radius: 50%; position: fixed;  background-position: center;";
   gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='12' height='12' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='12' height='12' fill='none' stroke='black' stroke-width='1'/%3E%3Crect x='1' y='1' width='10' height='10' fill='transparent'/%3E%3C/svg%3E")`;
-  gridSquares.style.backgroundPosition = "center";
+  gridSquares.style.backgroundSize = `10px 10px`;
+  gridSquares.style.backgroundPosition = `5px 5px`;
   document.body.appendChild(gridSquares);
+
+  // gridSquares.style.position = "relative";
+  gridSquares.innerHTML += `
+    <style>
+      #zoomGridSquares::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border: 2px solid red; /* Change color as needed */
+      }
+    </style>
+  `;
 
   return { canvas, lens, gridSquares };
 }
 
-// Activates the zoom and color picking functionality
+function updateZoomLensPosition(event) {
+  const x = event.clientX;
+  const y = event.clientY;
+  const lens = document.getElementById("zoomLens");
+  const gridSquares = document.getElementById("zoomGridSquares");
+
+  // Adjust these offsets based on your specific UI needs
+  const offsetX = x + 150 + 100 > window.innerWidth ? -150 : 150; // Adjusts to not overflow the screen
+  const offsetY = y + 100 + 100 > window.innerHeight ? -100 : 100; // Adjusts to not overflow the screen
+
+  if (!lens || !gridSquares) return;
+
+  lens.style.left = `${x - lens.offsetWidth / 2 + offsetX}px`;
+  lens.style.top = `${y - lens.offsetHeight / 2 + offsetY}px`;
+
+  gridSquares.style.left = `${x - gridSquares.offsetWidth / 2 + offsetX}px`;
+  gridSquares.style.top = `${y - gridSquares.offsetHeight / 2 + offsetY}px`;
+}
+
+function updateZoomBackground(canvas, lens, x, y, dataUrl) {
+  const scaleFactor = 10; // Adjust based on desired zoom level
+  const offsetX = x * scaleFactor - lens.offsetWidth / 2;
+  const offsetY = y * scaleFactor - lens.offsetHeight / 2;
+  const backgroundImage = `url('${dataUrl}')`;
+
+   lens.style.backgroundImage = `${backgroundImage}`;
+  lens.style.backgroundSize = `${canvas.width * scaleFactor}px ${
+    canvas.height * scaleFactor
+  }px`;
+  lens.style.backgroundPosition = `-${offsetX}px -${offsetY}px`;
+}
+
 function activateZoom(dataUrl) {
   const { canvas, lens, gridSquares } = injectUI();
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   const img = new Image();
-
   img.onload = () => {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
     document.addEventListener("mousemove", (event) => {
       const x = event.clientX;
       const y = event.clientY;
-      const pixel = ctx.getImageData(x, y, 1, 1);
-      const data = pixel.data;
-      const rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`;
 
-      // Update the lens position and background for zoom effect
-      lens.style.left = `${x - lens.offsetWidth / 2}px`;
-      lens.style.top = `${y - lens.offsetHeight / 2}px`;
-
-      // The zoomed image as the background
-      const backgroundImage = `url('${dataUrl}')`;
-      const backgroundSize = `${canvas.width * 10}px ${canvas.height * 10}px`;
-      const backgroundPosition = `-${x * 10 - lens.offsetWidth / 10}px -${
-        y * 10 - lens.offsetHeight / 10
-      }px`;
-
-    
-      lens.style.backgroundImage = `${backgroundImage}`;
-      lens.style.backgroundSize = `${backgroundSize}, 100px 100px`;
-      lens.style.backgroundPosition = `${backgroundPosition}, 0 0`;
-
-      gridSquares.style.left = `${x - lens.offsetWidth / 2}px`;
-      gridSquares.style.top = `${y - lens.offsetHeight / 2}px`;
-      gridSquares.style.backgroundSize = `10px 10px`;
-      gridSquares.style.backgroundPosition = `3px 3px`;
-
+      updateZoomLensPosition(event);
+      updateZoomBackground(canvas, lens, x, y, dataUrl);
     });
+
   };
 
-  gridSquares.addEventListener("click", function (event) {
+  document.addEventListener("click", (event) => {
+    console.log("click");
     const x = event.clientX;
     const y = event.clientY;
     const pixel = ctx.getImageData(x, y, 1, 1);
@@ -104,10 +125,10 @@ function activateZoom(dataUrl) {
         .toString(16)
         .slice(1);
 
-    // Send message to background script
+    console.log("hex", hex);
+
     chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
 
-    // Remove the canvas, zoom lens, and grid squares
     ["colorPickerCanvas", "zoomLens", "zoomGridSquares"].forEach((id) => {
       const element = document.getElementById(id);
       if (element) {
@@ -119,22 +140,21 @@ function activateZoom(dataUrl) {
   img.src = dataUrl;
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("messageContent", message);
-  if (message.action === "capture") {
-    activateZoom(message.screenshotUrl);
-  }
-});
+
 
 /// Tooltip
-let enabledOnTab = false;
+window.enabledOnTab = false;
+
+if (typeof window.enabledOnTab === 'undefined') {
+  window.enabledOnTab = false;
+}
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "enable") {
-    enabledOnTab = true;
+    window.enabledOnTab = true;
     // sendResponse({status: "Extension enabled"});
   } else if (request.action === "disable") {
-    enabledOnTab = false; 
+    window.enabledOnTab = false;
     const element = document.getElementById("extension-tooltip");
     if (element) {
       element.remove();
@@ -143,10 +163,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 });
 
-
 document.addEventListener("mouseup", function (e) {
   // console.log('enabledOnTab', enabledOnTab)
-  if (!enabledOnTab) return; // Exit if extension is not active
+  if (!window.enabledOnTab) return; // Exit if extension is not active
 
   let selection = window.getSelection();
   let selectedText = selection.toString();
@@ -173,7 +192,6 @@ document.addEventListener("mouseup", function (e) {
   } else {
     tooltip.innerHTML = "";
   }
-
 
   let textSpan = document.createElement("span");
   textSpan.style.padding = "6px 12px";

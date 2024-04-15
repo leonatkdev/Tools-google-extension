@@ -30,22 +30,7 @@
             <div id="errorMessage">
                 <p></p>
             </div>
-            <!-- //Color Tabs Pick and Favorite -->
-            <!-- <div style="display: flex; gap: 24px;">
-                <span id="pickColor"
-                    style=" margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border-radius: 30px; width: 100%; height: 32px; border: 1px solid black; ">
-                    <img src="images/ColorPicker.svg" alt="Copy Icon" />
-                </span>
 
-                <span id="star"
-                    style=" margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border-radius: 30px; width: 100%; height: 32px; border: 1px solid black; ">
-                    <img src="images/star.svg" alt="Copy Icon" />
-                </span>
-            </div> -->
-
-
-            <!-- Color Picker -->
-            <!-- <div style="flex-direction: row; gap: 24px; display: flex;"> -->
             <div id="colorPicker">
                 <canvas id="colorCanvas" height="120" width="366px"
                     style="box-shadow: 0px 0px 1px 1px black; border-radius: 8px;"></canvas>
@@ -67,11 +52,12 @@
 
             <!-- //Color Inputs -->
             <div style="margin-top: 8px">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex;  align-items: center;">
                     <div style="display: flex;
                     align-items: center;
                     gap: 6px; color: rgb(17, 24, 39); font-size: 14px; line-height: 24px;  font-weight: 600;
-                        letter-spacing: 0.5px;">
+                        letter-spacing: 0.5px;
+                        margin-right: 6px;">
                         <span class="activeType" id="colorType">
                             HEX
                         </span>
@@ -84,76 +70,56 @@
 
                     </div>
                     <input type="text" value="#000000" id="hex"
-                        style="padding: 6px 12px; font-size: 14px; max-height: 32px; min-height: 32px; box-sizing: border-box; border: 1px solid rgb(107, 114, 128); border-radius: 6px;">
+                        style="padding: 6px 12px; font-size: 14px; max-height: 32px; min-height: 32px; box-sizing: border-box; border: 1px solid rgb(107, 114, 128); border-radius: 6px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+
                     <span
-                        style="display: flex; justify-content: center; align-items: center; border-radius: 8px; width: 40px; height: 32px; border: 1px solid black;">
+                        style="display: flex; justify-content: center; align-items: center; border-radius: 8px; width: 31px; height: 30px; border: 1px solid black; border-top-left-radius: 0;border-bottom-left-radius: 0; border-left: 0;">
                         <img src="images/copy.svg" alt="Copy Icon" width="16" height="16" />
+                    </span>
+                    <span id="star"
+                        style="display: flex; justify-content: center; align-items: center; border-radius: 8px; width: 34px; height: 30px; border: 1px solid black; margin-left: 6px;">
+                        <img src="images/star.svg" alt="Copy Icon" width="16" height="16" />
                     </span>
                 </div>
 
-                <div
-                    style="display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #f1f1f1; margin-top: 8px; padding-top: 8px;">
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
 
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
+                <div class="sectionColorType">
+                    Recent Colors
+                </div>
 
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
-                    <span style="display: block; width: 30px; height: 30px; background-color: #f1f1f1;"></span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;  padding-top: 8px;">
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
 
                 </div>
 
-                <!-- <div>
-                        <label for="hls" style="display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
-                        letter-spacing: 0.5px;">hls
-                            <span style="display: flex;">
-                                <img src="images/copy.svg" alt="Copy Icon" />
-                            </span>
-                        </label>
-                        <div style="display: flex; flex-direction: row; align-items: center; gap: 8px; ">
-                            <input type="text" value="hsl(0, 0%, 0%)" id="hls"
-                                style="padding: 6px 12px; font-size: 14px; max-height: 32px; min-height: 32px; box-sizing: border-box; border: 1px solid rgb(107, 114, 128); border-radius: 6px;">
 
-                        </div>
-                    </div>
+                <div class="sectionColorType">
+                    Favorite Colors
+                </div>
 
-                    <div>
-                        <label for="rgba" style=" display: flex; justify-content: space-between; align-items: center;color: rgb(17, 24, 39); font-size: 14px; line-height: 24px; margin-bottom: 4px; font-weight: 600;
-                        letter-spacing: 0.5px;">rgba
-                            <span style="display: flex;">
-                                <img src="images/copy.svg" alt="Copy Icon" />
-                            </span>
-                        </label>
-                        <div style="display: flex; flex-direction: row; align-items: center; gap: 8px; ">
-                            <input id="rgba" type="text" value="rgba(0, 0, 0, 1)"
-                                style="padding: 6px 12px; font-size: 14px; max-height: 32px; min-height: 32px; box-sizing: border-box; border: 1px solid rgb(107, 114, 128); border-radius: 6px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; padding-top: 8px;">
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                </div>
 
-                        </div>
-                    </div> -->
+
 
             </div>
-            <!-- </div> -->
-
-            <!-- //TabBar -->
-            <!-- <div style="flex-direction: row; display: flex; padding: 24px 0 16px;">
-                <span class="colorTab" style="background-color: #f1f1f1; border-top-left-radius: 16px;border-bottom-left-radius: 16px;   ;
-                        "></span>
-                <span class="colorTab" style=" background-color: #f1f1f1;
-                    "></span>
-                <span class="colorTab" style=" background-color: #f1f1f1;
-                    "></span>
-                <span class="colorTab" style=" background-color: #f1f1f1;
-                      "></span>
-                <span class="colorTab" style=" background-color: #f1f1f1;
-                    "></span>
-                <span class="colorTab"
-                    style="background-color:  #f1f1f1;  border-top-right-radius: 16px;border-bottom-right-radius: 16px; border: none;"></span>
-            </div> -->
 
         </div>
     </div>

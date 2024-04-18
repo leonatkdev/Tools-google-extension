@@ -101,8 +101,12 @@
                 </div>
 
 
-                <div class="sectionColorType">
+                <div class="sectionColorType" style="display: flex; justify-content: space-between;">
+
                     Favorite Colors
+                    <div id="resetFav">
+                        Reset
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; padding-top: 8px;">
@@ -149,7 +153,9 @@
                     <span class="versionLabel">Version three</span>
                 </div>
             </div> -->
-
+            <div id="errorMessage">
+                <p></p>
+            </div>
 
             <div style="display: grid; grid-template-columns: repeat(3, 116px); gap: 8px;">
                 <div id="font-container" class="fontBox">
@@ -226,9 +232,7 @@
                     Save
                 </span>
             </div>
-            <div id="errorMessage">
-                <p></p>
-            </div>
+         
         </div>
     </div>
     <script src="js/popup.js"></script>

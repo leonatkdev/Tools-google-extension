@@ -10,18 +10,62 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 let lastPickedColor = "#000000";
+let recentColors = [];
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+
+// (function (request, sender, sendResponse) {
+//   if (request.type === "colorPicked") {
+//     lastPickedColor = request.color;
+//   }
+// });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (request.type === "colorPicked") {
+    console.log("colorPicked", colorPicked);
     lastPickedColor = request.color;
+    // Add the new color to the start of the array and remove duplicates
+    // recentColors = [request.color, ...new Set(recentColors)];
+    // // Ensure we only keep up to 9 recent colors
+    // recentColors = recentColors.slice(0, 9);
+    // // Save the recent colors in chrome.storage.local
+    // chrome.storage.local.set({ recentColors: recentColors }, function () {
+    //   if (chrome.runtime.lastError) {
+    //     console.error(
+    //       `Error saving recent colors: ${chrome.runtime.lastError.message}`
+    //     );
+    //   }
+    // });
   }
 });
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (request.type === "getColor") {
-    sendResponse({ color: lastPickedColor });
+    console.log('getColor', recentColors )
+    // sendResponse({ color: recentColors[0] || "#000000" });
   }
 });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (request.type === "getRecentColors") {
+    console.log('getRecentColors', getRecentColors)
+    // chrome.storage.local.get("recentColors", function (data) {
+    //   sendResponse({ recentColors: data.recentColors || [] });
+    // });
+  }
+});
+
+// 
+// (function (request, sender, sendResponse) {
+//   if (request.type === "colorPicked") {
+//     lastPickedColor = request.color;
+//   }
+// });
+
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//   if (request.type === "getColor") {
+//     sendResponse({ color: lastPickedColor });
+//   }
+// });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   sendResponse({ status: "Received by background script" });
@@ -58,8 +102,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       weight: message.data.fontWeight,
     };
 
-    chrome.storage.local.set({ fontData: extensionData.fontData }, () => {
-    });
+    chrome.storage.local.set({ fontData: extensionData.fontData }, () => {});
 
     // Cycle through font indices (0 to 2, in this case)
     extensionData.currentFontIndex = (extensionData.currentFontIndex + 1) % 3;

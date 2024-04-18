@@ -9,8 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initializeUI() {
   setupToggleHeaders();
-
   setupStarClicks();
+  loadFavoriteColors();
+  setupFavResetButton();
+  setRecentColors();
   setupColorCanvas();
   setupPickColorButton();
 }
@@ -27,35 +29,86 @@ function toggleContent(header) {
   header.classList.toggle("active");
 }
 
-// const handleStarClick = function (event) {
-//   const input = document.querySelector("#hex");
-//   const colorValue = input.value;
 
-//   const colorTabs = document.querySelectorAll(".colorTab");
-//   for (let tab of colorTabs) {
-//     const currentColor = tab.style.backgroundColor;
-//     if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
-//       tab.style.backgroundColor = colorValue;
-//       break; // Exit the loop after setting the color
-//     }
-//   }
-// };
-
-function setupStarClicks() {
-  document.getElementById('star').addEventListener('click', function() {
-    const input = document.querySelector("#hex");
-    const colorValue = input.value;
-
-    const colorTabs = document.querySelectorAll(".colorTabFavorite");
-    for (let tab of colorTabs) {
-      const currentColor = tab.style.backgroundColor;
-      if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
-        tab.style.backgroundColor = colorValue;
-        break; // Exit the loop after setting the color
-      }
+function  setRecentColors() {
+function updateRecentColorsUI(colors) {
+  const recentColorElements = document.querySelectorAll(".colorTabRecent");
+  colors.forEach((color, index) => {
+    if (recentColorElements[index]) {
+      recentColorElements[index].style.backgroundColor = color;
     }
   });
 }
+
+chrome.runtime.sendMessage({ type: "getRecentColors" }, (response) => {
+  if (response.recentColors && response.recentColors.length > 0) {
+    updateRecentColorsUI(response.recentColors);
+  }
+});
+}
+
+function setupStarClicks() {
+  document.getElementById("star").addEventListener("click", function () {
+    const input = document.querySelector("#hex");
+    const colorValue = input.value;
+
+    // Load current favorites, then update
+    chrome.storage.local.get({ favoriteColors: [] }, function (result) {
+      let favorites = result.favoriteColors;
+
+      // Assuming there's a predefined limit to the number of favorite colors
+      const maxFavorites = 9;
+      if (favorites.length < maxFavorites) {
+        favorites.push(colorValue);
+        chrome.storage.local.set({ favoriteColors: favorites }, function () {
+          updateFavoriteColorUI(favorites); // Update UI
+        });
+      } else {
+        console.error("Maximum number of favorite colors reached.");
+      }
+    });
+  });
+}
+
+function updateFavoriteColorUI(favorites) {
+  const colorTabs = document.querySelectorAll(".colorTabFavorite");
+  favorites.forEach((color, index) => {
+    if (colorTabs[index]) {
+      colorTabs[index].style.backgroundColor = color;
+    }
+  });
+}
+function loadFavoriteColors() {
+  chrome.storage.local.get({ favoriteColors: [] }, function (result) {
+    const favorites = result.favoriteColors;
+    updateFavoriteColorUI(favorites);
+  });
+}
+
+function setupFavResetButton() {
+  document.getElementById("resetFav").addEventListener("click", function () {
+    document.querySelectorAll(".colorTabFavorite").forEach((box) => {
+      box.style.backgroundColor = "#f1f1f1";
+    });
+    chrome.storage.local.set({ favoriteColors: [] });
+  });
+}
+
+// function setupStarClicks() {
+//   document.getElementById('star').addEventListener('click', function() {
+//     const input = document.querySelector("#hex");
+//     const colorValue = input.value;
+
+//     const colorTabs = document.querySelectorAll(".colorTabFavorite");
+//     for (let tab of colorTabs) {
+//       const currentColor = tab.style.backgroundColor;
+//       if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
+//         tab.style.backgroundColor = colorValue;
+//         break; // Exit the loop after setting the color
+//       }
+//     }
+//   });
+// }
 
 // function fetchInitialColor() {
 //   // Fetch and set the initial color from storage or a default
@@ -102,7 +155,7 @@ function convertColorInput(value, type) {
         type
       ).value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
       break;
-    case "hls": 
+    case "hls":
       const {
         r: hr,
         g: hg,
@@ -131,7 +184,7 @@ function hslToRgba({ h, s, l }) {
   l /= 100;
   const [r, g, b] = hslToRgb(h, s, l);
   console.log(`Converted RGB: r=${r}, g=${g}, b=${b}`);
-  return { r, g, b, a: 1 }; 
+  return { r, g, b, a: 1 };
 }
 
 function hslToRgb(h, s, l) {

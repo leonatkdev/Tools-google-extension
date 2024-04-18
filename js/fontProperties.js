@@ -113,7 +113,7 @@ function saveInputDataOnChange() {
     fontData[input.id] = input.value;
   });
   chrome.storage.local.remove([fontData], (result) => {});
-}
+} 
 
 function setupResetButton() {
   document.getElementById("reset").addEventListener("click", function () {

@@ -140,12 +140,10 @@ function activateZoom(dataUrl) {
   img.src = dataUrl;
 }
 
-
-
 /// Tooltip
 window.enabledOnTab = false;
 
-if (typeof window.enabledOnTab === 'undefined') {
+if (typeof window.enabledOnTab === "undefined") {
   window.enabledOnTab = false;
 }
 

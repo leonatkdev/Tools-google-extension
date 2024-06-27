@@ -1,6 +1,43 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+  let selected;
+
+  document
+    .getElementById("colors")
+    .addEventListener("click", () => openTab("colors"));
+  document
+    .getElementById("lorem")
+    .addEventListener("click", () => openTab("lorem"));
+  document
+    .getElementById("images")
+    .addEventListener("click", () => openTab("images"));
+  document
+    .getElementById("typografy")
+    .addEventListener("click", () => openTab("typografy"));
+
+  function openTab(tag) {
+    if (selected !== tag && selected !== undefined) {
+      document.getElementById(selected + "_section").style.display = "none";
+    }
+
+    selected = tag;
+
+    document.getElementById(selected + "_section").style.display = "block";
+
+    document.querySelector(".landingContainer").style.display = "none";
+  }
+
+  //redirect to landingcontent
+  document.querySelectorAll(".header").forEach((head) => {
+    head.addEventListener("click", () => {
+      document.querySelector(".landingContainer").style.display = "grid";
+      document.getElementById(selected + "_section").style.display = "none";
+    });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
   initializeUI();
   setupColorConversionListeners();
   // setupColorPickListener();
@@ -8,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initializeUI() {
-  setupToggleHeaders();
+  // setupToggleHeaders();
   setupStarClicks();
   loadFavoriteColors();
   setupFavResetButton();
@@ -17,34 +54,33 @@ function initializeUI() {
   setupPickColorButton();
 }
 
-function setupToggleHeaders() {
-  document.querySelectorAll(".header").forEach((header) => {
-    header.addEventListener("click", () => toggleContent(header));
-  });
-}
+// function setupToggleHeaders() {
+//   document.querySelectorAll(".header").forEach((header) => {
+//     header.addEventListener("click", () => toggleContent(header));
+//   });
+// }
 
-function toggleContent(header) {
-  const content = header.nextElementSibling;
-  content.style.display = content.style.display === "flex" ? "none" : "flex";
-  header.classList.toggle("active");
-}
+// function toggleContent(header) {
+//   const content = header.nextElementSibling;
+//   content.style.display = content.style.display === "flex" ? "none" : "flex";
+//   header.classList.toggle("active");
+// }
 
+function setRecentColors() {
+  function updateRecentColorsUI(colors) {
+    const recentColorElements = document.querySelectorAll(".colorTabRecent");
+    colors.forEach((color, index) => {
+      if (recentColorElements[index]) {
+        recentColorElements[index].style.backgroundColor = color;
+      }
+    });
+  }
 
-function  setRecentColors() {
-function updateRecentColorsUI(colors) {
-  const recentColorElements = document.querySelectorAll(".colorTabRecent");
-  colors.forEach((color, index) => {
-    if (recentColorElements[index]) {
-      recentColorElements[index].style.backgroundColor = color;
+  chrome.runtime.sendMessage({ type: "getRecentColors" }, (response) => {
+    if (response.recentColors && response.recentColors.length > 0) {
+      updateRecentColorsUI(response.recentColors);
     }
   });
-}
-
-chrome.runtime.sendMessage({ type: "getRecentColors" }, (response) => {
-  if (response.recentColors && response.recentColors.length > 0) {
-    updateRecentColorsUI(response.recentColors);
-  }
-});
 }
 
 function setupStarClicks() {
@@ -499,12 +535,119 @@ function setupColorCanvas() {
   setColorFromHex("#000000"); // Set a default HEX color if needed
 }
 
+/// lorem ipsum generator
+document.addEventListener("DOMContentLoaded", function () {
+  const loremInput = document.querySelector(".loremInput");
+  const loremArea = document.getElementById("loremArea");
+  const errorMessage = document
+    .getElementById("errorMessage")
+    .querySelector("p");
 
+  let selected = "paragraphs";
 
-///Images uploaded 
-document.getElementById('upload').addEventListener('change', handleImageUpload);
-document.getElementById('resize-button').addEventListener('click', resizeImage);
-document.getElementById('download-button').addEventListener('click', downloadImage);
+  document
+    .getElementById("paragraphs")
+    .addEventListener("click", () => generateLoremContent("paragraphs"));
+  document
+    .getElementById("words")
+    .addEventListener("click", () => generateLoremContent("words"));
+  document
+    .getElementById("bytes")
+    .addEventListener("click", () => generateLoremContent("bytes"));
+  document
+    .getElementById("lists")
+    .addEventListener("click", () => generateLoremContent("lists"));
+  document
+    .getElementById("loremCopyBtn")
+    .addEventListener("click", copyContent);
+
+  document.getElementById(selected).classList.add("loremTypeSelected");
+
+  function generateLoremContent(type) {
+    console.log("type", type);
+    console.log("selected", selected);
+    console.log("type !== selected)", type !== selected);
+
+    if (type !== selected) {
+      document.getElementById(selected).classList.remove("loremTypeSelected");
+    }
+
+    selected = type;
+    document.getElementById(type).classList.add("loremTypeSelected");
+
+    const value = parseInt(loremInput.value, 10);
+    if (isNaN(value) || value <= 0) {
+      errorMessage.textContent = "Please enter a valid number";
+      return;
+    } else {
+      errorMessage.textContent = "";
+    }
+
+    let content = "";
+
+    switch (type) {
+      case "paragraphs":
+        content = generateParagraphs(value);
+        break;
+      case "words":
+        content = generateWords(value);
+        break;
+      case "bytes":
+        content = generateBytes(value);
+        break;
+      case "lists":
+        content = generateLists(value);
+        break;
+    }
+
+    loremArea.value = content;
+  }
+
+  function generateParagraphs(count) {
+    const paragraph =
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.";
+    return Array(count).fill(paragraph).join("\n\n");
+  }
+
+  function generateWords(count) {
+    const words =
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit".split(" ");
+    let result = [];
+    while (result.length < count) {
+      result = result.concat(words);
+    }
+    return result.slice(0, count).join(" ");
+  }
+
+  function generateBytes(count) {
+    const bytes =
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit".repeat(10);
+    return bytes.slice(0, count);
+  }
+
+  function generateLists(count) {
+    const listItems =
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit".split(" ");
+    let result = "";
+    for (let i = 0; i < count; i++) {
+      result += `<li>${listItems[i % listItems.length]}</li>`;
+    }
+    return `<ul>${result}</ul>`;
+  }
+
+  function copyContent() {
+    loremArea.select();
+    document.execCommand("copy");
+    alert("Content copied to clipboard");
+  }
+});
+
+///Images uploaded
+document.getElementById("upload").addEventListener("change", handleImageUpload);
+document.getElementById("resize-button").addEventListener("click", resizeImage);
+document
+  .getElementById("download-button")
+  .addEventListener("click", downloadImage);
 
 let originalImage = new Image();
 
@@ -512,39 +655,39 @@ function handleImageUpload(event) {
   const file = event.target.files[0];
   const reader = new FileReader();
 
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     originalImage.src = e.target.result;
-    document.getElementById('preview').src = e.target.result;
-    document.getElementById('download-button').classList.add('hidden');
+    document.getElementById("preview").src = e.target.result;
+    document.getElementById("download-button").classList.add("hidden");
   };
 
   reader.readAsDataURL(file);
 }
 
 function resizeImage() {
-  const width = document.getElementById('width').value;
-  const height = document.getElementById('height').value;
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
+  const width = document.getElementById("width").value;
+  const height = document.getElementById("height").value;
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
 
   canvas.width = width;
   canvas.height = height;
 
   // Set image smoothing quality to high
   ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingQuality = "high";
 
   ctx.drawImage(originalImage, 0, 0, width, height);
 
-  document.getElementById('preview').src = canvas.toDataURL();
-  document.getElementById('download-button').classList.remove('hidden');
+  document.getElementById("preview").src = canvas.toDataURL();
+  document.getElementById("download-button").classList.remove("hidden");
 }
 
 function downloadImage() {
-  const canvas = document.getElementById('canvas');
-  const link = document.createElement('a');
+  const canvas = document.getElementById("canvas");
+  const link = document.createElement("a");
 
-  link.download = 'resized-image.png';
+  link.download = "resized-image.png";
   link.href = canvas.toDataURL();
   link.click();
 }

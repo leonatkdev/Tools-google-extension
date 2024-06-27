@@ -14,21 +14,74 @@
 
 <body class="colorPickerBody">
 
-    <!-- ///Colors -->
 
-    <div class="section">
+    <!-- LandingContainer -->
+    <div class="landingContainer">
+        <div class="tabLanding">
+            Thank you for using the extension 🥳
+            <img src="images/moon.png" alt="moon Icon" width="30" height="30" />
+        </div>
+        <div class="sectionType" id="colors">
+            <img src="images/colors.png" alt="colors Icon" width="30" height="30" />
+            Colors
+        </div>
+        <div class="sectionType" id="lorem">
+            <img src="images/lorem.png" alt="lorem Icon" width="30" height="30" />
+            Lorem Ipsum
+        </div>
+        <div class="sectionType" id="images">
+            <img src="images/images.png" alt="images Icon" width="30" height="30" />
+            Images
+        </div>
+        <div class="sectionType" id="typografy">
+            <img src="images/typografy.png" alt="typografy Icon" width="30" height="30" />
+            Typografy
+        </div>
+    </div>
+
+    <!-- ///Colors -->
+    <div id="colors_section" class="section">
         <div class="header">
-            <span>Color</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24px"
-                width="24px" xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="16px"
+                width="16px" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
+                </path>
             </svg>
+            <span>Color</span>
+
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
+                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
+            </svg>
+            <div>
+                <div>
+                    Lorem Ipsum
+                </div>
+                <div>
+                    Images
+                </div>
+                <div>
+                    Typografy
+                </div>
+            </div>
+
         </div>
 
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">
                 <p></p>
+            </div>
+
+            <div class="colorPickerTabs">
+                <div class="colorTabs">
+                    Solid
+                </div>
+                <div class="colorTabs">
+                    Linear
+                </div>
             </div>
 
             <div id="colorPicker">
@@ -129,14 +182,15 @@
     </div>
 
     <!-- Typography -->
-    <div class="section">
+    <div id="typografy_section" class="section">
         <div class="header">
-            <span>Typography</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24px"
-                width="24px" xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em"
+                width="1em" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
+                </path>
             </svg>
+            <span>Typography</span>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">
@@ -222,14 +276,15 @@
         </div>
     </div>
     <!-- //Lorem ipsum -->
-    <div class="section">
+    <div id="lorem_section" class="section">
         <div class="header">
-            <span>Lorem Ipsum generator</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24px"
-                width="24px" xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em"
+                width="1em" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
+                </path>
             </svg>
+            <span>Lorem Ipsum</span>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">
@@ -237,41 +292,35 @@
             </div>
 
             <div class="loremTypeContainer">
-                <button class="paragraphs">Paragraphs</button>
-                <button class="words">Words</button>
-                <button class="bytes">Bytes</button>
-                <button class="lists">Lists</button>
+                <button id="paragraphs" class="paragraphs">Paragraphs</button>
+                <button id="words" class="words">Words</button>
+                <button id="bytes" class="bytes">Bytes</button>
+                <button id="lists" class="lists">Lists</button>
                 <!-- <button class="start">Start with 'Lorem <br /> ipsum dolor sit amet...'</button> -->
             </div>
 
             <div class="loremTopContainer">
                 <input placeholder="" value="5" class="loremInput" />
-                <span id="loremSaveBtn">
-                    Save
-                </span>
 
                 <span id="loremCopyBtn">
                     Copy <img src="images/copy.svg" alt="Copy Icon" />
                 </span>
             </div>
 
-            <textarea id="loremArea"
-                placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,"></textarea>
-
-
-
+            <textarea id="loremArea"></textarea>
         </div>
     </div>
 
-
-    <div class="section">
+    <!-- //Images -->
+    <div id="images_section" class="section">
         <div class="header">
-            <span>Images</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24px"
-                width="24px" xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em"
+                width="1em" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
+                </path>
             </svg>
+            <span>Images</span>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">

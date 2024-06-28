@@ -42,8 +42,8 @@
     <!-- ///Colors -->
     <div id="colors_section" class="section">
         <div class="header">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="16px"
-                width="16px" xmlns="http://www.w3.org/2000/svg">
+            <svg class="goBack" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512"
+                height="16px" width="16px" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
                 </path>
@@ -56,15 +56,15 @@
                 <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
                 <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
             </svg>
-            <div>
-                <div>
+            <div class="ref">
+                <div id="lorem">
                     Lorem Ipsum
                 </div>
-                <div>
-                    Images
+                <div id="images">
+                    images
                 </div>
-                <div>
-                    Typografy
+                <div id="typografy">
+                    typografy
                 </div>
             </div>
 
@@ -184,13 +184,29 @@
     <!-- Typography -->
     <div id="typografy_section" class="section">
         <div class="header">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em"
-                width="1em" xmlns="http://www.w3.org/2000/svg">
+            <svg class="goBack" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512"
+                height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
                 </path>
             </svg>
             <span>Typography</span>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
+                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
+            </svg>
+            <div class="ref">
+                <div id="colors">
+                    Color
+                </div>
+                <div id="lorem">
+                    Lorem Ipsum
+                </div>
+                <div id="images"> Image
+                </div>
+            </div>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">
@@ -278,13 +294,29 @@
     <!-- //Lorem ipsum -->
     <div id="lorem_section" class="section">
         <div class="header">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em"
-                width="1em" xmlns="http://www.w3.org/2000/svg">
+            <svg class="goBack" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512"
+                height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
                 </path>
             </svg>
             <span>Lorem Ipsum</span>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
+                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
+            </svg>
+            <div class="ref">
+                <div id="colors">
+                    Color
+                </div>
+                <div id="typografy">
+                    Typografy
+                </div>
+                <div id="images"> Image
+                </div>
+            </div>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">
@@ -296,11 +328,10 @@
                 <button id="words" class="words">Words</button>
                 <button id="bytes" class="bytes">Bytes</button>
                 <button id="lists" class="lists">Lists</button>
-                <!-- <button class="start">Start with 'Lorem <br /> ipsum dolor sit amet...'</button> -->
             </div>
 
             <div class="loremTopContainer">
-                <input placeholder="" value="5" class="loremInput" />
+                <input placeholder="" value="1" class="loremInput" id="loremAmount" />
 
                 <span id="loremCopyBtn">
                     Copy <img src="images/copy.svg" alt="Copy Icon" />
@@ -314,25 +345,51 @@
     <!-- //Images -->
     <div id="images_section" class="section">
         <div class="header">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em"
-                width="1em" xmlns="http://www.w3.org/2000/svg">
+            <svg class="goBack" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512"
+                height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
                 </path>
             </svg>
             <span>Images</span>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
+                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
+            </svg>
+            <div class="ref">
+                <div id="colors">
+                    Color
+                </div>
+                <div id="lorem">
+                    Lorem ipsum
+                </div>
+                <div id="typografy"> Typography
+                </div>
+            </div>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">
                 <p></p>
             </div>
 
-            <input type="file" id="upload" accept="image/*">
-            <div class="preview-container">
-                <img id="preview" class="preview" src="" alt="Image preview">
+            <div class="addImage">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em"
+                    width="1em" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z">
+                    </path>
+                </svg>
+                Add Image
+                <input type="file" id="upload" accept="image/*" class="imageInput">
             </div>
 
-            <div class="">
+            <!-- <div class="preview-container">
+                <img id="preview" class="preview" src="" alt="Image preview">
+            </div> -->
+
+            <div class="imageWidthHeightContainer">
                 <div>
                     <label for="width" class="label">Width:</label>
                     <input type="number" id="width" class="input" placeholder="Width">
@@ -344,10 +401,10 @@
             </div>
 
 
-            <button id="resize-button" class="button">Resize Image</button>
-            <canvas id="canvas" class="canvas"></canvas>
-            <button id="download-button" class="button hidden">Download Resized Image</button>
 
+            <button id="download-button" class="button hidden">Download Resized Image</button>
+            <button id="resize-button" class="button">Preview Resize Image</button>
+            <canvas id="Imagecanvas" class="Imagecanvas"></canvas>
         </div>
     </div>
     <script src="js/popup.js"></script>

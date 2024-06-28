@@ -1,3 +1,4 @@
+
 "use strict";
 
 // Initialize event listeners when the DOM content is fully loaded

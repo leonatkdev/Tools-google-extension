@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Designer Tools",
+    "name": "Dev Tools",
     "version": "1.0.0",
     "description": "The best tool for designer to pick color from web page and get the color code easily.",
     "action": {

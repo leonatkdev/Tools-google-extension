@@ -4,6 +4,14 @@
   min-width: 400px;
 }
 
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
 .section{
   display: none;
 }
@@ -76,7 +84,8 @@
   /* justify-content: space-between; */
   align-items: center;
   cursor: pointer;
-  padding: 12px 16px;
+  /* padding: 12px 16px; */
+  padding-right: 16px;
   background: linear-gradient(9deg, #f4f4f4 0%, #efefef 100%);
   border: 1px solid #ececec;
   border-radius: 5px;
@@ -85,26 +94,41 @@
   letter-spacing: 0.3px;
 }
 
+
+
 .header span {
   display: inline-block;
   margin-right: 10px;
   margin-left: 8px;
   max-width: 90px;
   min-width: 90px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
+
+
 
 .header svg {
  width: 16px;
  height: 16px;
+
+}
+
+.goBack{
+   padding: 12px;
+ padding-left: 16px;
+ padding-right: 8px;
 }
 
 .header div {
   display: flex;
   gap: 16px;
+  margin-left: auto;
  }
 
  .header div div {
 font-size: 12px;
+align-self: center;
  }
 
 /* 
@@ -173,6 +197,7 @@ font-size: 12px;
   display: block;
   width: 33px;
   height: 33px;
+  border-radius: 8px;
   background-color: #f1f1f1;
 }
 
@@ -534,8 +559,18 @@ font-size: 12px;
   border: 1px solid lightgray;
   border-radius: 8px;
   min-width: max-content;
-
 }
+
+.imageWidthHeightContainer div input:first-child{
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0;
+}
+
+.imageWidthHeightContainer div input:first-child + input:last-child{
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0;
+}
+
 
 #resize-button{
   margin-top: 12px;

@@ -1,12 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     initializeUI();
     setupColorConversionListeners();
-    // setupColorPickListener();
-    // fetchInitialColor();
   });
   
   function initializeUI() {
-    // setupToggleHeaders();
     setupStarClicks();
     loadFavoriteColors();
     setupFavResetButton();
@@ -79,30 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   
-  // function setupStarClicks() {
-  //   document.getElementById('star').addEventListener('click', function() {
-  //     const input = document.querySelector("#hex");
-  //     const colorValue = input.value;
-  
-  //     const colorTabs = document.querySelectorAll(".colorTabFavorite");
-  //     for (let tab of colorTabs) {
-  //       const currentColor = tab.style.backgroundColor;
-  //       if (currentColor === "rgb(241, 241, 241)" || currentColor === "") {
-  //         tab.style.backgroundColor = colorValue;
-  //         break; // Exit the loop after setting the color
-  //       }
-  //     }
-  //   });
-  // }
-  
-  // function fetchInitialColor() {
-  //   // Fetch and set the initial color from storage or a default
-  //   chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
-  //     document.getElementById("hex").value = response.color;
-  //     // You might want to trigger conversion here to update other inputs
-  //   });
-  // }
-  
   function setupColorConversionListeners() {
     const colorTypeSpans = document.querySelectorAll("#colorType");
     const colorInput = document.getElementById("hex"); // Initial input ID is 'hex'
@@ -162,91 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function parseHsl(hslString) {
     const [h, s, l] = hslString.match(/\d+\.?\d*/g).map(Number);
     return { h, s, l };
-  }
-  
-  function hslToRgba({ h, s, l }) {
-    s /= 100;
-    l /= 100;
-    const [r, g, b] = hslToRgb(h, s, l);
-    console.log(`Converted RGB: r=${r}, g=${g}, b=${b}`);
-    return { r, g, b, a: 1 };
-  }
-  
-  function hslToRgb(h, s, l) {
-    let r, g, b;
-  
-    if (s === 0) {
-      r = g = b = l; // achromatic
-    } else {
-      function hue2rgb(p, q, t) {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (t < 1 / 6) return p + (q - p) * 6 * t;
-        if (t < 1 / 2) return q;
-        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-        return p;
-      }
-  
-      let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      let p = 2 * l - q;
-      h /= 360;
-      r = hue2rgb(p, q, h + 1 / 3);
-      g = hue2rgb(p, q, h);
-      // b = hue
-      b = hue2rgb(p, q, h - 1 / 3);
-    }
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-  }
-  function rgbaToHex(r, g, b, a) {
-    return (
-      "#" +
-      [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("") +
-      (a < 1
-        ? Math.round(a * 255)
-            .toString(16)
-            .padStart(2, "0")
-        : "")
-    );
-  }
-  function rgbToHsl(r, g, b) {
-    (r /= 255), (g /= 255), (b /= 255);
-    let max = Math.max(r, g, b),
-      min = Math.min(r, g, b);
-    let h,
-      s,
-      l = (max + min) / 2;
-  
-    if (max === min) {
-      h = s = 0;
-    } else {
-      let d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0);
-          break;
-        case g:
-          h = (b - r) / d + 2;
-          break;
-        case b:
-          h = (r - g) / d + 4;
-          break;
-      }
-      h /= 6;
-    }
-    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-  }
-  function hexToRgba(hex) {
-    let r = 0,
-      g = 0,
-      b = 0,
-      a = 1;
-    if (hex.length === 7) {
-      r = parseInt(hex.slice(1, 3), 16);
-      g = parseInt(hex.slice(3, 5), 16);
-      b = parseInt(hex.slice(5, 7), 16);
-    }
-    return { r, g, b, a };
   }
   
   function setupPickColorButton() {
@@ -482,5 +370,116 @@ document.addEventListener("DOMContentLoaded", () => {
       // You might want to trigger conversion here to update other inputs
     });
     setColorFromHex("#000000"); // Set a default HEX color if needed
+  }
+
+  function hexToRgba(hex) {
+    let r = 0,
+      g = 0,
+      b = 0,
+      a = 1;
+    if (hex.length === 7) {
+      r = parseInt(hex.slice(1, 3), 16);
+      g = parseInt(hex.slice(3, 5), 16);
+      b = parseInt(hex.slice(5, 7), 16);
+    } else if (hex.length === 9) {
+      r = parseInt(hex.slice(1, 3), 16);
+      g = parseInt(hex.slice(3, 5), 16);
+      b = parseInt(hex.slice(5, 7), 16);
+      a = parseInt(hex.slice(7, 9), 16) / 255;
+    }
+    return { r, g, b, a };
+  }
+
+  function hslToRgb(h, s, l) {
+    let r, g, b;
+  
+    if (s === 0) {
+      r = g = b = l; // achromatic
+    } else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      }
+  
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      h /= 360;
+      r = hue2rgb(p, q, h + 1 / 3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1 / 3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+  
+
+  function hslToRgba({ h, s, l, a = 1 }) {
+    s /= 100;
+    l /= 100;
+    const [r, g, b] = hslToRgb(h, s, l);
+    console.log(`Converted RGB: r=${r}, g=${g}, b=${b}`);
+    return { r, g, b, a };
+  }
+  
+  function rgbaToHex(r, g, b, a = 1) {
+    return (
+      "#" +
+      [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("") +
+      (a < 1
+        ? Math.round(a * 255)
+            .toString(16)
+            .padStart(2, "0")
+        : "")
+    );
+  }
+  
+  function rgbToHsl(r, g, b, a = 1) {
+    (r /= 255), (g /= 255), (b /= 255);
+    let max = Math.max(r, g, b),
+      min = Math.min(r, g, b);
+    let h,
+      s,
+      l = (max + min) / 2;
+  
+    if (max === min) {
+      h = s = 0;
+    } else {
+      let d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0);
+          break;
+        case g:
+          h = (b - r) / d + 2;
+          break;
+        case b:
+          h = (r - g) / d + 4;
+          break;
+      }
+      h /= 6;
+    }
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), a];
+  }
+  
+  function hexToRgba(hex) {
+    let r = 0,
+      g = 0,
+      b = 0,
+      a = 1;
+    if (hex.length === 7) {
+      r = parseInt(hex.slice(1, 3), 16);
+      g = parseInt(hex.slice(3, 5), 16);
+      b = parseInt(hex.slice(5, 7), 16);
+    } else if (hex.length === 9) {
+      r = parseInt(hex.slice(1, 3), 16);
+      g = parseInt(hex.slice(3, 5), 16);
+      b = parseInt(hex.slice(5, 7), 16);
+      a = parseInt(hex.slice(7, 9), 16) / 255;
+    }
+    return { r, g, b, a };
   }
   

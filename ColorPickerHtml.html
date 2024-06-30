@@ -50,12 +50,7 @@
             </svg>
             <span>Color</span>
 
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
-                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
-            </svg>
+           
             <div class="ref">
                 <div id="lorem">
                     Lorem Ipsum
@@ -136,11 +131,23 @@
                 </div>
 
 
-                <div class="sectionColorType">
+                <div class="sectionColorType" style="display: flex; justify-content: space-between;">
                     Recent Colors
+                    <div id="resetFav">
+                        Clear
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;  padding-top: 8px;">
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
@@ -158,11 +165,20 @@
 
                     Favorite Colors
                     <div id="resetFav">
-                        Reset
+                        Clear
                     </div>
                 </div>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; padding-top: 8px;">
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
@@ -191,12 +207,7 @@
                 </path>
             </svg>
             <span>Typography</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
-                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
-            </svg>
+           
             <div class="ref">
                 <div id="colors">
                     Color
@@ -301,12 +312,7 @@
                 </path>
             </svg>
             <span>Lorem Ipsum</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
-                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
-            </svg>
+           
             <div class="ref">
                 <div id="colors">
                     Color
@@ -319,9 +325,6 @@
             </div>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
-            <div id="errorMessage">
-                <p></p>
-            </div>
 
             <div class="loremTypeContainer">
                 <button id="paragraphs" class="paragraphs">Paragraphs</button>
@@ -352,12 +355,7 @@
                 </path>
             </svg>
             <span>Images</span>
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z"></path>
-                <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z"></path>
-            </svg>
+           
             <div class="ref">
                 <div id="colors">
                     Color
@@ -392,17 +390,29 @@
             <div class="imageWidthHeightContainer">
                 <div>
                     <label for="width" class="label">Width:</label>
-                    <input type="number" id="width" class="input" placeholder="Width">
+                    <!-- <input type="number" id="width" placeholder="Width"> -->
+                    <div class="fontInputBox">
+                        <input type="number" id="width" placeholder="Width" class="inputContainerWidth">
+                        <div class="versionBtn" id="versionBtn">
+                            PX
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label for="height" class="label">Height:</label>
-                    <input type="number" id="height" class="input" placeholder="Height">
+                    <!-- <input type="number" id="height" placeholder="Height"> -->
+                    <div class="fontInputBox">
+                        <input  type="number" id="height" placeholder="Height" class="inputContainerHeight">
+                        <div class="versionBtn" id="versionBtn">
+                            PX
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
 
-            <button id="download-button" class="button hidden">Download Resized Image</button>
+            <button id="download-button" class="button">Download Resized Image</button>
             <button id="resize-button" class="button">Preview Resize Image</button>
             <canvas id="Imagecanvas" class="Imagecanvas"></canvas>
         </div>

@@ -1,7 +1,12 @@
 .colorPickerBody {
   font-family: "Inter", sans-serif;
   margin: 0;
-  min-width: 400px;
+  min-width: 450px;
+
+}
+
+*{
+  box-sizing: border-box;
 }
 
 .hidden {
@@ -57,7 +62,7 @@
   padding: 24px;
   font-size: 18px;
   font-weight: 500;
-  min-height: 150px;
+  min-height: 180px;
   text-align: center;
 }
 
@@ -153,10 +158,11 @@ align-self: center;
 
 .colorTabs{
   padding: 8px 16px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: 500;
+  font-size: 13px;
   color: white;
-  background-color: #4083F1;
+  background-color: #007bff;
 }
 
 .gradient-border {
@@ -189,8 +195,10 @@ align-self: center;
 }
 
 #colorCanvas {
-  width: 366px;
-  height: 120px;
+  width: 100%;
+  height: 140px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
 }
 .colorTabRecent,
 .colorTabFavorite {
@@ -281,14 +289,14 @@ align-self: center;
 
 .activeType {
   background-color: #007bff;
-  padding: 4px 6px;
-  border-radius: 4px;
+  padding: 4px 14px;
+  border-radius: 8px;
   color: white;
 }
 
 .sectionColorType {
   font-size: 15px;
-  margin-top: 8px;
+  margin-top: 14px;
   padding-top: 8px;
   font-weight: 600;
   border-top: 1px solid #f1f1f1;

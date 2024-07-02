@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupStarClicks();
     loadFavoriteColors();
     setupFavResetButton();
+    setupRecentColorResetButton(),
     setRecentColors();
     setupColorCanvas();
     setupPickColorButton();
@@ -14,7 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
   
   function setRecentColors() {
     function updateRecentColorsUI(colors) {
+      console.log('colors', colors)
       const recentColorElements = document.querySelectorAll(".colorTabRecent");
+      console.log('recentColorElements', recentColorElements)
       colors.forEach((color, index) => {
         if (recentColorElements[index]) {
           recentColorElements[index].style.backgroundColor = color;
@@ -23,9 +26,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     chrome.runtime.sendMessage({ type: "getRecentColors" }, (response) => {
+      console.log('recentColors', response)
+      console.log('response.recentColors', response.recentColors)
+      console.log('response.recentColors && response.recentColors.length > 0', response.recentColors && response.recentColors.length > 0)
       if (response.recentColors && response.recentColors.length > 0) {
         updateRecentColorsUI(response.recentColors);
       }
+    });
+  }
+
+  function setupRecentColorResetButton() {
+    document.getElementById("resetRecent").addEventListener("click", function () {
+      document.querySelectorAll(".colorTabRecent").forEach((box) => {
+        box.style.backgroundColor = "#f1f1f1";
+      });
+      chrome.storage.local.set({ recentColors: [] });
     });
   }
   
@@ -60,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+  
   function loadFavoriteColors() {
     chrome.storage.local.get({ favoriteColors: [] }, function (result) {
       const favorites = result.favoriteColors;
@@ -268,7 +284,6 @@ document.addEventListener("DOMContentLoaded", () => {
         currentAlpha
       );
   
-      console.log("manualHexInput", manualHexInput);
   
       if (!manualHexInput) {
         hexInput.value = hex;

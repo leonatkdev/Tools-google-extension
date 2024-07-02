@@ -137,7 +137,7 @@
 
                 <div class="sectionColorType" style="display: flex; justify-content: space-between;">
                     Recent Colors
-                    <div id="resetFav">
+                    <div id="resetRecent">
                         Clear
                     </div>
                 </div>
@@ -161,7 +161,6 @@
                     <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
-
                 </div>
 
 
@@ -373,65 +372,48 @@
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
             <div id="errorMessage">
-                <p></p>
+              <p></p>
             </div>
-
+          
             <div class="addImage">
-                <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
-                    stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
-                    <polyline points="16 16 12 12 8 16"></polyline>
-                    <line x1="12" y1="12" x2="12" y2="21"></line>
-                    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
-                    <polyline points="16 16 12 12 8 16"></polyline>
-                </svg>
-                Drag and drop file to upload
-                <button class="fileSelectImage">Select File</button>
-                <input type="file" id="upload" accept="image/*" class="imageInput">
+              <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="16 16 12 12 8 16"></polyline>
+                <line x1="12" y1="12" x2="12" y2="21"></line>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                <polyline points="16 16 12 12 8 16"></polyline>
+              </svg>
+              Drag and drop file to upload
+              <button class="fileSelectImage">Select File</button>
+              <input type="file" id="upload" accept="image/*" class="imageInput">
             </div>
-
+          
             <div class="infoImageText">
-                <div>
-                    Supported: JPG , PNG , Webp
-                </div>
-
-                <div>
-                    Max Size: 100MB
-                 </div>
+              <div>Supported: JPG, PNG, Webp</div>
+              <div>Max Size: 100MB</div>
             </div>
-
-            <!-- <div class="preview-container">
-                <img id="preview" class="preview" src="" alt="Image preview">
-            </div> -->
-
+          
             <div class="imageWidthHeightContainer">
-                <div>
-                    <label for="width" class="label">Width</label>
-                    <!-- <input type="number" id="width" placeholder="Width"> -->
-                    <div class="fontInputBox">
-                        <input type="number" id="width" placeholder="Width" class="inputContainerWidth">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
-                        </div>
-                    </div>
+              <div>
+                <label for="width" class="label">Width</label>
+                <div class="fontInputBox">
+                  <input type="number" id="width" placeholder="Width" class="inputContainerWidth">
+                  <div class="versionBtn" id="versionBtn">PX</div>
                 </div>
-                <div>
-                    <label for="height" class="label">Height</label>
-                    <!-- <input type="number" id="height" placeholder="Height"> -->
-                    <div class="fontInputBox">
-                        <input type="number" id="height" placeholder="Height" class="inputContainerHeight">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
-                        </div>
-                    </div>
+              </div>
+              <div>
+                <label for="height" class="label">Height</label>
+                <div class="fontInputBox">
+                  <input type="number" id="height" placeholder="Height" class="inputContainerHeight">
+                  <div class="versionBtn" id="versionBtn">PX</div>
                 </div>
+              </div>
             </div>
-
-
-
-            <button id="download-button" class="button">Download Resized Image</button>
+          
             <button id="resize-button" class="button">Preview Resize Image</button>
+            <button id="download-button" class="button">Download Resized Image</button>
             <canvas id="Imagecanvas" class="Imagecanvas"></canvas>
-        </div>
+          </div>
+          
     </div>
     <script src="js/popup.js"></script>
     <script src="js/color.js"></script>

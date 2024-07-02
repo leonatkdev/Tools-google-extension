@@ -42,14 +42,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "getRecentColors") {
     console.log('getRecentColors', recentColors);
     chrome.storage.local.get("recentColors", function (data) {
+      console.log('data', data)
       sendResponse({ recentColors: data.recentColors || [] });
     });
+    return true; // Needed to indicate that sendResponse will be called asynchronously
   }
 });
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  sendResponse({ status: "Received by background script" });
-});
 
 
 // let extensionData = {

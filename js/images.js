@@ -1,51 +1,83 @@
-"use strict";
-
-///Images uploaded
-document.getElementById("upload").addEventListener("change", handleImageUpload);
-document.getElementById("resize-button").addEventListener("click", resizeImage);
-document
-  .getElementById("download-button")
-  .addEventListener("click", downloadImage);
-
-let originalImage = new Image();
-
-function handleImageUpload(event) {
-  const file = event.target.files[0];
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-    originalImage.src = e.target.result;
-    document.getElementById("preview").src = e.target.result;
-    document.getElementById("download-button").classList.add("hidden");
-  };
-
-  reader.readAsDataURL(file);
-}
-
-function resizeImage() {
-  const width = document.getElementById("width").value;
-  const height = document.getElementById("height").value;
-  const canvas = document.getElementById("canvas");
+document.addEventListener("DOMContentLoaded", () => {
+  const uploadInput = document.getElementById("upload");
+  const widthInput = document.getElementById("width");
+  const heightInput = document.getElementById("height");
+  const canvas = document.getElementById("Imagecanvas");
   const ctx = canvas.getContext("2d");
+  const resizeButton = document.getElementById("resize-button");
+  const downloadButton = document.getElementById("download-button");
+  const addImageContainer = document.querySelector(".addImage");
+  const fileSelectButton = document.querySelector(".fileSelectImage");
+  let originalImage = new Image();
+  let originalWidth, originalHeight;
 
-  canvas.width = width;
-  canvas.height = height;
+  // Handle file input click
+  fileSelectButton.addEventListener("click", () => {
+    uploadInput.click();
+  });
 
-  // Set image smoothing quality to high
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
+  // Handle image upload
+  uploadInput.addEventListener("change", (e) => {
+    handleFileUpload(e.target.files[0]);
+  });
 
-  ctx.drawImage(originalImage, 0, 0, width, height);
+  // Handle drag and drop
+  addImageContainer.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    addImageContainer.classList.add("drag-over");
+  });
 
-  document.getElementById("preview").src = canvas.toDataURL();
-  document.getElementById("download-button").classList.remove("hidden");
-}
+  addImageContainer.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    addImageContainer.classList.remove("drag-over");
+  });
 
-function downloadImage() {
-  const canvas = document.getElementById("canvas");
-  const link = document.createElement("a");
+  addImageContainer.addEventListener("drop", (e) => {
+    e.preventDefault();
+    addImageContainer.classList.remove("drag-over");
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  });
 
-  link.download = "resized-image.png";
-  link.href = canvas.toDataURL();
-  link.click();
-}
+  // Handle file upload
+  function handleFileUpload(file) {
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        originalImage.onload = () => {
+          originalWidth = originalImage.width;
+          originalHeight = originalImage.height;
+          canvas.width = originalWidth;
+          canvas.height = originalHeight;
+          ctx.drawImage(originalImage, 0, 0, originalWidth, originalHeight);
+          widthInput.value = originalWidth;
+          heightInput.value = originalHeight;
+        };
+        originalImage.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("Unsupported file type. Please upload an image file.");
+    }
+  }
+
+  // Handle resizing the image
+  resizeButton.addEventListener("click", () => {
+    const newWidth = parseInt(widthInput.value) || originalWidth;
+    const newHeight = parseInt(heightInput.value) || originalHeight;
+
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    ctx.drawImage(originalImage, 0, 0, newWidth, newHeight);
+  });
+
+  // Handle downloading the resized image
+  downloadButton.addEventListener("click", () => {
+    const link = document.createElement("a");
+    link.download = "resized-image.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+});

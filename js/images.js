@@ -1,83 +1,156 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const uploadInput = document.getElementById("upload");
-  const widthInput = document.getElementById("width");
-  const heightInput = document.getElementById("height");
-  const canvas = document.getElementById("Imagecanvas");
-  const ctx = canvas.getContext("2d");
-  const resizeButton = document.getElementById("resize-button");
-  const downloadButton = document.getElementById("download-button");
-  const addImageContainer = document.querySelector(".addImage");
-  const fileSelectButton = document.querySelector(".fileSelectImage");
-  let originalImage = new Image();
-  let originalWidth, originalHeight;
-
-  // Handle file input click
-  fileSelectButton.addEventListener("click", () => {
-    uploadInput.click();
-  });
-
-  // Handle image upload
-  uploadInput.addEventListener("change", (e) => {
-    handleFileUpload(e.target.files[0]);
-  });
+document.addEventListener('DOMContentLoaded', function() {
+  const addImage = document.getElementById('addImage');
+  const upload = document.getElementById('upload');
+  const resizeButton = document.getElementById('resize-button');
+  const downloadButton = document.getElementById('download-button');
+  const canvas = document.getElementById('Imagecanvas');
+  const ctx = canvas.getContext('2d');
+  const statusContainer = document.getElementById('statusContainer');
+  const fileNameDisplay = document.getElementById('fileName');
+  const cancelButton = document.getElementById('cancelButton');
+  const progressBar = document.getElementById('progressBar');
+  const formatSelect = document.getElementById('format');
+  const widthInput = document.getElementById('width');
+  const heightInput = document.getElementById('height');
+  const originalWidth = document.getElementById('originalWidth');
+  const originalHeight = document.getElementById('originalHeight');
+  let originalImage = null;
+  let resizedImage = null;
+  let fileReader = null;
 
   // Handle drag and drop
-  addImageContainer.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    addImageContainer.classList.add("drag-over");
+  addImage.addEventListener('dragover', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    addImage.classList.add('dragover');
   });
 
-  addImageContainer.addEventListener("dragleave", (e) => {
-    e.preventDefault();
-    addImageContainer.classList.remove("drag-over");
+  addImage.addEventListener('dragleave', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    addImage.classList.remove('dragover');
   });
 
-  addImageContainer.addEventListener("drop", (e) => {
-    e.preventDefault();
-    addImageContainer.classList.remove("drag-over");
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileUpload(file);
+  addImage.addEventListener('drop', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    addImage.classList.remove('dragover');
+    const files = event.dataTransfer.files;
+    if (files.length) {
+      handleFileUpload(files[0]);
     }
   });
 
-  // Handle file upload
+  // Handle file select
+  addImage.querySelector('.fileSelectImage').addEventListener('click', function() {
+    upload.click();
+  });
+
+  upload.addEventListener('change', function(event) {
+    const files = event.target.files;
+    if (files.length) {
+      handleFileUpload(files[0]);
+    }
+  });
+
   function handleFileUpload(file) {
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        originalImage.onload = () => {
-          originalWidth = originalImage.width;
-          originalHeight = originalImage.height;
-          canvas.width = originalWidth;
-          canvas.height = originalHeight;
-          ctx.drawImage(originalImage, 0, 0, originalWidth, originalHeight);
-          widthInput.value = originalWidth;
-          heightInput.value = originalHeight;
-        };
-        originalImage.src = event.target.result;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert("Unsupported file type. Please upload an image file.");
-    }
+    fileReader = new FileReader();
+    fileNameDisplay.textContent = file.name;
+    statusContainer.style.display = 'flex';
+    progressBar.value = 0;
+
+    fileReader.onprogress = function(event) {
+      if (event.lengthComputable) {
+        const percentLoaded = Math.round((event.loaded / event.total) * 100);
+        progressBar.value = percentLoaded;
+      }
+    };
+
+    fileReader.onloadstart = function() {
+      showStatusMessage(`Uploading ${file.name}...`);
+    };
+
+    fileReader.onload = function(event) {
+      const img = new Image();
+      img.onload = function() {
+        originalImage = img;
+        widthInput.value = img.width;
+        heightInput.value = img.height;
+        originalWidth.textContent = img.width;
+        originalHeight.textContent = img.height;
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        hideStatusMessage();
+      }
+      img.onerror = function() {
+        showStatusMessage(`Error loading ${file.name}.`, true);
+      }
+      img.src = event.target.result;
+    };
+
+    fileReader.onerror = function() {
+      showStatusMessage(`Error reading ${file.name}.`, true);
+    };
+
+    fileReader.readAsDataURL(file);
   }
 
-  // Handle resizing the image
-  resizeButton.addEventListener("click", () => {
-    const newWidth = parseInt(widthInput.value) || originalWidth;
-    const newHeight = parseInt(heightInput.value) || originalHeight;
-
-    canvas.width = newWidth;
-    canvas.height = newHeight;
-    ctx.drawImage(originalImage, 0, 0, newWidth, newHeight);
+  cancelButton.addEventListener('click', function() {
+    if (fileReader) {
+      fileReader.abort();
+      hideStatusMessage();
+      statusContainer.style.display = 'none';
+    }
   });
 
-  // Handle downloading the resized image
-  downloadButton.addEventListener("click", () => {
-    const link = document.createElement("a");
-    link.download = "resized-image.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+  // Handle resize
+  resizeButton.addEventListener('click', function() {
+    const width = parseInt(widthInput.value, 10);
+    const height = parseInt(heightInput.value, 10);
+    const format = formatSelect.value;
+    if (originalImage && width && height) {
+      const offscreenCanvas = document.createElement('canvas');
+      const offscreenCtx = offscreenCanvas.getContext('2d');
+
+      offscreenCanvas.width = originalImage.width;
+      offscreenCanvas.height = originalImage.height;
+      offscreenCtx.drawImage(originalImage, 0, 0, originalImage.width, originalImage.height);
+
+      canvas.width = width;
+      canvas.height = height;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(offscreenCanvas, 0, 0, originalImage.width, originalImage.height, 0, 0, width, height);
+
+      if (format === 'jpeg') {
+        resizedImage = canvas.toDataURL('image/jpeg', 0.9); // Use quality parameter for JPEG
+      } else if (format === 'webp') {
+        resizedImage = canvas.toDataURL('image/webp', 0.9); // Use quality parameter for WebP
+      } else {
+        resizedImage = canvas.toDataURL('image/png');
+      }
+    }
   });
+
+  // Handle download
+  downloadButton.addEventListener('click', function() {
+    if (resizedImage) {
+      const format = formatSelect.value;
+      const link = document.createElement('a');
+      link.download = `resized-image.${format}`;
+      link.href = resizedImage;
+      link.click();
+    } else {
+      alert('Please resize the image first.');
+    }
+  });
+
+  function showStatusMessage(message, isError = false) {
+    fileNameDisplay.textContent = message;
+    fileNameDisplay.style.color = isError ? 'red' : 'black';
+  }
+
+  function hideStatusMessage() {
+    fileNameDisplay.textContent = '';
+  }
 });

@@ -114,14 +114,14 @@
 
 
 .header svg {
- width: 16px;
- height: 16px;
-
+  width: 28px;
+  height: 40px;
+  padding: 8px;
 }
 
 .goBack{
-   margin-left: 16px;
- margin-right: 8px;
+   /* margin-left: 16px; */
+ /* margin-right: 8px; */
 }
 
 .header div {
@@ -448,7 +448,7 @@ align-self: center;
 .loremInput{
   padding: 8px 16px;
   flex: 1;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
   border: 1px solid lightgray;
   text-align: center;
@@ -462,7 +462,7 @@ align-self: center;
   font-size: 14px;
   padding: 10px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   border: 1px solid black;
   text-align: center;
   justify-content: center;
@@ -499,8 +499,8 @@ align-self: center;
 .lists, 
 .start {
   border: none;
-  padding: 8px 16px;
-  border-radius: 24px;
+  padding: 8px 14px;
+  border-radius: 11px;
   background-color: white;
   border: 1px solid lightgray;
   font-size: 14px;
@@ -554,6 +554,11 @@ align-self: center;
   border: 2px dashed #326EFE;
 }
 
+.addImage:hover button {
+  background: #007bff;
+  color: #fff;
+}
+
 
 .fileSelectImage{
   margin-top: 12px;
@@ -583,7 +588,7 @@ align-self: center;
 .imageWidthHeightContainer div label{
   font-size: 14px;
   font-weight: 500;
-  padding-bottom: 4px;
+  /* padding-bottom: 4px; */
   display: block;
 }
 
@@ -629,3 +634,58 @@ align-self: center;
 }
 
 
+/* ////// */
+
+.addImage {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.addImage.dragover {
+  border-color: #000;
+}
+
+.statusContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.fileName {
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.cancelButton {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background-color: #ff1a1a;
+}
+
+.progressBar {
+  width: 100%;
+}
+
+.imageFormatContainer {
+  margin-top: 10px;
+}
+
+.inputContainerFormat {
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+}
+
+
+.inputContainerFormat{
+
+}

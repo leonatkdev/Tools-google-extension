@@ -1,15 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
   const addImage = document.getElementById('addImage');
   const upload = document.getElementById('upload');
-  const resizeButton = document.getElementById('resize-button');
   const downloadButton = document.getElementById('download-button');
-  const canvas = document.getElementById('Imagecanvas');
-  const ctx = canvas.getContext('2d');
+  const canvasImgUploaded = document.getElementById('ImgUploaded');
+  const ctxImgUploaded = canvasImgUploaded.getContext('2d');
   const statusContainer = document.getElementById('statusContainer');
   const fileNameDisplay = document.getElementById('fileName');
   const cancelButton = document.getElementById('cancelButton');
   const progressBar = document.getElementById('progressBar');
-  const formatSelect = document.getElementById('format');
   const widthInput = document.getElementById('width');
   const heightInput = document.getElementById('height');
   const originalWidth = document.getElementById('originalWidth');
@@ -17,6 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let originalImage = null;
   let resizedImage = null;
   let fileReader = null;
+  let selectedFormat = 'original';
+  let originalFileType = '';
+  const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
   // Handle drag and drop
   addImage.addEventListener('dragover', function(event) {
@@ -54,10 +55,16 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function handleFileUpload(file) {
+    if (file.size > MAX_FILE_SIZE) {
+      alert('The file size exceeds the maximum limit of 100MB.');
+      return;
+    }
+
     fileReader = new FileReader();
     fileNameDisplay.textContent = file.name;
     statusContainer.style.display = 'flex';
     progressBar.value = 0;
+    originalFileType = file.type.split('/')[1];
 
     fileReader.onprogress = function(event) {
       if (event.lengthComputable) {
@@ -76,17 +83,17 @@ document.addEventListener('DOMContentLoaded', function() {
         originalImage = img;
         widthInput.value = img.width;
         heightInput.value = img.height;
-        originalWidth.textContent = img.width;
-        originalHeight.textContent = img.height;
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0, img.width, img.height);
+        originalWidth.textContent = img.width + ' PX';
+        originalHeight.textContent = img.height + ' PX';
+        drawImageWithObjectFit(ctxImgUploaded, img, 300, 150, 'contain');
         hideStatusMessage();
-      }
+      };
       img.onerror = function() {
         showStatusMessage(`Error loading ${file.name}.`, true);
-      }
+      };
       img.src = event.target.result;
+      showStatusMessage(`${file.name}`);
+      addImage.style.display = 'none';
     };
 
     fileReader.onerror = function() {
@@ -99,45 +106,49 @@ document.addEventListener('DOMContentLoaded', function() {
   cancelButton.addEventListener('click', function() {
     if (fileReader) {
       fileReader.abort();
-      hideStatusMessage();
-      statusContainer.style.display = 'none';
     }
+    resetState();
   });
 
-  // Handle resize
-  resizeButton.addEventListener('click', function() {
+  document.getElementById('originalFormat').addEventListener('click', () => setFormat('original'));
+  document.getElementById('pngFormat').addEventListener('click', () => setFormat('png'));
+  document.getElementById('jpegFormat').addEventListener('click', () => setFormat('jpeg'));
+  document.getElementById('webpFormat').addEventListener('click', () => setFormat('webp'));
+
+  function setFormat(format) {
+    selectedFormat = format;
+    document.querySelectorAll('#format button').forEach(button => button.style.background = '');
+    document.querySelectorAll('#format button').forEach(button => button.style.color = '');
+    const selectedButton = document.getElementById(format + 'Format');
+    selectedButton.style.background = '#4083F1';
+    selectedButton.style.color = 'white';
+  }
+
+  // Handle download
+  downloadButton.addEventListener('click', function() {
     const width = parseInt(widthInput.value, 10);
     const height = parseInt(heightInput.value, 10);
-    const format = formatSelect.value;
+
     if (originalImage && width && height) {
       const offscreenCanvas = document.createElement('canvas');
       const offscreenCtx = offscreenCanvas.getContext('2d');
 
-      offscreenCanvas.width = originalImage.width;
-      offscreenCanvas.height = originalImage.height;
-      offscreenCtx.drawImage(originalImage, 0, 0, originalImage.width, originalImage.height);
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
+      offscreenCtx.drawImage(originalImage, 0, 0, originalImage.width, originalImage.height, 0, 0, width, height);
 
-      canvas.width = width;
-      canvas.height = height;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(offscreenCanvas, 0, 0, originalImage.width, originalImage.height, 0, 0, width, height);
-
-      if (format === 'jpeg') {
-        resizedImage = canvas.toDataURL('image/jpeg', 0.9); // Use quality parameter for JPEG
-      } else if (format === 'webp') {
-        resizedImage = canvas.toDataURL('image/webp', 0.9); // Use quality parameter for WebP
+      if (selectedFormat === 'jpeg') {
+        resizedImage = offscreenCanvas.toDataURL('image/jpeg', 0.9); // Use quality parameter for JPEG
+      } else if (selectedFormat === 'webp') {
+        resizedImage = offscreenCanvas.toDataURL('image/webp', 0.9); // Use quality parameter for WebP
+      } else if (selectedFormat === 'png') {
+        resizedImage = offscreenCanvas.toDataURL('image/png');
       } else {
-        resizedImage = canvas.toDataURL('image/png');
+        resizedImage = offscreenCanvas.toDataURL(`image/${originalFileType}`);
       }
-    }
-  });
 
-  // Handle download
-  downloadButton.addEventListener('click', function() {
-    if (resizedImage) {
-      const format = formatSelect.value;
       const link = document.createElement('a');
-      link.download = `resized-image.${format}`;
+      link.download = `resized-image.${selectedFormat === 'original' ? originalFileType : selectedFormat}`;
       link.href = resizedImage;
       link.click();
     } else {
@@ -151,6 +162,69 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function hideStatusMessage() {
+    // fileNameDisplay.textContent = '';
+  }
+
+  function drawImageWithObjectFit(ctx, img, canvasWidth, canvasHeight, fitType) {
+    const imageAspectRatio = img.width / img.height;
+    const canvasAspectRatio = canvasWidth / canvasHeight;
+    let width, height, x, y;
+
+    if (fitType === 'cover') {
+      if (canvasAspectRatio > imageAspectRatio) {
+        width = canvasWidth;
+        height = canvasWidth / imageAspectRatio;
+        x = 0;
+        y = -(height - canvasHeight) / 2;
+      } else {
+        width = canvasHeight * imageAspectRatio;
+        height = canvasHeight;
+        x = -(width - canvasWidth) / 2;
+        y = 0;
+      }
+    } else if (fitType === 'contain') {
+      if (canvasAspectRatio > imageAspectRatio) {
+        width = canvasHeight * imageAspectRatio;
+        height = canvasHeight;
+        x = (canvasWidth - width) / 2;
+        y = 0;
+      } else {
+        width = canvasWidth;
+        height = canvasWidth / imageAspectRatio;
+        x = 0;
+        y = (canvasHeight - height) / 2;
+      }
+    } else if (fitType === 'fill') {
+      width = canvasWidth;
+      height = canvasHeight;
+      x = 0;
+      y = 0;
+    }
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.drawImage(img, x, y, width, height);
+  }
+
+  function resetState() {
+    // Reset variables
+    originalImage = null;
+    resizedImage = null;
+    fileReader = null;
+    selectedFormat = 'original';
+    originalFileType = '';
+
+    // Reset UI elements
     fileNameDisplay.textContent = '';
+    progressBar.value = 0;
+    widthInput.value = '';
+    heightInput.value = '';
+    originalWidth.textContent = '';
+    originalHeight.textContent = '';
+    addImage.style.display = 'flex';
+    statusContainer.style.display = 'none';
+    ctxImgUploaded.clearRect(0, 0, canvasImgUploaded.width, canvasImgUploaded.height);
+
+    // Reset format buttons
+    setFormat('original');
   }
 });

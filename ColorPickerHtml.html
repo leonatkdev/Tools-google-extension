@@ -56,10 +56,10 @@
                     Lorem Ipsum
                 </div>
                 <div id="images">
-                    images
+                    Images
                 </div>
                 <div id="typografy">
-                    typografy
+                    Typografy
                 </div>
             </div>
 
@@ -200,6 +200,74 @@
         </div>
     </div>
 
+    <!-- //Lorem ipsum -->
+    <div id="lorem_section" class="section">
+        <div class="header">
+            <svg class="goBack" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512"
+                height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
+                </path>
+            </svg>
+            <span>Lorem Ipsum</span>
+
+            <div class="ref">
+                <div id="colors">
+                    Color
+                </div>
+                <div id="typografy">
+                    Typografy
+                </div>
+                <div id="images"> Image
+                </div>
+            </div>
+        </div>
+        <div class="content" style="display: flex; flex-direction: column;">
+            <div class="loremTypeContainer">
+                <button id="paragraphs" class="paragraphs">Paragraphs</button>
+                <button id="words" class="words">Words</button>
+                <button id="bytes" class="bytes">Bytes</button>
+                <button id="lists" class="lists">Lists</button>
+            </div>
+            <div class="loremTopContainer">
+                <input placeholder="" value="1" class="loremInput" id="loremAmount" />
+                <span id="loremCopyBtn">
+                    Copy <img src="images/copy.svg" alt="Copy Icon" />
+                </span>
+            </div>
+            <div style="position: relative;">
+                <textarea id="loremArea" style="width: 100%; height: 200px;"></textarea>
+                <div style="
+                    position: absolute;
+                    bottom: 4px;
+                    padding: 6px 12px;
+                    right: 1px;
+                    background: #f5f5f5;
+                    width: calc(100% - 2px);
+                    text-align: end;
+                    border-bottom-left-radius: 8px;
+                    border-bottom-right-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+                    <span class="scrollTop" id="scrollTopBtn">
+                        <svg stroke="currentColor" class="scrollTopSvg" fill="white" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"></path>
+                        </svg>
+                    </span>
+                    <span id="wordCount">
+                        0 Words
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+
     <!-- Typography -->
     <div id="typografy_section" class="section">
         <div class="header">
@@ -298,53 +366,9 @@
                 <span id="activateButton">
                     Activate on the tab
                 </span>
-                <span id="saveBtn">
-                    Save
-                </span>
+               
             </div>
 
-        </div>
-    </div>
-    <!-- //Lorem ipsum -->
-    <div id="lorem_section" class="section">
-        <div class="header">
-            <svg class="goBack" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512"
-                height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
-                </path>
-            </svg>
-            <span>Lorem Ipsum</span>
-
-            <div class="ref">
-                <div id="colors">
-                    Color
-                </div>
-                <div id="typografy">
-                    Typografy
-                </div>
-                <div id="images"> Image
-                </div>
-            </div>
-        </div>
-        <div class="content" style="display: flex; flex-direction: column;">
-
-            <div class="loremTypeContainer">
-                <button id="paragraphs" class="paragraphs">Paragraphs</button>
-                <button id="words" class="words">Words</button>
-                <button id="bytes" class="bytes">Bytes</button>
-                <button id="lists" class="lists">Lists</button>
-            </div>
-
-            <div class="loremTopContainer">
-                <input placeholder="" value="1" class="loremInput" id="loremAmount" />
-
-                <span id="loremCopyBtn">
-                    Copy <img src="images/copy.svg" alt="Copy Icon" />
-                </span>
-            </div>
-
-            <textarea id="loremArea"></textarea>
         </div>
     </div>
 
@@ -384,18 +408,21 @@
                 <button class="fileSelectImage">Select File</button>
                 <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">
             </div>
-
             <div id="statusContainer" class="statusContainer" style="display: none;">
-                <div id="fileName" class="fileName"></div>
-                <button id="cancelButton" class="cancelButton">Cancel</button>
-                <progress id="progressBar" class="progressBar" value="0" max="100"></progress>
+                <canvas id="ImgUploaded" class="ImgUploaded" width="300" height="150"></canvas>
+                <div
+                    style="display: flex; gap: 16px; background-color: lightgray; width: 100%; padding: 8px 12px; margin-top: auto; border-bottom-right-radius: 7px; border-bottom-left-radius: 7px;">
+                    <div style="width: 100%;">
+                        <div id="fileName" class="fileName"></div>
+                        <progress id="progressBar" class="progressBar" value="0" max="100"></progress>
+                    </div>
+                    <button id="cancelButton" class="cancelButton">Cancel</button>
+                </div>
             </div>
-
             <div class="infoImageText">
                 <div>Supported: JPG, PNG, Webp</div>
                 <div>Max Size: 100MB</div>
             </div>
-
             <div class="imageWidthHeightContainer">
                 <div>
                     <div style="display: flex; justify-content: space-between; padding-bottom: 4px;">
@@ -418,26 +445,17 @@
                     </div>
                 </div>
             </div>
-
             <div class="imageFormatContainer">
                 <label for="format" class="label">Convert Format</label>
                 <div id="format" class="inputContainerFormat">
-                    <button>Original</button>
-                    <button>PNG</button>
-                    <button>JPEG</button>
-                    <button>WebP</button>
+                    <button id="originalFormat"
+                        style="color: white; background: #4083F1; font-size: 15px;">Original</button>
+                    <button id="pngFormat">PNG</button>
+                    <button id="jpegFormat">JPEG</button>
+                    <button id="webpFormat">WebP</button>
                 </div>
-                <!-- 
-              <select id="format" class="inputContainerFormat">
-                <option value="png">PNG</option>
-                <option value="jpeg">JPEG</option>
-                <option value="webp">WebP</option>
-              </select> -->
             </div>
-
-            <!-- <button id="resize-button" class="button">Preview Resize Image</button> -->
             <button id="download-button" class="button">Download Resized Image</button>
-            <canvas id="Imagecanvas" class="Imagecanvas"></canvas>
         </div>
 
 

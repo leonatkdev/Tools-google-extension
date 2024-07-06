@@ -1,8 +1,7 @@
-
 "use strict";
 
-/// lorem ipsum generator
-  const sentences = [
+// lorem ipsum generator
+const sentences = [
     "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
@@ -34,13 +33,13 @@
     "Omnis voluptas assumenda est, omnis dolor repellendus.",
     "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.",
     "Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."
-  ];
-  
-  function getRandomSentence() {
+];
+
+function getRandomSentence() {
     return sentences[Math.floor(Math.random() * sentences.length)];
-  }
-  
-  function generateLoremIpsum(type, amount) {
+}
+
+function generateLoremIpsum(type, amount) {
     switch(type) {
         case 'paragraphs':
             return generateParagraphs(amount);
@@ -53,9 +52,9 @@
         default:
             return '';
     }
-  }
-  
-  function generateParagraphs(amount) {
+}
+
+function generateParagraphs(amount) {
     let paragraphs = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."];
     for (let i = 1; i < amount; i++) {
         let paragraph = [];
@@ -65,83 +64,96 @@
         paragraphs.push(paragraph.join(' '));
     }
     return paragraphs.join('\n\n');
-  }
-  
-  function generateWords(amount) {
+}
+
+function generateWords(amount) {
     let words = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".split(' ');
     while (words.length < amount) {
         words = words.concat(getRandomSentence().split(' '));
     }
     return words.slice(0, amount).join(' ') + '...';
-  }
-  
-  function generateBytes(amount) {
+}
+
+function generateBytes(amount) {
     let result = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ";
     while (result.length < amount) {
         result += getRandomSentence() + ' ';
     }
     return result.substring(0, amount) + '...';
-  }
-  
-  function generateList(amount) {
+}
+
+function generateList(amount) {
     let list = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."];
     for (let i = 0; i < amount - 1; i++) {
         list.push(getRandomSentence());
     }
     return list.join('\n');
-  }
-  
+}
 
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     let selectedType = "paragraphs";
     document.getElementById(selectedType).classList.add("loremTypeSelected");
-  
+
     const amountInput = document.getElementById('loremAmount');
-  
+
     const updateText = () => {
         const amount = parseInt(amountInput.value);
-        document.getElementById('loremArea').value = generateLoremIpsum(selectedType, amount);
+        const loremArea = document.getElementById('loremArea');
+        loremArea.value = generateLoremIpsum(selectedType, amount);
+        updateWordCount();
     };
-  
+
+    const updateWordCount = () => {
+        const loremArea = document.getElementById('loremArea');
+        const text = loremArea.value;
+        const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        document.getElementById('wordCount').textContent = `${words} Words`;
+    };
+
     document.getElementById('paragraphs').addEventListener('click', () => {
         document.getElementById(selectedType).classList.remove("loremTypeSelected");
         selectedType = 'paragraphs';
         document.getElementById(selectedType).classList.add("loremTypeSelected");
         updateText();
     });
-  
+
     document.getElementById('words').addEventListener('click', () => {
         document.getElementById(selectedType).classList.remove("loremTypeSelected");
         selectedType = 'words';
         document.getElementById(selectedType).classList.add("loremTypeSelected");
         updateText();
     });
-  
+
     document.getElementById('bytes').addEventListener('click', () => {
         document.getElementById(selectedType).classList.remove("loremTypeSelected");
         selectedType = 'bytes';
         document.getElementById(selectedType).classList.add("loremTypeSelected");
         updateText();
     });
-  
+
     document.getElementById('lists').addEventListener('click', () => {
         document.getElementById(selectedType).classList.remove("loremTypeSelected");
         selectedType = 'lists';
         document.getElementById(selectedType).classList.add("loremTypeSelected");
         updateText();
     });
-  
+
     amountInput.addEventListener('input', updateText);
-  
+
     document.getElementById('loremCopyBtn').addEventListener('click', () => {
         const loremText = document.getElementById('loremArea').value;
         navigator.clipboard.writeText(loremText).then(() => {
-          document.getElementById('loremCopyBtn').classList.toggle("copyButtonAnimation");
-  
+            document.getElementById('loremCopyBtn').classList.toggle("copyButtonAnimation");
         }).catch(err => {
             alert('Failed to copy text: ', err);
         });
     });
-  
+
+    document.getElementById('scrollTopBtn').addEventListener('click', () => {
+        document.getElementById('loremArea').scrollTop = 0;
+    });
+
+    document.getElementById('loremArea').addEventListener('input', updateWordCount);
+
     updateText();  // Initial text generation
-  });
+});

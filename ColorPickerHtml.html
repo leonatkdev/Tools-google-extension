@@ -35,7 +35,7 @@
         </div>
         <div class="sectionType" id="typografy">
             <img src="images/typografy.png" alt="typografy Icon" width="30" height="30" />
-            Typografy
+            Font/Typografy
         </div>
     </div>
 
@@ -254,8 +254,11 @@
                     align-items: center;
                 ">
                     <span class="scrollTop" id="scrollTopBtn">
-                        <svg stroke="currentColor" class="scrollTopSvg" fill="white" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"></path>
+                        <svg stroke="currentColor" class="scrollTopSvg" fill="white" stroke-width="0"
+                            viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
+                            </path>
                         </svg>
                     </span>
                     <span id="wordCount">
@@ -264,7 +267,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 
 
@@ -295,59 +298,83 @@
                 <p></p>
             </div> -->
 
-            <div style="display: grid; grid-template-columns: repeat(3, 116px); gap: 8px;">
+            <div style="">
                 <div id="font-container" class="fontBox">
-                    <label for="input-1-size" class="labelInput">
-                        Font #1
+                    <label for="input-1-size" class="labelInput" style="
+                    grid-column: 1/3;
+                ">
+                        Recent
                         <span style="display: flex;">
                             <img src="images/copy.svg" alt="Copy Icon" />
                         </span></label>
-                    <div class="fontInputBox">
-                        <input type="text" id="input-1-size" placeholder="Size" class="inputContainer">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
-                        </div>
-                    </div>
-                    <input type="text" id="input-1-line" placeholder="Line-Height"
-                        class="inputContainer inputContainerMiddle">
-                    <input type="text" id="input-1-weight" placeholder="Weight"
-                        class="inputContainer inputContainerEnd">
-                </div>
 
-                <div id="font-container" class="fontBox">
-                    <label for="input-2-size" class="labelInput">
-                        Font #2
-                        <span style="display: flex;">
-                            <img src="images/copy.svg" alt="Copy Icon" />
-                        </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="text" id="input-2-size" placeholder="Size" class="inputContainer">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
-                        </div>
-                    </div>
-                    <input type="text" id="input-2-line" placeholder="Line-Height"
-                        class="inputContainer inputContainerMiddle">
-                    <input type="text" id="input-2-weight" placeholder="Weight"
-                        class="inputContainer inputContainerEnd">
-                </div>
 
-                <div id="font-container" class="fontBox">
-                    <label for="input-3-size" class="labelInput">
-                        Font #3
-                        <span style="display: flex;">
-                            <img src="images/copy.svg" alt="Copy Icon" />
-                        </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="text" id="input-3-size" placeholder="Size" class="inputContainer">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
+                    <div>
+                        <label class="typolabel">
+                            Font family
+                        </label>
+                        <div class="fontInputBox">
+                            <input type="text" id="input-1-family" placeholder="Font family" class="inputContainer inputRounded">
+
                         </div>
                     </div>
-                    <input type="text" id="input-3-line" placeholder="Line-Height"
-                        class="inputContainer inputContainerMiddle">
-                    <input type="text" id="input-3-weight" placeholder="Weight"
-                        class="inputContainer inputContainerEnd">
+
+
+
+                    <div>
+                        <label class="typolabel">
+                            Style
+                        </label>
+                        <div class="fontInputBox">
+                            <!-- <input type="text" id="input-1-size" placeholder="Size" class="inputContainer inputRounded"> -->
+
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="typolabel">
+                            Font-Size
+                        </label>
+                        <div class="fontInputBox">
+                            <input type="text" id="input-1-size" placeholder="Size" class="inputContainer">
+                            <div class="versionBtn" id="versionBtn">
+                                PX
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="typolabel">
+                            Line-Height
+                        </label>
+                        <div class="fontInputBox">
+                            <input type="text" id="input-1-line" placeholder="Line Height" class="inputContainer">
+                            <div class="versionBtn" id="versionBtn">
+                                PX
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="typolabel">
+                            Color
+                        </label>
+                        <div class="fontInputBox">
+                            <input type="text" id="input-1-color" placeholder="Color" class="inputContainer inputRounded">
+
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="typolabel">
+                            Font Weght
+                        </label>
+                        <div class="fontInputBox">
+                            <input type="text" id="input-1-weight" placeholder="Weight" class="inputContainer inputRounded">
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -366,7 +393,7 @@
                 <span id="activateButton">
                     Activate on the tab
                 </span>
-               
+
             </div>
 
         </div>
@@ -421,7 +448,7 @@
             </div>
             <div class="infoImageText">
                 <div>Supported: JPG, PNG, Webp</div>
-                <div>Max Size: 100MB</div>
+                <!-- <div>Max Size: 100MB</div>  -->
             </div>
             <div class="imageWidthHeightContainer">
                 <div>

@@ -354,29 +354,29 @@
   border: 1px solid black;
 }
 
-.versionLabel {
-  margin: 5px 0;
-  cursor: pointer;
+
+.fontBox {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  grid-column-gap: 12px;
 }
 
-.labelInput {
-  color: rgb(17, 24, 39);
+.labelInput {  color: rgb(17, 24, 39);
   font-size: 14px;
   line-height: 24px;
   margin-bottom: 4px;
-}
-
-.fontBox {
-  display: flex;
-  flex-direction: column;
-}
-
-.labelInput {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: 500;
   font-size: 13px;
+}
+
+.typolabel{
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
 }
 
 .fontInputBox {
@@ -399,16 +399,10 @@
   border-bottom-right-radius: 0;
 }
 
-.inputContainerMiddle {
-  border-radius: 0;
-  border-bottom: 0;
-  margin-top: -4px;
+.inputRounded{
+  border-radius: 8px;
 }
 
-.inputContainerEnd {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
 
 .saveResetTab {
   display: flex;
@@ -437,7 +431,7 @@
 }
 
 #activateButton {
-  margin-right: 12px;
+  /* margin-right: 12px; */
   margin-left: auto;
 }
 

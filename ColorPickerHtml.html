@@ -295,61 +295,25 @@
                 <p></p>
             </div> -->
 
-            <div style="display: grid; grid-template-columns: repeat(3, 116px); gap: 8px;">
-                <div id="font-container" class="fontBox">
-                    <label for="input-1-size" class="labelInput">
-                        Font #1
-                        <span style="display: flex;">
-                            <img src="images/copy.svg" alt="Copy Icon" />
-                        </span></label>
-                    <div class="fontInputBox">
-                        <input type="text" id="input-1-size" placeholder="Size" class="inputContainer">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
-                        </div>
-                    </div>
-                    <input type="text" id="input-1-line" placeholder="Line-Height"
-                        class="inputContainer inputContainerMiddle">
-                    <input type="text" id="input-1-weight" placeholder="Weight"
-                        class="inputContainer inputContainerEnd">
-                </div>
-
-                <div id="font-container" class="fontBox">
-                    <label for="input-2-size" class="labelInput">
-                        Font #2
-                        <span style="display: flex;">
-                            <img src="images/copy.svg" alt="Copy Icon" />
-                        </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="text" id="input-2-size" placeholder="Size" class="inputContainer">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
-                        </div>
-                    </div>
-                    <input type="text" id="input-2-line" placeholder="Line-Height"
-                        class="inputContainer inputContainerMiddle">
-                    <input type="text" id="input-2-weight" placeholder="Weight"
-                        class="inputContainer inputContainerEnd">
-                </div>
-
-                <div id="font-container" class="fontBox">
-                    <label for="input-3-size" class="labelInput">
-                        Font #3
-                        <span style="display: flex;">
-                            <img src="images/copy.svg" alt="Copy Icon" />
-                        </span></label>
-                    <div style="display: flex; flex-direction: row; align-items: center;">
-                        <input type="text" id="input-3-size" placeholder="Size" class="inputContainer">
-                        <div class="versionBtn" id="versionBtn">
-                            PX
-                        </div>
-                    </div>
-                    <input type="text" id="input-3-line" placeholder="Line-Height"
-                        class="inputContainer inputContainerMiddle">
-                    <input type="text" id="input-3-weight" placeholder="Weight"
-                        class="inputContainer inputContainerEnd">
-                </div>
+            <div class="fontInputBox">
+                <input type="text" id="input-1-family" placeholder="Font Family" class="inputContainer inputRounded">
             </div>
+            <div class="fontInputBox">
+                <input type="text" id="input-1-size" placeholder="Font Size" class="inputContainer inputRounded">
+            </div>
+            <div class="fontInputBox">
+                <input type="text" id="input-1-weight" placeholder="Font Weight" class="inputContainer inputRounded">
+            </div>
+            <div class="fontInputBox">
+                <input type="text" id="input-1-line" placeholder="Line Height" class="inputContainer inputRounded">
+            </div>
+            <div class="fontInputBox">
+                <input type="text" id="input-1-color" placeholder="Color" class="inputContainer inputRounded">
+            </div>
+            <div>
+                <button id="reset">Reset</button>
+            </div>
+            
 
 
             <!-- // Reset and Save -->

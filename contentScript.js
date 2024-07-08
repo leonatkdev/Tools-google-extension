@@ -155,202 +155,230 @@ function activateZoom(dataUrl) {
 }
 
 /////Typography
-let typographyMode = false;
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "activateTypography") {
-    typographyMode = !typographyMode;
-    if (typographyMode) {
-      document.addEventListener("click", handleClick, true);
-    } else {
-      document.removeEventListener("click", handleClick, true);
+(function() {
+  if (typeof window.typographyMode === 'undefined') {
+    window.typographyMode = false;
+
+    // Function to create and style the quit button
+    function createQuitButton() {
+      const button = document.createElement("button");
+      button.id = "quitTypographyButton";
+      button.innerText = "Quit Typography Mode";
+      button.style.position = "fixed";
+      button.style.top = "10px";
+      button.style.right = "10px";
+      button.style.padding = "10px 20px";
+      button.style.backgroundColor = "#dc3545";
+      button.style.color = "#fff";
+      button.style.border = "none";
+      button.style.borderRadius = "5px";
+      button.style.cursor = "pointer";
+      button.style.zIndex = 10001;
+      document.body.appendChild(button);
+
+      button.addEventListener("click", () => {
+        console.log('button clicked');
+        window.typographyMode = false;
+        document.removeEventListener("click", handleClick, true);
+        removeAllModals();
+        button.remove();
+        console.log('Typography mode deactivated, all modals removed, and button removed');
+      });
     }
-  }
-});
 
-function handleClick(event) {
-  // Check if the clicked element is a modal or a child of a modal
-  if (event.target.closest(".typography-modal")) {
-    return;
-  }
+    // Function to remove all modals
+    function removeAllModals() {
+      const modals = document.querySelectorAll(".typography-modal");
+      modals.forEach(modal => modal.remove());
+    }
 
-  if (typographyMode) {
-    event.preventDefault();
-    event.stopPropagation();
+    // Function to handle click events when typography mode is enabled
+    function handleClick(event) {
+      // Check if the clicked element is the quit button
+      if (event.target.id === "quitTypographyButton" || event.target.closest("#quitTypographyButton")) {
+        return;
+      }
 
-    const computedStyle = window.getComputedStyle(event.target);
-    const fontData = {
-      fontFamily: computedStyle.fontFamily,
-      fontSize: computedStyle.fontSize,
-      fontWeight: computedStyle.fontWeight,
-      lineHeight: computedStyle.lineHeight,
-      color: computedStyle.color,
-    };
+      // Check if the clicked element is a modal or a child of a modal
+      if (event.target.closest(".typography-modal")) {
+        return;
+      }
 
-    showModal(fontData, event.pageX, event.pageY);
-  }
-}
+      if (window.typographyMode) {
+        event.preventDefault();
+        event.stopPropagation();
 
-const modalStyles = {
-  position: "absolute",
-  backgroundColor: "rgba(255, 255, 255, 0.9)",
-  padding: "16px",
-  zIndex: 10000,
-  maxWidth: "425px",
-  width: "425px",
-  borderRadius: "8px",
-  border: "1px solid lightgray",
-  display: "flex",
-  gap: "12px",
-  flexDirection: "column",
-};
+        const computedStyle = window.getComputedStyle(event.target);
+        const fontData = {
+          elementSelectedTag: event.target.nodeName || "",
+          fontFamily: computedStyle.fontFamily,
+          fontSize: computedStyle.fontSize,
+          fontWeight: computedStyle.fontWeight,
+          lineHeight: computedStyle.lineHeight,
+          color: computedStyle.color,
+        };
 
-const ModalTypographyTopPart = {
-  flexDirection: "row",
-  justifyContent: "space-between"
-};
+        showModal(fontData, event.pageX, event.pageY);
 
-const divStyle = {
-  display: "flex",
-  flexDirection: "column",
-};
+        // Log the type of the node
+        console.log(`Node Type: ${event.target.nodeName}`);
+      }
+    }
 
-const divStyleTest = {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: "8px",
-};
+    // Function to show the modal with font data
+    function showModal(fontData, x, y) {
+      const modal = document.createElement("div");
+      modal.className = "typography-modal";
+      Object.assign(modal.style, modalStyles);
 
-const labelStyles = {
-  fontSize: "14px",
-  color: "gray",
-};
-
-const spanStyles = {
-  color: "#21272a",
-  fontSize: "16px",
-};
-
-
-
-const copyButtonStyles = {
-  padding: "12px 16px",
-  border: "none",
-  borderRadius: "8px",
-  cursor: "pointer",
-  backgroundColor: "#007bff",
-  color: "white",
-  fontSize: "15px", 
-  fontWeight: '500',
-  justifyContent: "space-between"
-};
-
-const closeButtonStyles = {
-  border: 'none',
-  backgroundColor: "transparent",
-};
-
-function showModal(fontData, x, y) {
-  const modal = document.createElement("div");
-  modal.className = "typography-modal";
-  Object.assign(modal.style, modalStyles);
-
-  modal.innerHTML = ` 
-       <div class="ModalTypographyTopPart" >
-            <span>Heading 4</span>
-            <button id="closeButton">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="
-    width: 24px;
-    height: 24px;
-"><path d="m289.94 256 95-95A24 24 0 0 0 351 127l-95 95-95-95a24 24 0 0 0-34 34l95 95-95 95a24 24 0 1 0 34 34l95-95 95 95a24 24 0 0 0 34-34z"></path></svg></button>
+      modal.innerHTML = ` 
+        <div class="ModalTypographyTopPart">
+          <span>${fontData.elementSelectedTag}</span>
+          <button id="closeButton">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;">
+              <path d="m289.94 256 95-95A24 24 0 0 0 351 127l-95 95-95-95a24 24 0 0 0-34 34l95 95-95 95a24 24 0 1 0 34 34l95-95 95 95a24 24 0 0 0 34-34z"></path>
+            </svg>
+          </button>
         </div>
         <div>
-            <label>Font Family:</label>
-            <span>${fontData.fontFamily}</span>
+          <label>Font Family:</label>
+          <span>${fontData.fontFamily}</span>
         </div>
         <div class="ModalTypographyContainer">
           <div>
             <label>Font Size:</label>
-                <span>${fontData.fontSize}</span>
-        </div>
-        <div>
+            <span>${fontData.fontSize}</span>
+          </div>
+          <div>
             <label>Font Weight:</label>
-              <span>${fontData.fontWeight}</span>
-        </div>
-        <div>
+            <span>${fontData.fontWeight}</span>
+          </div>
+          <div>
             <label>Line Height:</label>
-                 <span>${fontData.lineHeight}</span>
-                        </div>
-        <div>
+            <span>${fontData.lineHeight}</span>
+          </div>
+          <div>
             <label>Color:</label>
-               <span>${fontData.color}</span>
+            <span>${fontData.color}</span>
+          </div>
         </div>
-        </div>
-      
         <button id="copyButton">Copy All</button>
-    `;
+      `;
 
-  document.body.appendChild(modal);
+      document.body.appendChild(modal);
 
-  modal
-    .querySelectorAll("div")
-    .forEach((span) => Object.assign(span.style, divStyle));
-  modal
-    .querySelectorAll("label")
-    .forEach((label) => Object.assign(label.style, labelStyles));
-  modal
-    .querySelectorAll("span")
-    .forEach((span) => Object.assign(span.style, spanStyles));
-  modal
-    .querySelectorAll(".ModalTypographyContainer")
-    .forEach((span) => Object.assign(span.style, divStyleTest));
-    modal
-    .querySelectorAll(".ModalTypographyTopPart")
-    .forEach((span) => Object.assign(span.style, ModalTypographyTopPart));
+      modal.querySelectorAll("div").forEach((div) => Object.assign(div.style, divStyle));
+      modal.querySelectorAll("label").forEach((label) => Object.assign(label.style, labelStyles));
+      modal.querySelectorAll("span").forEach((span) => Object.assign(span.style, spanStyles));
+      modal.querySelectorAll(".ModalTypographyContainer").forEach((div) => Object.assign(div.style, divStyleTest));
+      modal.querySelectorAll(".ModalTypographyTopPart").forEach((div) => Object.assign(div.style, ModalTypographyTopPart));
 
+      Object.assign(modal.querySelector("#copyButton").style, copyButtonStyles);
+      Object.assign(modal.querySelector("#closeButton").style, closeButtonStyles);
 
-  // Apply styles to buttons
-  Object.assign(modal.querySelector("#copyButton").style, copyButtonStyles);
-  Object.assign(modal.querySelector("#closeButton").style, closeButtonStyles);
+      // Adjust position to prevent overflow
+      const modalRect = modal.getBoundingClientRect();
+      if (x + modalRect.width > window.innerWidth) {
+        x = window.innerWidth - modalRect.width - 10; // 10px margin from the edge
+      }
+      if (y + modalRect.height > window.innerHeight) {
+        y = window.innerHeight - modalRect.height - 10; // 10px margin from the edge
+      }
+      modal.style.left = `${x}px`;
+      modal.style.top = `${y}px`;
 
-  // Adjust position to prevent overflow
-  const modalRect = modal.getBoundingClientRect();
-  if (x + modalRect.width > window.innerWidth) {
-    x = window.innerWidth - modalRect.width - 10; // 10px margin from the edge
+      // Add event listeners for buttons
+      modal.querySelector("#copyButton").addEventListener("click", () => {
+        copyAllToClipboard(
+          fontData.fontFamily,
+          fontData.fontSize,
+          fontData.fontWeight,
+          fontData.lineHeight,
+          fontData.color
+        );
+      });
+      modal.querySelector("#closeButton").addEventListener("click", () => {
+        modal.remove();
+      });
+    }
+
+    // Function to copy all font data to clipboard
+    function copyAllToClipboard(fontFamily, fontSize, fontWeight, lineHeight, color) {
+      const text = `font-family: ${fontFamily};\nfont-size: ${fontSize};\nfont-weight: ${fontWeight};\nline-height: ${lineHeight};\ncolor: ${color};`;
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+
+    // Function to activate typography mode
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === "activateTypography") {
+        window.typographyMode = true;
+        document.addEventListener("click", handleClick, true);
+        createQuitButton();
+      }
+    });
+
+    const modalStyles = {
+      position: "absolute",
+      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      padding: "16px",
+      zIndex: 10000,
+      maxWidth: "425px",
+      width: "425px",
+      borderRadius: "8px",
+      border: "1px solid lightgray",
+      display: "flex",
+      gap: "12px",
+      flexDirection: "column",
+    };
+
+    const ModalTypographyTopPart = {
+      flexDirection: "row",
+      justifyContent: "space-between"
+    };
+
+    const divStyle = {
+      display: "flex",
+      flexDirection: "column",
+    };
+
+    const divStyleTest = {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "8px",
+    };
+
+    const labelStyles = {
+      fontSize: "14px",
+      color: "gray",
+    };
+
+    const spanStyles = {
+      color: "#21272a",
+      fontSize: "16px",
+    };
+
+    const copyButtonStyles = {
+      padding: "12px 16px",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      backgroundColor: "#007bff",
+      color: "white",
+      fontSize: "15px", 
+      fontWeight: '500',
+      justifyContent: "space-between"
+    };
+
+    const closeButtonStyles = {
+      border: 'none',
+      backgroundColor: "transparent",
+    };
   }
-  if (y + modalRect.height > window.innerHeight) {
-    y = window.innerHeight - modalRect.height - 10; // 10px margin from the edge
-  }
-  modal.style.left = `${x}px`;
-  modal.style.top = `${y}px`;
+})();
 
-  // Add event listeners for buttons
-  modal.querySelector("#copyButton").addEventListener("click", () => {
-    copyAllToClipboard(
-      fontData.fontFamily,
-      fontData.fontSize,
-      fontData.fontWeight,
-      fontData.lineHeight,
-      fontData.color
-    );
-  });
-  modal.querySelector("#closeButton").addEventListener("click", () => {
-    modal.remove();
-  });
-}
-
-function copyAllToClipboard(
-  fontFamily,
-  fontSize,
-  fontWeight,
-  lineHeight,
-  color
-) {
-  const text = `font-family: ${fontFamily};\nfont-size: ${fontSize};\nfont-weight: ${fontWeight};\nline-height: ${lineHeight};\ncolor: ${color};`;
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
-}

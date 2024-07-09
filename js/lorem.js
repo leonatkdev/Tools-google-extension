@@ -83,7 +83,7 @@ function generateBytes(amount) {
 }
 
 function generateList(amount) {
-    let list = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."];
+    let list = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."];
     for (let i = 0; i < amount - 1; i++) {
         list.push(getRandomSentence());
     }
@@ -94,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedType = "paragraphs";
     document.getElementById(selectedType).classList.add("loremTypeSelected");
 
+    const copyBtn = document.getElementById('loremCopyBtn')
+
     const amountInput = document.getElementById('loremAmount');
 
     const updateText = () => {
@@ -101,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loremArea = document.getElementById('loremArea');
         loremArea.value = generateLoremIpsum(selectedType, amount);
         updateWordCount();
+        resetCopyButton(); // Reset the copy button on text update
     };
 
     const updateWordCount = () => {
@@ -108,6 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = loremArea.value;
         const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
         document.getElementById('wordCount').textContent = `${words} Words`;
+    };
+
+    const resetCopyButton = () => {
+        copyBtn.classList.remove("copyButtonAnimation");
+        copyBtn.innerHTML = 'Copy <img src="images/copy.svg" alt="Copy Icon" />';
     };
 
     document.getElementById('paragraphs').addEventListener('click', () => {
@@ -140,10 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     amountInput.addEventListener('input', updateText);
 
-    document.getElementById('loremCopyBtn').addEventListener('click', () => {
+    copyBtn.addEventListener('click', () => {
         const loremText = document.getElementById('loremArea').value;
         navigator.clipboard.writeText(loremText).then(() => {
-            document.getElementById('loremCopyBtn').classList.toggle("copyButtonAnimation");
+            console.log('copiedTest')
+            copyBtn.classList.add("copyButtonAnimation");
+            copyBtn.textContent = "Copied";
         }).catch(err => {
             alert('Failed to copy text: ', err);
         });

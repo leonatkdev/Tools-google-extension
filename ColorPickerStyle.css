@@ -473,21 +473,9 @@
 }
 
 .copyButtonAnimation{
-  animation: changeColor 2s forwards;
-
-}
- 
-
-@keyframes changeColor {
-  0% {
-      background-color: #007bff;
-      border: 1px solid grey;
-      color: white;
-  }
-  100% {
-      background-color: white;
-      color: #000;
-  }
+  background-color: white !important;
+  color: #007bff !important;
+  border: 1px solid #007bff !important;
 }
 
 

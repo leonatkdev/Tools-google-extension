@@ -11,13 +11,12 @@ function initializeUI() {
   setRecentColors();
   setupColorCanvas();
   setupPickColorButton();
+  setupColorTabClicks();
 }
 
 function setRecentColors() {
   function updateRecentColorsUI(colors) {
-    console.log('colors', colors);
     const recentColorElements = document.querySelectorAll(".colorTabRecent");
-    console.log('recentColorElements', recentColorElements);
     colors.forEach((color, index) => {
       if (recentColorElements[index]) {
         recentColorElements[index].style.backgroundColor = color;
@@ -26,7 +25,6 @@ function setRecentColors() {
   }
 
   chrome.runtime.sendMessage({ type: "getRecentColors" }, (response) => {
-    console.log('recentColors', response);
     if (response.recentColors && response.recentColors.length > 0) {
       updateRecentColorsUI(response.recentColors);
     }
@@ -44,7 +42,7 @@ function setupRecentColorResetButton() {
 
 function setupStarClicks() {
   document.getElementById("star").addEventListener("click", function () {
-    const input = document.querySelector("#hex");
+    const input = document.querySelector("#colorValue");
     const colorValue = input.value;
 
     chrome.storage.local.get({ favoriteColors: [] }, function (result) {
@@ -88,8 +86,8 @@ function setupFavResetButton() {
 }
 
 function setupColorConversionListeners() {
-  const colorTypeSpans = document.querySelectorAll("#colorType");
-  const colorInput = document.getElementById("hex");
+  const colorTypeSpans = document.querySelectorAll("#hex, #rgba, #hsl");
+  const colorInput = document.getElementById("colorValue");
 
   colorTypeSpans.forEach((span) => {
     span.addEventListener("click", function () {
@@ -101,40 +99,46 @@ function setupColorConversionListeners() {
       span.classList.add("activeType");
 
       const newInputId = span.textContent.trim().toLowerCase();
-      colorInput.id = newInputId;
-
       convertColorInput(colorInput.value, newInputId);
     });
   });
 }
 
 function convertColorInput(value, type) {
-  switch (type) {
-    case "hex":
-      const { r, g, b, a } = value.startsWith("rgba")
-        ? parseRgba(value)
-        : hslToRgba(parseHsl(value));
-      document.getElementById(type).value = rgbaToHex(r, g, b, a);
-      break;
-    case "rgba":
-      const rgba = value.startsWith("#")
-        ? hexToRgba(value)
-        : hslToRgba(parseHsl(value));
-      document.getElementById(
-        type
-      ).value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
-      break;
-    case "hsl":
-      const {
-        r: hr,
-        g: hg,
-        b: hb,
-      } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
-      const [h, s, l] = rgbToHsl(hr, hg, hb);
-      document.getElementById(type).value = `hsl(${h}, ${s}%, ${l}%)`;
-      break;
-    default:
-      console.error("Unsupported type for conversion.");
+  try {
+    const colorInput = document.getElementById("colorValue");
+    if (!colorInput) {
+      console.error("colorValue input not found.");
+      return;
+    }
+
+    switch (type) {
+      case "hex":
+        const { r, g, b, a } = value.startsWith("rgba")
+          ? parseRgba(value)
+          : hslToRgba(parseHsl(value));
+        colorInput.value = rgbaToHex(r, g, b, a);
+        break;
+      case "rgba":
+        const rgba = value.startsWith("#")
+          ? hexToRgba(value)
+          : hslToRgba(parseHsl(value));
+        colorInput.value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+        break;
+      case "hsl":
+        const {
+          r: hr,
+          g: hg,
+          b: hb,
+        } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
+        const [h, s, l] = rgbToHsl(hr, hg, hb);
+        colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+        break;
+      default:
+        console.error("Unsupported type for conversion.");
+    }
+  } catch (error) {
+    console.error("Error during conversion: ", error);
   }
 }
 
@@ -179,13 +183,22 @@ function setupPickColorButton() {
   });
 }
 
+function setupColorTabClicks() {
+  document.querySelectorAll(".colorTabRecent, .colorTabFavorite").forEach(tab => {
+    tab.addEventListener("click", function () {
+      const color = window.getComputedStyle(tab).backgroundColor;
+      setColorFromHex(rgbaToHex(...parseRgba(color)));
+    });
+  });
+}
+
 function setupColorCanvas() {
   const colorCanvas = document.getElementById("colorCanvas");
   const ctx = colorCanvas.getContext("2d", { willReadFrequently: true });
   const hueRange = document.getElementById("hueRange");
   const alphaRange = document.getElementById("alphaRange");
   const selectedColorDiv = document.getElementById("selectedColor");
-  const hexInput = document.getElementById("hex");
+  const colorInput = document.getElementById("colorValue");
 
   let manualHexInput = false;
 
@@ -266,9 +279,25 @@ function setupColorCanvas() {
     ).data;
 
     const hex = rgbaToHex(imageData[0], imageData[1], imageData[2], currentAlpha);
+    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+    const [h, s, l] = rgbToHsl(imageData[0], imageData[1], imageData[2], currentAlpha);
+
+    const activeTypeSpan = document.querySelector("span.activeType").id;
 
     if (!manualHexInput) {
-      hexInput.value = hex;
+      switch (activeTypeSpan) {
+        case "hex":
+          colorInput.value = hex;
+          break;
+        case "rgba":
+          colorInput.value = rgba;
+          break;
+        case "hsl":
+          colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+          break;
+        default:
+          colorInput.value = hex;
+      }
     }
 
     selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
@@ -318,7 +347,7 @@ function setupColorCanvas() {
     pickColor();
   });
 
-  hexInput.addEventListener("input", (e) => {
+  colorInput.addEventListener("input", (e) => {
     manualHexInput = true;
     setColorFromHex(e.target.value);
   });
@@ -393,7 +422,6 @@ function hslToRgba({ h, s, l, a = 1 }) {
   s /= 100;
   l /= 100;
   const [r, g, b] = hslToRgb(h, s, l);
-  console.log(`Converted RGB: r=${r}, g=${g}, b=${b}`);
   return { r, g, b, a };
 }
 
@@ -436,19 +464,4 @@ function rgbToHsl(r, g, b, a = 1) {
     h /= 6;
   }
   return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), a];
-}
-
-function hexToRgba(hex) {
-  let r = 0, g = 0, b = 0, a = 1;
-  if (hex.length === 7) {
-    r = parseInt(hex.slice(1, 3), 16);
-    g = parseInt(hex.slice(3, 5), 16);
-    b = parseInt(hex.slice(5, 7), 16);
-  } else if (hex.length === 9) {
-    r = parseInt(hex.slice(1, 3), 16);
-    g = parseInt(hex.slice(3, 5), 16);
-    b = parseInt(hex.slice(5, 7), 16);
-    a = parseInt(hex.slice(7, 9), 16) / 255;
-  }
-  return { r, g, b, a };
 }

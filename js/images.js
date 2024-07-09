@@ -117,8 +117,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function setFormat(format) {
     selectedFormat = format;
-    document.querySelectorAll('#format button').forEach(button => button.style.background = '');
-    document.querySelectorAll('#format button').forEach(button => button.style.color = '');
+    document.querySelectorAll('#format button').forEach(button => {
+      button.style.background = '';
+      button.style.color = '';
+    });
     const selectedButton = document.getElementById(format + 'Format');
     selectedButton.style.background = '#4083F1';
     selectedButton.style.color = 'white';
@@ -226,5 +228,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Reset format buttons
     setFormat('original');
+  }
+
+  // Validate input values
+  widthInput.addEventListener('input', validateInput);
+  heightInput.addEventListener('input', validateInput);
+
+  function validateInput(event) {
+    const input = event.target;
+    const value = input.value;
+
+    // Remove non-digit characters
+    const sanitizedValue = value.replace(/\D/g, '');
+
+    // Ensure value is not negative and within valid range
+    if (sanitizedValue !== '' && parseInt(sanitizedValue, 10) >= 0) {
+      input.value = parseInt(sanitizedValue, 10);
+      input.style.borderColor = ''; // Reset border color if valid
+    } else {
+      input.style.borderColor = 'red'; // Set border color to red if invalid
+    }
   }
 });

@@ -294,12 +294,21 @@
   cursor: pointer;
 }
 
+.colorType{
+  padding: 4px 14px;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
 .activeType {
   background-color: #007bff;
   padding: 4px 14px;
   border-radius: 8px;
   color: white;
 }
+
+
 
 .sectionColorType {
   font-size: 15px;

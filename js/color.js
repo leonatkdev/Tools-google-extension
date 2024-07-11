@@ -11,7 +11,6 @@ function initializeUI() {
   setRecentColors();
   setupColorCanvas();
   setupPickColorButton();
-  setupColorTabClicks();
 }
 
 function setRecentColors() {
@@ -19,7 +18,7 @@ function setRecentColors() {
     const recentColorElements = document.querySelectorAll(".colorTabRecent");
     colors.forEach((color, index) => {
       if (recentColorElements[index]) {
-        recentColorElements[index].style.backgroundColor = color;
+        recentColorElements[index].style.backgroundColor = color.startsWith('#') ? color : rgbaToHex(...parseRgba(color));
       }
     });
   }
@@ -49,7 +48,8 @@ function setupStarClicks() {
       let favorites = result.favoriteColors;
       const maxFavorites = 9;
       if (favorites.length < maxFavorites) {
-        favorites.push(colorValue);
+        const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(...parseRgba(colorValue));
+        favorites.push(hexColor);
         chrome.storage.local.set({ favoriteColors: favorites }, function () {
           updateFavoriteColorUI(favorites);
         });
@@ -143,7 +143,8 @@ function convertColorInput(value, type) {
 }
 
 function parseRgba(rgbaString) {
-  const [r, g, b, a] = rgbaString.match(/\d+\.?\d*/g).map(Number);
+  const rgbaArray = rgbaString.match(/\d+\.?\d*/g).map(Number);
+  const [r, g, b, a = 1] = rgbaArray; // Default alpha to 1 if not present
   return { r, g, b, a };
 }
 
@@ -183,14 +184,7 @@ function setupPickColorButton() {
   });
 }
 
-function setupColorTabClicks() {
-  document.querySelectorAll(".colorTabRecent, .colorTabFavorite").forEach(tab => {
-    tab.addEventListener("click", function () {
-      const color = window.getComputedStyle(tab).backgroundColor;
-      setColorFromHex(rgbaToHex(...parseRgba(color)));
-    });
-  });
-}
+
 
 function setupColorCanvas() {
   const colorCanvas = document.getElementById("colorCanvas");
@@ -376,6 +370,16 @@ function setupColorCanvas() {
   });
 
   setColorFromHex("#000000");
+
+  //recent and favorite color clicks
+  document.querySelectorAll(".colorTabRecent, .colorTabFavorite").forEach(tab => {
+    tab.addEventListener("click", function () {
+      const color = window.getComputedStyle(tab).backgroundColor;
+      const rgbaColor = parseRgba(color);
+      const hexColor = rgbaToHex(rgbaColor.r, rgbaColor.g, rgbaColor.b, rgbaColor.a);
+      setColorFromHex(hexColor);
+    });
+  });
 }
 
 function hexToRgba(hex) {

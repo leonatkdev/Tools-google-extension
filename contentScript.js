@@ -42,14 +42,14 @@ function injectUI() {
   const lens = document.createElement("div");
   lens.id = "zoomLens";
   lens.style.cssText =
-    "position: fixed; border: 1px solid #000; border-radius: 50%; width: 100px; height: 100px; overflow: hidden; pointer-events: none; z-index: 100000000; background-position: center;";
+    "position: fixed; border: 1px solid #000; border-radius: 50%; width: 150px; height: 150px; overflow: hidden; pointer-events: none; z-index: 100000000; background-position: center;";
   document.body.appendChild(lens);
 
   const gridSquares = document.createElement("div");
   gridSquares.id = "zoomGridSquares";
   gridSquares.style.cssText =
-    "overflow: hidden; z-index: 100000000; width: 100px; height: 100px; border-radius: 50%; position: fixed; background-position: center; pointer-events: none;";
-  gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='10' height='10' fill='none' stroke='black' stroke-width='1'/%3E%3Crect x='1' y='1' width='8' height='8' fill='transparent'/%3E%3C/svg%3E")`;
+    "overflow: hidden; z-index: 100000000; width: 150px; height: 150px; border-radius: 50%; position: fixed; background-position: center; pointer-events: none;";
+  gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='10' height='10' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E")`;
   document.body.appendChild(gridSquares);
 
   gridSquares.innerHTML += `
@@ -147,6 +147,11 @@ function updateZoomBackground(canvas, lens, x, y, dataUrl) {
     // Adjust the grid size and position
     const gridSize = lensSize / scaleFactor;
     gridSquares.style.backgroundSize = `${gridSize}px ${gridSize}px`;
+
+    // Align the grid to the center of the lens
+    const gridOffsetX = (x - startX) % gridSize;
+    const gridOffsetY = (y - startY) % gridSize;
+    gridSquares.style.backgroundPosition = `-${gridOffsetX}px -${gridOffsetY}px`;
   };
   img.src = pixelatedDataUrl;
 }
@@ -196,11 +201,6 @@ function activateZoom(dataUrl) {
 
   img.src = dataUrl;
 }
-
-
-
-
-
 
 
 

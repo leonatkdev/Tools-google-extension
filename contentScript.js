@@ -17,7 +17,6 @@ document.addEventListener("keydown", function (event) {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("messageContent", message);
   if (message.action === "capture") {
     activateZoom(message.screenshotUrl);
   }
@@ -43,16 +42,14 @@ function injectUI() {
   const lens = document.createElement("div");
   lens.id = "zoomLens";
   lens.style.cssText =
-    "position: fixed; border: 1px solid #000; border-radius: 50%; width: 100px; height: 100px; overflow: hidden; pointer-events: none; z-index: 100000000; background-position: center;";
+    "position: fixed; border: 1px solid #000; border-radius: 50%; width: 150px; height: 150px; overflow: hidden; pointer-events: none; z-index: 100000000; background-position: center;";
   document.body.appendChild(lens);
 
   const gridSquares = document.createElement("div");
   gridSquares.id = "zoomGridSquares";
   gridSquares.style.cssText =
-    "overflow: hidden; z-index: 100000000; width: 100px; height: 100px; border-radius: 50%; position: fixed; background-position: center;";
-  gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='12' height='12' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='12' height='12' fill='none' stroke='black' stroke-width='1'/%3E%3Crect x='1' y='1' width='10' height='10' fill='transparent'/%3E%3C/svg%3E")`;
-  gridSquares.style.backgroundSize = `10px 10px`;
-  gridSquares.style.backgroundPosition = `5px 5px`;
+    "overflow: hidden; z-index: 100000000; width: 150px; height: 150px; border-radius: 50%; position: fixed; background-position: center; pointer-events: none;";
+  gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='10' height='10' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E")`;
   document.body.appendChild(gridSquares);
 
   gridSquares.innerHTML += `
@@ -79,7 +76,6 @@ function updateZoomLensPosition(event) {
   const lens = document.getElementById("zoomLens");
   const gridSquares = document.getElementById("zoomGridSquares");
 
-  // Adjust these offsets based on your specific UI needs
   const offsetX = x + 150 + 100 > window.innerWidth ? -150 : 150; // Adjusts to not overflow the screen
   const offsetY = y + 100 + 100 > window.innerHeight ? -100 : 100; // Adjusts to not overflow the screen
 
@@ -94,15 +90,70 @@ function updateZoomLensPosition(event) {
 
 function updateZoomBackground(canvas, lens, x, y, dataUrl) {
   const scaleFactor = 10; // Adjust based on desired zoom level
-  const offsetX = x * scaleFactor - lens.offsetWidth / 2;
-  const offsetY = y * scaleFactor - lens.offsetHeight / 2;
-  const backgroundImage = `url('${dataUrl}')`;
+  const lensSize = lens.offsetWidth;
+  const ctx = canvas.getContext("2d");
 
-  lens.style.backgroundImage = `${backgroundImage}`;
-  lens.style.backgroundSize = `${canvas.width * scaleFactor}px ${
-    canvas.height * scaleFactor
-  }px`;
-  lens.style.backgroundPosition = `-${offsetX}px -${offsetY}px`;
+  const startX = Math.max(0, x - lensSize / (2 * scaleFactor));
+  const startY = Math.max(0, y - lensSize / (2 * scaleFactor));
+  const width = Math.min(lensSize / scaleFactor, canvas.width - startX);
+  const height = Math.min(lensSize / scaleFactor, canvas.height - startY);
+
+  if (width <= 0 || height <= 0) return;
+
+  const pixelData = ctx.getImageData(startX, startY, width, height).data;
+  const pixelatedCanvas = document.createElement("canvas");
+  const pixelatedCtx = pixelatedCanvas.getContext("2d");
+
+  pixelatedCanvas.width = width;
+  pixelatedCanvas.height = height;
+
+  for (let i = 0; i < pixelData.length; i += 4) {
+    const r = pixelData[i];
+    const g = pixelData[i + 1];
+    const b = pixelData[i + 2];
+    const a = pixelData[i + 3] / 255;
+
+    const col = (i / 4) % width;
+    const row = Math.floor(i / 4 / width);
+
+    pixelatedCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+    pixelatedCtx.fillRect(col, row, 1, 1);
+  }
+
+  const pixelatedDataUrl = pixelatedCanvas.toDataURL();
+
+  // Use a temporary canvas to resize the pixelated image without smoothing
+  const tempCanvas = document.createElement("canvas");
+  const tempCtx = tempCanvas.getContext("2d");
+
+  tempCanvas.width = lensSize;
+  tempCanvas.height = lensSize;
+
+  // Disable image smoothing
+  tempCtx.msImageSmoothingEnabled = false;
+  tempCtx.mozImageSmoothingEnabled = false;
+  tempCtx.webkitImageSmoothingEnabled = false;
+  tempCtx.imageSmoothingEnabled = false;
+
+  // Draw the pixelated image at full size on the temporary canvas
+  const img = new Image();
+  img.onload = () => {
+    tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+
+    // Set the background image of the lens to the resized pixelated image
+    lens.style.backgroundImage = `url('${tempCanvas.toDataURL()}')`;
+    lens.style.backgroundSize = `${lensSize}px ${lensSize}px`;
+
+    // Adjust the grid size and position
+    const gridSize = lensSize / scaleFactor;
+    gridSquares.style.backgroundSize = `${gridSize}px ${gridSize}px`;
+
+    // Align the grid to the center of the lens
+    const gridOffsetX = (x - startX) % gridSize;
+    const gridOffsetY = (y - startY) % gridSize;
+    gridSquares.style.backgroundPosition = `-${gridOffsetX}px -${gridOffsetY}px`;
+  };
+  img.src = pixelatedDataUrl;
 }
 
 function activateZoom(dataUrl) {
@@ -122,7 +173,6 @@ function activateZoom(dataUrl) {
 
     document.addEventListener("click", (event) => {
       event.preventDefault(); // Prevent default click behavior
-      console.log("click");
       const x = event.clientX;
       const y = event.clientY;
       const pixel = ctx.getImageData(x, y, 1, 1);
@@ -132,8 +182,6 @@ function activateZoom(dataUrl) {
         ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2])
           .toString(16)
           .slice(1);
-
-      console.log("hex", hex);
 
       chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
 
@@ -153,6 +201,8 @@ function activateZoom(dataUrl) {
 
   img.src = dataUrl;
 }
+
+
 
 /////Typography
 

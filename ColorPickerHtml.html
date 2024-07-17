@@ -98,7 +98,6 @@
                 </div>
 
             </div>
-
             <!-- //Color Inputs -->
             <div style="margin-top: 12px">
                 <div style="display: flex;
@@ -106,22 +105,20 @@
                     gap: 16px; color: rgb(17, 24, 39); font-size: 14px; line-height: 24px;  font-weight: 600;
                         letter-spacing: 0.5px;
                         margin-right: 6px; margin-bottom: 16px;">
-                    <span class="activeType" id="colorType" style="padding: 4px 14px;">
+                    <span class="colorType activeType" id="hex">
                         HEX
                     </span>
-                    <span id="colorType"
-                        style="padding: 4px 14px;padding: 4px 14px;border: 1px solid lightgray;border-radius: 8px;font-size: 13px;">
+                    <span id="rgba" class="colorType">
                         RGBA
                     </span>
-                    <span id="colorType"
-                        style="padding: 4px 14px;padding: 4px 14px;border: 1px solid lightgray;border-radius: 8px;font-size: 13px;">
-                        HLS
+                    <span id="hsl" class="colorType">
+                        HSL
                     </span>
 
                 </div>
                 <div style="display: flex;  align-items: center;">
 
-                    <input type="text" value="#000000" id="hex"
+                    <input type="text" value="#000000" id="colorValue"
                         style="width: 100%;padding: 9px 14px;font-size: 13.5px;box-sizing: border-box;border: 1px solid lightgray;border-radius: 8px;border-top-right-radius: 0;border-bottom-right-radius: 0;">
 
                     <span
@@ -270,7 +267,6 @@
 
     </div>
 
-
     <!-- Typography -->
     <div id="typografy_section" class="section">
         <div class="header">
@@ -314,7 +310,8 @@
                             Font family
                         </label>
                         <div class="fontInputBox">
-                            <input type="text" id="input-1-family" placeholder="Font family" class="inputContainer inputRounded">
+                            <input type="text" id="input-1-family" placeholder="Font family"
+                                class="inputContainer inputRounded">
 
                         </div>
                     </div>
@@ -360,7 +357,8 @@
                             Color
                         </label>
                         <div class="fontInputBox">
-                            <input type="text" id="input-1-color" placeholder="Color" class="inputContainer inputRounded">
+                            <input type="text" id="input-1-color" placeholder="Color"
+                                class="inputContainer inputRounded">
 
                         </div>
                     </div>
@@ -370,7 +368,8 @@
                             Font Weght
                         </label>
                         <div class="fontInputBox">
-                            <input type="text" id="input-1-weight" placeholder="Weight" class="inputContainer inputRounded">
+                            <input type="text" id="input-1-weight" placeholder="Weight"
+                                class="inputContainer inputRounded">
 
                         </div>
                     </div>

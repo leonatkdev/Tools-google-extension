@@ -60,8 +60,8 @@ function injectUI() {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 10px;
-        height: 10px;
+        width: 15px;
+        height: 15px;
         border: 2px solid red; /* Change color as needed */
       }
     </style>
@@ -91,6 +91,7 @@ function updateZoomLensPosition(event) {
 function updateZoomBackground(canvas, lens, x, y, dataUrl) {
   const scaleFactor = 10; // Adjust based on desired zoom level
   const lensSize = lens.offsetWidth;
+  const gridSquares = document.getElementById("zoomGridSquares");
   const ctx = canvas.getContext("2d");
 
   const startX = Math.max(0, x - lensSize / (2 * scaleFactor));
@@ -204,13 +205,12 @@ function activateZoom(dataUrl) {
 
 
 
-/////Typography
 
+/////Typography
 (function() {
   if (typeof window.typographyMode === 'undefined') {
     window.typographyMode = false;
 
-    // Function to create and style the quit button
     function createQuitButton() {
       const button = document.createElement("button");
       button.id = "quitTypographyButton";
@@ -228,29 +228,23 @@ function activateZoom(dataUrl) {
       document.body.appendChild(button);
 
       button.addEventListener("click", () => {
-        console.log('button clicked');
         window.typographyMode = false;
         document.removeEventListener("click", handleClick, true);
         removeAllModals();
         button.remove();
-        console.log('Typography mode deactivated, all modals removed, and button removed');
       });
     }
 
-    // Function to remove all modals
     function removeAllModals() {
       const modals = document.querySelectorAll(".typography-modal");
       modals.forEach(modal => modal.remove());
     }
 
-    // Function to handle click events when typography mode is enabled
     function handleClick(event) {
-      // Check if the clicked element is the quit button
       if (event.target.id === "quitTypographyButton" || event.target.closest("#quitTypographyButton")) {
         return;
       }
 
-      // Check if the clicked element is a modal or a child of a modal
       if (event.target.closest(".typography-modal")) {
         return;
       }
@@ -261,7 +255,7 @@ function activateZoom(dataUrl) {
 
         const computedStyle = window.getComputedStyle(event.target);
         const fontData = {
-          elementSelectedTag: event.target.nodeName || "",
+          elementSelectedTag: event?.target?.nodeName || "",
           fontFamily: computedStyle.fontFamily,
           fontSize: computedStyle.fontSize,
           fontWeight: computedStyle.fontWeight,
@@ -269,14 +263,13 @@ function activateZoom(dataUrl) {
           color: computedStyle.color,
         };
 
-        showModal(fontData, event.pageX, event.pageY);
+        // Send the font data to the background script to save it
+        chrome.runtime.sendMessage({ action: "saveFontData", fontData: fontData });
 
-        // Log the type of the node
-        console.log(`Node Type: ${event.target.nodeName}`);
+        showModal(fontData, event.pageX, event.pageY);
       }
     }
 
-    // Function to show the modal with font data
     function showModal(fontData, x, y) {
       const modal = document.createElement("div");
       modal.className = "typography-modal";
@@ -327,18 +320,16 @@ function activateZoom(dataUrl) {
       Object.assign(modal.querySelector("#copyButton").style, copyButtonStyles);
       Object.assign(modal.querySelector("#closeButton").style, closeButtonStyles);
 
-      // Adjust position to prevent overflow
       const modalRect = modal.getBoundingClientRect();
       if (x + modalRect.width > window.innerWidth) {
-        x = window.innerWidth - modalRect.width - 10; // 10px margin from the edge
+        x = window.innerWidth - modalRect.width - 10;
       }
       if (y + modalRect.height > window.innerHeight) {
-        y = window.innerHeight - modalRect.height - 10; // 10px margin from the edge
+        y = window.innerHeight - modalRect.height - 10;
       }
       modal.style.left = `${x}px`;
       modal.style.top = `${y}px`;
 
-      // Add event listeners for buttons
       modal.querySelector("#copyButton").addEventListener("click", () => {
         copyAllToClipboard(
           fontData.fontFamily,
@@ -353,7 +344,6 @@ function activateZoom(dataUrl) {
       });
     }
 
-    // Function to copy all font data to clipboard
     function copyAllToClipboard(fontFamily, fontSize, fontWeight, lineHeight, color) {
       const text = `font-family: ${fontFamily};\nfont-size: ${fontSize};\nfont-weight: ${fontWeight};\nline-height: ${lineHeight};\ncolor: ${color};`;
       const textarea = document.createElement("textarea");
@@ -364,14 +354,32 @@ function activateZoom(dataUrl) {
       document.body.removeChild(textarea);
     }
 
-    // Function to activate typography mode
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.action === "activateTypography") {
         window.typographyMode = true;
         document.addEventListener("click", handleClick, true);
         createQuitButton();
+
+        if (message.fontData) {
+          applyFontData(message.fontData);
+        }
       }
     });
+
+    function applyFontData(fontData) {
+      const style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = `
+        * {
+          font-family: ${fontData.fontFamily} !important;
+          font-size: ${fontData.fontSize} !important;
+          font-weight: ${fontData.fontWeight} !important;
+          line-height: ${fontData.lineHeight} !important;
+          color: ${fontData.color} !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
     const modalStyles = {
       position: "absolute",
@@ -431,4 +439,7 @@ function activateZoom(dataUrl) {
     };
   }
 })();
+
+
+
 

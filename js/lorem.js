@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     copyBtn.addEventListener('click', () => {
         const loremText = document.getElementById('loremArea').value;
         navigator.clipboard.writeText(loremText).then(() => {
-            console.log('copiedTest')
+            // console.log('copiedTest')
             copyBtn.classList.add("copyButtonAnimation");
             copyBtn.textContent = "Copied";
         }).catch(err => {

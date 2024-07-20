@@ -71,7 +71,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   
   function updateFontInputs(fontData) {
-    console.log('fontData', fontData)
     document.getElementById("htmlTag").textContent = fontData.elementSelectedTag || "-";
     document.getElementById("fontFamily").textContent = fontData.fontFamily || "-";
     document.getElementById("input-1-size").value = fontData.fontSize || "";

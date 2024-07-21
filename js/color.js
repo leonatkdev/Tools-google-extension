@@ -11,6 +11,7 @@ function initializeUI() {
   setRecentColors();
   setupColorCanvas();
   setupPickColorButton();
+  setupCopyColorInputButton();
 }
 
 function setRecentColors() {
@@ -18,7 +19,7 @@ function setRecentColors() {
     const recentColorElements = document.querySelectorAll(".colorTabRecent");
     colors.forEach((color, index) => {
       if (recentColorElements[index]) {
-        recentColorElements[index].style.backgroundColor = color.startsWith('#') ? color : rgbaToHex(...parseRgba(color));
+        recentColorElements[index].style.backgroundColor = color.startsWith('#') ? color : rgbaToHex(parseRgba(color));
       }
     });
   }
@@ -48,7 +49,8 @@ function setupStarClicks() {
       let favorites = result.favoriteColors;
       const maxFavorites = 9;
       if (favorites.length < maxFavorites) {
-        const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(...parseRgba(colorValue));
+        const rgba = parseRgba(colorValue);
+        const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
         favorites.push(hexColor);
         chrome.storage.local.set({ favoriteColors: favorites }, function () {
           updateFavoriteColorUI(favorites);
@@ -123,7 +125,7 @@ function convertColorInput(value, type) {
         const rgba = value.startsWith("#")
           ? hexToRgba(value)
           : hslToRgba(parseHsl(value));
-        colorInput.value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+        colorInput.value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(2)})`;
         break;
       case "hsl":
         const {
@@ -145,7 +147,7 @@ function convertColorInput(value, type) {
 function parseRgba(rgbaString) {
   const rgbaArray = rgbaString.match(/\d+\.?\d*/g).map(Number);
   const [r, g, b, a = 1] = rgbaArray; // Default alpha to 1 if not present
-  return { r, g, b, a };
+  return { r, g, b, a: parseFloat(a.toFixed(2)) }; // Ensure alpha is limited to two decimal places
 }
 
 function parseHsl(hslString) {
@@ -184,6 +186,25 @@ function setupPickColorButton() {
   });
 }
 
+function setupCopyColorInputButton() {
+  const copyColorBtn = document.getElementById("copyColorInput");
+  copyColorBtn.addEventListener("click", function () {
+    const colorInput = document.getElementById("colorValue");
+    colorInput.select();
+    colorInput.setSelectionRange(0, 99999); // For mobile devices
+    copyColorBtn.style.backgroundColor = '#007bff'
+    console.log('copyColorBtn.querySelector("img")', copyColorBtn.querySelector("img"))
+    copyColorBtn.querySelector("img").style.filter = "brightness(0);"
+       copyColorBtn.querySelector("img").style.filter = "invert(1)"
+
+    try {
+      document.execCommand("copy");
+      console.log("Color copied to clipboard:", colorInput.value);
+    } catch (err) {
+      console.error("Failed to copy color:", err);
+    }
+  });
+}
 
 function setupColorCanvas() {
   const colorCanvas = document.getElementById("colorCanvas");
@@ -241,41 +262,41 @@ function setupColorCanvas() {
   }
 
   function drawBall() {
-     // Save the current state
-     ctx.save();
-  
-     // Draw box shadow
-     ctx.shadowColor = "black";
-     ctx.shadowBlur = 2;
-     ctx.shadowOffsetX = 0;
-     ctx.shadowOffsetY = 0;
-   
-     // Draw border
-     ctx.lineWidth = 4;
-     ctx.strokeStyle = "white";
-   
-     // Draw transparent middle
-     ctx.fillStyle = "rgba(255, 255, 255, 0)"; // Transparent fill
-   
-     ctx.beginPath();
-     ctx.arc(ballPosition.x, ballPosition.y, 10, 0, 2 * Math.PI);
-     ctx.fill();
-     ctx.stroke();
-   
-     // Draw plus sign
-     ctx.lineWidth = 1;
-     ctx.strokeStyle = "white";
-     ctx.beginPath();
-     // Vertical line
-     ctx.moveTo(ballPosition.x, ballPosition.y - 5);
-     ctx.lineTo(ballPosition.x, ballPosition.y + 5);
-     // Horizontal line
-     ctx.moveTo(ballPosition.x - 5, ballPosition.y);
-     ctx.lineTo(ballPosition.x + 5, ballPosition.y);
-     ctx.stroke();
-   
-     // Restore the previous state
-     ctx.restore();
+    // Save the current state
+    ctx.save();
+
+    // Draw box shadow
+    ctx.shadowColor = "black";
+    ctx.shadowBlur = 2;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Draw border
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "white";
+
+    // Draw transparent middle
+    ctx.fillStyle = "rgba(255, 255, 255, 0)"; // Transparent fill
+
+    ctx.beginPath();
+    ctx.arc(ballPosition.x, ballPosition.y, 10, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+
+    // Draw plus sign
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "white";
+    ctx.beginPath();
+    // Vertical line
+    ctx.moveTo(ballPosition.x, ballPosition.y - 5);
+    ctx.lineTo(ballPosition.x, ballPosition.y + 5);
+    // Horizontal line
+    ctx.moveTo(ballPosition.x - 5, ballPosition.y);
+    ctx.lineTo(ballPosition.x + 5, ballPosition.y);
+    ctx.stroke();
+
+    // Restore the previous state
+    ctx.restore();
   }
 
   function pickColor() {
@@ -284,7 +305,7 @@ function setupColorCanvas() {
     const imageData = offscreenCtx.getImageData(ballPosition.x, ballPosition.y, 1, 1).data;
 
     const hex = rgbaToHex(imageData[0], imageData[1], imageData[2], currentAlpha);
-    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${parseFloat(currentAlpha).toFixed(2)})`;
     const [h, s, l] = rgbToHsl(imageData[0], imageData[1], imageData[2], currentAlpha);
 
     const activeTypeSpan = document.querySelector("span.activeType").id;
@@ -347,7 +368,7 @@ function setupColorCanvas() {
 
   alphaRange.addEventListener("input", function () {
     manualHexInput = false;
-    currentAlpha = this.value;
+    currentAlpha = parseFloat(this.value);
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   });
@@ -420,7 +441,7 @@ function hexToRgba(hex) {
     b = parseInt(hex.slice(5, 7), 16);
     a = parseInt(hex.slice(7, 9), 16) / 255;
   }
-  return { r, g, b, a };
+  return { r, g, b, a: parseFloat(a.toFixed(2)) }; // Ensure alpha is limited to two decimal places
 }
 
 function hslToRgb(h, s, l) {
@@ -493,5 +514,5 @@ function rgbToHsl(r, g, b, a = 1) {
     }
     h /= 6;
   }
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), a];
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), parseFloat(a.toFixed(2))];
 }

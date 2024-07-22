@@ -70,27 +70,24 @@
                 <p></p>
             </div> -->
 
-            <div class="colorPickerTabs">
+            <!-- <div class="colorPickerTabs">
                 <div class="colorTabs">
                     Solid
                 </div>
                 <div class="colorTabs">
                     Linear
                 </div>
-            </div>
+            </div> -->
 
             <div id="colorPicker">
                 <canvas id="colorCanvas" height="140" width="415px"></canvas>
-                <div
-                    style="display: flex;margin-top: 8px;border-bottom: 1px solid #f1f1f1;padding-bottom: 12px;align-items: flex-end;">
-                    <span id="pickColor"
-                        style="  display: flex;align-items: center;justify-content: center;border-radius: 8px;width: 48px;height: 40px;border: 1px solid lightgray;min-width: 80px;max-width: 36px;">
+                <div class="colorTopSection">
+                    <span id="pickColor">
                         <img src="images/ColorPicker.svg" alt="Copy Icon" />
                     </span>
-                    <div id="selectedColor"
-                        style="display: block;width: 62px;height: 40px;border-radius: 8px;margin-right: 8px;background-color: rgb(0, 0, 0);min-width: 80px;max-width: 36px;border: 1px solid lightgray;margin-left: 8px;">
+                    <div id="selectedColor">
                     </div>
-                    <div style="width: 100%;margin-left: 12px;max-width: 208px;">
+                    <div class="colorRangeInputsContainer">
                         <input type="range" id="hueRange" min="0" max="360" value="0">
                         <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
                     </div>
@@ -99,47 +96,41 @@
 
             </div>
             <!-- //Color Inputs -->
-            <div style="margin-top: 12px">
-                <div style="display: flex;
-                    align-items: center;
-                    gap: 16px; color: rgb(17, 24, 39); font-size: 14px; line-height: 24px;  font-weight: 600;
-                        letter-spacing: 0.5px;
-                        margin-right: 6px; margin-bottom: 16px;">
+            <div class="colorMidSecton" style="margin-top: 12px">
+                <div class="colorTypeTabs">
                     <span class="colorType activeType" id="hex">
                         HEX
                     </span>
                     <span id="rgba" class="colorType">
                         RGBA
                     </span>
-                    <span id="hsl" class="colorType">
+                    <!-- <span id="hsl" class="colorType">
                         HSL
-                    </span>
+                    </span> -->
 
                 </div>
                 <div style="display: flex;  align-items: center;">
 
-                    <input type="text" value="#000000" id="colorValue"
-                        style="width: 100%;padding: 9px 14px;font-size: 13.5px;box-sizing: border-box;border: 1px solid lightgray;border-radius: 8px;border-top-right-radius: 0;border-bottom-right-radius: 0;">
-
-                    <span
-                        style="display: flex;justify-content: center;align-items: center;border-radius: 8px;width: 45px;height: 35px;border: 1px solid lightgray;border-top-left-radius: 0;border-bottom-left-radius: 0;border-left: 0;">
+                    <input type="text" value="#000000" id="colorValue">
+                    <span id="copyColorInput">
                         <img src="images/copy.svg" alt="Copy Icon" width="16" height="16" />
                     </span>
-                    <span id="star"
-                        style="display: flex;justify-content: center;align-items: center;border-radius: 8px;width: 45px;height: 35px;border: 1px solid lightgray;margin-left: 8px;">
+                    <span id="star">
                         <img src="images/star.svg" alt="Copy Icon" width="16" height="16" />
                     </span>
                 </div>
 
 
-                <div class="sectionColorType" style="display: flex; justify-content: space-between;">
+                <div class="sectionColorType" >
                     Recent Colors
                     <div id="resetRecent">
-                        Clear
+                        Clear 
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;  padding-top: 8px;">
+                <div class="colorsContainer" >
+                    <span class="colorTabRecent"></span>
+                    <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
                     <span class="colorTabRecent"></span>
@@ -161,7 +152,7 @@
                 </div>
 
 
-                <div class="sectionColorType" style="display: flex; justify-content: space-between;">
+                <div class="sectionColorType" >
 
                     Favorite Colors
                     <div id="resetFav">
@@ -169,7 +160,9 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; padding-top: 8px;">
+                <div class="colorsContainer">
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
@@ -232,24 +225,10 @@
                     Copy <img src="images/copy.svg" alt="Copy Icon" />
                 </span>
             </div>
-            <div style="position: relative;">
+            <div id="max_limit_typography">Max Limit 250</div>
+            <div class="loremMidmSection" >
                 <textarea id="loremArea" style="width: 100%; height: 200px;"></textarea>
-                <div style="
-                    position: absolute;
-                    bottom: 4px;
-                    padding: 6px 12px;
-                    right: 1px;
-                    background: #f5f5f5;
-                    width: calc(100% - 2px);
-                    text-align: end;
-                    border-bottom-left-radius: 8px;
-                    border-bottom-right-radius: 8px;
-                    font-size: 12px;
-                    font-weight: 500;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                ">
+                <div class="loremBottomArea" >
                     <span class="scrollTop" id="scrollTopBtn">
                         <svg stroke="currentColor" class="scrollTopSvg" fill="white" stroke-width="0"
                             viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -294,86 +273,44 @@
                 <p></p>
             </div> -->
 
-            <div style="">
-                <div id="font-container" class="fontBox">
-                    <label for="input-1-size" class="labelInput" style="
-                    grid-column: 1/3;
-                ">
-                        Recent
-                        <span style="display: flex;">
-                            <img src="images/copy.svg" alt="Copy Icon" />
-                        </span></label>
-
-
+            <div id="font-container" class="fontBox">
+                <div id="htmlTag"
+                    >
+                    -
+                </div>
+                <div style="padding-bottom: 12px; border-bottom: 1px solid lightgrey;">
+                    <label class="typolabel">Font family</label>
+                    <span id="fontFamily">-</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                     <div>
-                        <label class="typolabel">
-                            Font family
-                        </label>
-                        <div class="fontInputBox">
-                            <input type="text" id="input-1-family" placeholder="Font family"
-                                class="inputContainer inputRounded">
-
-                        </div>
-                    </div>
-
-
-
-                    <div>
-                        <label class="typolabel">
-                            Style
-                        </label>
-                        <div class="fontInputBox">
-                            <!-- <input type="text" id="input-1-size" placeholder="Size" class="inputContainer inputRounded"> -->
-
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="typolabel">
-                            Font-Size
-                        </label>
+                        <label class="typolabel">Font-Size</label>
                         <div class="fontInputBox">
                             <input type="text" id="input-1-size" placeholder="Size" class="inputContainer">
-                            <div class="versionBtn" id="versionBtn">
-                                PX
-                            </div>
+                            <div class="versionBtn" id="versionBtn">PX</div>
                         </div>
                     </div>
-
                     <div>
-                        <label class="typolabel">
-                            Line-Height
-                        </label>
+                        <label class="typolabel">Line-Height</label>
                         <div class="fontInputBox">
                             <input type="text" id="input-1-line" placeholder="Line Height" class="inputContainer">
-                            <div class="versionBtn" id="versionBtn">
-                                PX
-                            </div>
+                            <div class="versionBtn" id="versionBtn">PX</div>
                         </div>
                     </div>
-
                     <div>
-                        <label class="typolabel">
-                            Color
-                        </label>
+                        <label class="typolabel">Color</label>
                         <div class="fontInputBox">
                             <input type="text" id="input-1-color" placeholder="Color"
                                 class="inputContainer inputRounded">
-
                         </div>
                     </div>
-
                     <div>
-                        <label class="typolabel">
-                            Font Weght
-                        </label>
+                        <label class="typolabel">Font Weight</label>
                         <div class="fontInputBox">
                             <input type="text" id="input-1-weight" placeholder="Weight"
                                 class="inputContainer inputRounded">
-
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -436,8 +373,7 @@
             </div>
             <div id="statusContainer" class="statusContainer" style="display: none;">
                 <canvas id="ImgUploaded" class="ImgUploaded" width="300" height="150"></canvas>
-                <div
-                    style="display: flex; gap: 16px; background-color: lightgray; width: 100%; padding: 8px 12px; margin-top: auto; border-bottom-right-radius: 7px; border-bottom-left-radius: 7px;">
+                <div class="imageInfoContainer">
                     <div style="width: 100%;">
                         <div id="fileName" class="fileName"></div>
                         <progress id="progressBar" class="progressBar" value="0" max="100"></progress>
@@ -451,9 +387,9 @@
             </div>
             <div class="imageWidthHeightContainer">
                 <div>
-                    <div style="display: flex; justify-content: space-between; padding-bottom: 4px;">
+                    <div class="imageInputLabel" >
                         <label for="width" class="label">Width</label>
-                        <span style="font-size: 10px; align-content: flex-end;" id="originalWidth"></span>
+                        <span  id="originalWidth"></span>
                     </div>
                     <div class="fontInputBox">
                         <input type="number" id="width" placeholder="Width" class="inputContainerWidth">
@@ -461,9 +397,9 @@
                     </div>
                 </div>
                 <div>
-                    <div style="display: flex; justify-content: space-between; padding-bottom: 4px;">
+                    <div class="imageInputLabel" >
                         <label for="height" class="label">Height</label>
-                        <span style="font-size: 10px; align-content: flex-end;" id="originalHeight"></span>
+                        <span id="originalHeight"></span>
                     </div>
                     <div class="fontInputBox">
                         <input type="number" id="height" placeholder="Height" class="inputContainerHeight">

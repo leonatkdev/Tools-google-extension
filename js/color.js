@@ -11,14 +11,15 @@ function initializeUI() {
   setRecentColors();
   setupColorCanvas();
   setupPickColorButton();
+  setupCopyColorInputButton();
 }
 
 function setRecentColors() {
   function updateRecentColorsUI(colors) {
     const recentColorElements = document.querySelectorAll(".colorTabRecent");
-    colors.forEach((color, index) => {
+    colors.slice(0, 20).reverse().forEach((color, index) => {
       if (recentColorElements[index]) {
-        recentColorElements[index].style.backgroundColor = color.startsWith('#') ? color : rgbaToHex(...parseRgba(color));
+        recentColorElements[index].style.backgroundColor = color.startsWith('#') ? color : rgbaToHex(parseRgba(color));
       }
     });
   }
@@ -46,10 +47,11 @@ function setupStarClicks() {
 
     chrome.storage.local.get({ favoriteColors: [] }, function (result) {
       let favorites = result.favoriteColors;
-      const maxFavorites = 9;
+      const maxFavorites = 20;
       if (favorites.length < maxFavorites) {
-        const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(...parseRgba(colorValue));
-        favorites.push(hexColor);
+        const rgba = parseRgba(colorValue);
+        const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        favorites.unshift(hexColor);  // Add to the start of the array
         chrome.storage.local.set({ favoriteColors: favorites }, function () {
           updateFavoriteColorUI(favorites);
         });
@@ -62,7 +64,7 @@ function setupStarClicks() {
 
 function updateFavoriteColorUI(favorites) {
   const colorTabs = document.querySelectorAll(".colorTabFavorite");
-  favorites.forEach((color, index) => {
+  favorites.slice(0, 20).forEach((color, index) => {
     if (colorTabs[index]) {
       colorTabs[index].style.backgroundColor = color;
     }
@@ -123,7 +125,7 @@ function convertColorInput(value, type) {
         const rgba = value.startsWith("#")
           ? hexToRgba(value)
           : hslToRgba(parseHsl(value));
-        colorInput.value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+        colorInput.value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(2)})`;
         break;
       case "hsl":
         const {
@@ -143,9 +145,14 @@ function convertColorInput(value, type) {
 }
 
 function parseRgba(rgbaString) {
-  const rgbaArray = rgbaString.match(/\d+\.?\d*/g).map(Number);
+  const match = rgbaString.match(/\d+\.?\d*/g);
+  if (!match) {
+    // console.error("Invalid RGBA string:", rgbaString);
+    return { r: 0, g: 0, b: 0, a: 1 }; // Default to black with full opacity if invalid
+  }
+  const rgbaArray = match.map(Number);
   const [r, g, b, a = 1] = rgbaArray; // Default alpha to 1 if not present
-  return { r, g, b, a };
+  return { r, g, b, a: parseFloat(a.toFixed(2)) }; // Ensure alpha is limited to two decimal places
 }
 
 function parseHsl(hslString) {
@@ -184,7 +191,23 @@ function setupPickColorButton() {
   });
 }
 
+function setupCopyColorInputButton() {
+  const copyColorBtn = document.getElementById("copyColorInput");
+  copyColorBtn.addEventListener("click", function () {
+    const colorInput = document.getElementById("colorValue");
+    colorInput.select();
+    colorInput.setSelectionRange(0, 99999); // For mobile devices
+    copyColorBtn.style.backgroundColor = '#007bff'
+    copyColorBtn.querySelector("img").style.filter = "invert(1)";
 
+    try {
+      document.execCommand("copy");
+      console.log("Color copied to clipboard:", colorInput.value);
+    } catch (err) {
+      console.error("Failed to copy color:", err);
+    }
+  });
+}
 
 function setupColorCanvas() {
   const colorCanvas = document.getElementById("colorCanvas");
@@ -196,12 +219,10 @@ function setupColorCanvas() {
 
   let manualHexInput = false;
 
-  let offscreenCanvas = document.createElement("canvas");
+  const offscreenCanvas = document.createElement("canvas");
   offscreenCanvas.width = colorCanvas.width;
   offscreenCanvas.height = colorCanvas.height;
-  let offscreenCtx = offscreenCanvas.getContext("2d", {
-    willReadFrequently: true,
-  });
+  const offscreenCtx = offscreenCanvas.getContext("2d", { willReadFrequently: true });
 
   let currentHue = 0;
   let currentAlpha = 1;
@@ -212,23 +233,13 @@ function setupColorCanvas() {
   function drawOffscreenColorSpectrum(hue, alpha) {
     offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-    const colorGradient = offscreenCtx.createLinearGradient(
-      0,
-      0,
-      offscreenCanvas.width,
-      0
-    );
+    const colorGradient = offscreenCtx.createLinearGradient(0, 0, offscreenCanvas.width, 0);
     colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
     colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
     offscreenCtx.fillStyle = colorGradient;
     offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-    const hueGradient = offscreenCtx.createLinearGradient(
-      0,
-      0,
-      0,
-      offscreenCanvas.height
-    );
+    const hueGradient = offscreenCtx.createLinearGradient(0, 0, 0, offscreenCanvas.height);
     hueGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
     hueGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
     offscreenCtx.fillStyle = hueGradient;
@@ -254,26 +265,50 @@ function setupColorCanvas() {
   }
 
   function drawBall() {
+    // Save the current state
+    ctx.save();
+
+    // Draw box shadow
+    ctx.shadowColor = "black";
+    ctx.shadowBlur = 2;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Draw border
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "white";
+
+    // Draw transparent middle
+    ctx.fillStyle = "rgba(255, 255, 255, 0)"; // Transparent fill
+
     ctx.beginPath();
     ctx.arc(ballPosition.x, ballPosition.y, 10, 0, 2 * Math.PI);
-    ctx.fillStyle = "white";
     ctx.fill();
-    ctx.strokeStyle = "black";
     ctx.stroke();
+
+    // Draw plus sign
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "white";
+    ctx.beginPath();
+    // Vertical line
+    ctx.moveTo(ballPosition.x, ballPosition.y - 5);
+    ctx.lineTo(ballPosition.x, ballPosition.y + 5);
+    // Horizontal line
+    ctx.moveTo(ballPosition.x - 5, ballPosition.y);
+    ctx.lineTo(ballPosition.x + 5, ballPosition.y);
+    ctx.stroke();
+
+    // Restore the previous state
+    ctx.restore();
   }
 
   function pickColor() {
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
-    const imageData = offscreenCtx.getImageData(
-      ballPosition.x,
-      ballPosition.y,
-      1,
-      1
-    ).data;
+    const imageData = offscreenCtx.getImageData(ballPosition.x, ballPosition.y, 1, 1).data;
 
     const hex = rgbaToHex(imageData[0], imageData[1], imageData[2], currentAlpha);
-    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${parseFloat(currentAlpha).toFixed(2)})`;
     const [h, s, l] = rgbToHsl(imageData[0], imageData[1], imageData[2], currentAlpha);
 
     const activeTypeSpan = document.querySelector("span.activeType").id;
@@ -336,7 +371,7 @@ function setupColorCanvas() {
 
   alphaRange.addEventListener("input", function () {
     manualHexInput = false;
-    currentAlpha = this.value;
+    currentAlpha = parseFloat(this.value);
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   });
@@ -349,13 +384,27 @@ function setupColorCanvas() {
   function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
     const [h, s, l] = rgbToHsl(r, g, b);
+
     currentHue = h;
     currentAlpha = a;
     hueRange.value = h;
     alphaRange.value = a;
 
-    ballPosition.x = (s / 100) * colorCanvas.width;
-    ballPosition.y = colorCanvas.height - (l / 100) * colorCanvas.height;
+    drawOffscreenColorSpectrum(currentHue, currentAlpha);
+
+    let found = false;
+    for (let y = 0; y < offscreenCanvas.height; y++) {
+      for (let x = 0; x < offscreenCanvas.width; x++) {
+        const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+        if (imageData[0] === r && imageData[1] === g && imageData[2] === b && Math.round(imageData[3] / 255 * 100) === Math.round(a * 100)) {
+          ballPosition.x = x;
+          ballPosition.y = y;
+          found = true;
+          break;
+        }
+      }
+      if (found) break;
+    }
 
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
@@ -382,6 +431,7 @@ function setupColorCanvas() {
   });
 }
 
+// Utility functions
 function hexToRgba(hex) {
   let r = 0, g = 0, b = 0, a = 1;
   if (hex.length === 7) {
@@ -394,7 +444,7 @@ function hexToRgba(hex) {
     b = parseInt(hex.slice(5, 7), 16);
     a = parseInt(hex.slice(7, 9), 16) / 255;
   }
-  return { r, g, b, a };
+  return { r, g, b, a: parseFloat(a.toFixed(2)) }; // Ensure alpha is limited to two decimal places
 }
 
 function hslToRgb(h, s, l) {
@@ -467,5 +517,5 @@ function rgbToHsl(r, g, b, a = 1) {
     }
     h /= 6;
   }
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), a];
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100), parseFloat(a.toFixed(2))];
 }

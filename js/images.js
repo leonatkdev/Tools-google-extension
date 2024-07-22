@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const heightInput = document.getElementById('height');
   const originalWidth = document.getElementById('originalWidth');
   const originalHeight = document.getElementById('originalHeight');
+  const supportedFormats = ['jpeg', 'png', 'webp', 'svg+xml'];
   let originalImage = null;
   let resizedImage = null;
   let fileReader = null;
@@ -55,6 +56,24 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function handleFileUpload(file) {
+    const fileType = file.type.split('/')[1];
+    if (!supportedFormats.includes(fileType)) {
+      addImage.innerHTML = `
+        <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+            stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="16 16 12 12 8 16"></polyline>
+            <line x1="12" y1="12" x2="12" y2="21"></line>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 1 0 0 3 16.3"></path>
+            <polyline points="16 16 12 12 8 16"></polyline>
+        </svg>
+        File format not supported
+        <button class="fileSelectImage">Select File</button>
+        <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">`;
+      addImage.style.backgroundColor = '#fdf3f3';
+      addImage.style.border = '2px dashed red';
+      return;
+    }
+
     if (file.size > MAX_FILE_SIZE) {
       alert('The file size exceeds the maximum limit of 100MB.');
       return;
@@ -64,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fileNameDisplay.textContent = file.name;
     statusContainer.style.display = 'flex';
     progressBar.value = 0;
-    originalFileType = file.type.split('/')[1];
+    originalFileType = fileType;
 
     fileReader.onprogress = function(event) {
       if (event.lengthComputable) {
@@ -91,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
       img.onerror = function() {
         showStatusMessage(`Error loading ${file.name}.`, true);
       };
+
       img.src = event.target.result;
       showStatusMessage(`${file.name}`);
       addImage.style.display = 'none';
@@ -164,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function hideStatusMessage() {
-    // fileNameDisplay.textContent = '';
+    fileNameDisplay.textContent = '';
   }
 
   function drawImageWithObjectFit(ctx, img, canvasWidth, canvasHeight, fitType) {
@@ -223,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     originalWidth.textContent = '';
     originalHeight.textContent = '';
     addImage.style.display = 'flex';
+    addImage.style.backgroundColor = ''; // Reset background color
     statusContainer.style.display = 'none';
     ctxImgUploaded.clearRect(0, 0, canvasImgUploaded.width, canvasImgUploaded.height);
 

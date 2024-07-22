@@ -14,7 +14,7 @@ let recentColors = [];
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "colorPicked") {
-    console.log("colorPicked", message.color);
+    // console.log("colorPicked", message.color);
     lastPickedColor = message.color;
     // Add the new color to the start of the array and remove duplicates
     recentColors = [message.color, ...new Set(recentColors)];
@@ -33,16 +33,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "getColor") {
-    console.log('getColor', recentColors);
+    // console.log('getColor', recentColors);
     sendResponse({ color: recentColors[0] || "#000000" });
   }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "getRecentColors") {
-    console.log('getRecentColors', recentColors);
+    // console.log('getRecentColors', recentColors);
     chrome.storage.local.get("recentColors", function (data) {
-      console.log('data', data)
+      // console.log('data', data)
       sendResponse({ recentColors: data.recentColors || [] });
     });
     return true; // Needed to indicate that sendResponse will be called asynchronously
@@ -51,7 +51,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 ////Typography
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'saveFontData') {
-      chrome.storage.local.set({ fontData: message.data });
+  if (message.action === "saveFontData") {
+    chrome.storage.local.set({ fontData: message.fontData }, function () {
+      console.log("Font data saved in background:", message.fontData);
+    });
   }
 });
+

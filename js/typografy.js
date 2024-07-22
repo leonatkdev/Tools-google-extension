@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error(`Error injecting script: ${chrome.runtime.lastError.message}`);
               } else {
                 chrome.tabs.sendMessage(tabs[0].id, { action: "activateTypography", fontData: fontData });
+                  // Close the extension popup
+              window.close();
               }
             }
           );

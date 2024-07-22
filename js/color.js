@@ -147,7 +147,7 @@ function convertColorInput(value, type) {
 function parseRgba(rgbaString) {
   const match = rgbaString.match(/\d+\.?\d*/g);
   if (!match) {
-    // console.error("Invalid RGBA string:", rgbaString);
+    console.error("Invalid RGBA string:", rgbaString);
     return { r: 0, g: 0, b: 0, a: 1 }; // Default to black with full opacity if invalid
   }
   const rgbaArray = match.map(Number);
@@ -180,6 +180,8 @@ function setupPickColorButton() {
                 action: "capturePage",
                 tabId: tabs[0].id,
               });
+              // Close the extension popup
+              window.close();
             }
           }
         );
@@ -406,9 +408,31 @@ function setupColorCanvas() {
       if (found) break;
     }
 
+    // locateColorOnCanvas(r, g, b, a);
+
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   }
+
+  // function locateColorOnCanvas(r, g, b, a) {
+  //   const targetRgba = `rgba(${r}, ${g}, ${b}, ${a})`;
+  //   let found = false;
+
+  //   for (let y = 0; y < offscreenCanvas.height; y++) {
+  //     for (let x = 0; x < offscreenCanvas.width; x++) {
+  //       const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+  //       const canvasColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${parseFloat(imageData[3] / 255).toFixed(2)})`;
+        
+  //       if (canvasColor === targetRgba) {
+  //         ballPosition.x = x;
+  //         ballPosition.y = y;
+  //         found = true;
+  //         break;
+  //       }
+  //     }
+  //     if (found) break;
+  //   }
+  // }
 
   chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
     if (response.color) {

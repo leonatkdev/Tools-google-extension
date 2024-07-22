@@ -205,7 +205,6 @@ function activateZoom(dataUrl) {
 
 
 
-
 /////Typography
 (function() {
   if (typeof window.typographyMode === 'undefined') {
@@ -250,6 +249,12 @@ function activateZoom(dataUrl) {
       }
 
       if (window.typographyMode) {
+        const tagName = event.target.tagName.toLowerCase();
+        if (tagName === 'a' || tagName === 'button') {
+          // Allow links and buttons to work normally
+          return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
 
@@ -266,7 +271,7 @@ function activateZoom(dataUrl) {
         // Send the font data to the background script to save it
         chrome.runtime.sendMessage({ action: "saveFontData", fontData: fontData });
 
-        showModal(fontData, event.pageX, event.pageY);
+        showModal(fontData, event.clientX, event.clientY);
       }
     }
 
@@ -359,27 +364,8 @@ function activateZoom(dataUrl) {
         window.typographyMode = true;
         document.addEventListener("click", handleClick, true);
         createQuitButton();
-
-        if (message.fontData) {
-          applyFontData(message.fontData);
-        }
       }
     });
-
-    function applyFontData(fontData) {
-      const style = document.createElement('style');
-      style.type = 'text/css';
-      style.innerHTML = `
-        * {
-          font-family: ${fontData.fontFamily} !important;
-          font-size: ${fontData.fontSize} !important;
-          font-weight: ${fontData.fontWeight} !important;
-          line-height: ${fontData.lineHeight} !important;
-          color: ${fontData.color} !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
 
     const modalStyles = {
       position: "absolute",
@@ -439,6 +425,7 @@ function activateZoom(dataUrl) {
     };
   }
 })();
+
 
 
 

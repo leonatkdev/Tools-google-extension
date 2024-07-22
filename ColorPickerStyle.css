@@ -536,8 +536,13 @@
 .loremTopContainer {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   gap: 8px;
+}
+
+#max_limit_typography{
+  color: red;
+  font-weight: 500;
 }
 
 .loremInput {
@@ -618,6 +623,7 @@
 
 .loremMidmSection {
   position: relative;
+  margin-top: 6px;
 }
 
 .loremBottomArea {

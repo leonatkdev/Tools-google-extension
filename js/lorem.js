@@ -94,16 +94,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedType = "paragraphs";
     document.getElementById(selectedType).classList.add("loremTypeSelected");
 
-    const copyBtn = document.getElementById('loremCopyBtn')
-
+    const copyBtn = document.getElementById('loremCopyBtn');
     const amountInput = document.getElementById('loremAmount');
+    const maxLimitTypography = document.getElementById('max_limit_typography');
 
     const updateText = () => {
-        const amount = parseInt(amountInput.value);
+        let amount = parseInt(amountInput.value);
+        if (amount > 250) {
+            maxLimitTypography.style.display = 'block';
+            amount = 250;
+            amountInput.value = 250;
+        } else {
+            maxLimitTypography.style.display = 'none';
+        }
         const loremArea = document.getElementById('loremArea');
         loremArea.value = generateLoremIpsum(selectedType, amount);
         updateWordCount();
         resetCopyButton(); // Reset the copy button on text update
+    };
+
+    const validateInput = () => {
+        amountInput.value = amountInput.value.replace(/[^0-9]/g, '');
     };
 
     const updateWordCount = () => {
@@ -146,12 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateText();
     });
 
-    amountInput.addEventListener('input', updateText);
+    amountInput.addEventListener('input', () => {
+        validateInput();
+        updateText();
+    });
 
     copyBtn.addEventListener('click', () => {
         const loremText = document.getElementById('loremArea').value;
         navigator.clipboard.writeText(loremText).then(() => {
-            // console.log('copiedTest')
             copyBtn.classList.add("copyButtonAnimation");
             copyBtn.textContent = "Copied";
         }).catch(err => {

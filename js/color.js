@@ -17,7 +17,7 @@ function initializeUI() {
 function setRecentColors() {
   function updateRecentColorsUI(colors) {
     const recentColorElements = document.querySelectorAll(".colorTabRecent");
-    colors.forEach((color, index) => {
+    colors.slice(0, 20).reverse().forEach((color, index) => {
       if (recentColorElements[index]) {
         recentColorElements[index].style.backgroundColor = color.startsWith('#') ? color : rgbaToHex(parseRgba(color));
       }
@@ -47,11 +47,11 @@ function setupStarClicks() {
 
     chrome.storage.local.get({ favoriteColors: [] }, function (result) {
       let favorites = result.favoriteColors;
-      const maxFavorites = 9;
+      const maxFavorites = 20;
       if (favorites.length < maxFavorites) {
         const rgba = parseRgba(colorValue);
         const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
-        favorites.push(hexColor);
+        favorites.unshift(hexColor);  // Add to the start of the array
         chrome.storage.local.set({ favoriteColors: favorites }, function () {
           updateFavoriteColorUI(favorites);
         });
@@ -64,7 +64,7 @@ function setupStarClicks() {
 
 function updateFavoriteColorUI(favorites) {
   const colorTabs = document.querySelectorAll(".colorTabFavorite");
-  favorites.forEach((color, index) => {
+  favorites.slice(0, 20).forEach((color, index) => {
     if (colorTabs[index]) {
       colorTabs[index].style.backgroundColor = color;
     }
@@ -145,7 +145,12 @@ function convertColorInput(value, type) {
 }
 
 function parseRgba(rgbaString) {
-  const rgbaArray = rgbaString.match(/\d+\.?\d*/g).map(Number);
+  const match = rgbaString.match(/\d+\.?\d*/g);
+  if (!match) {
+    // console.error("Invalid RGBA string:", rgbaString);
+    return { r: 0, g: 0, b: 0, a: 1 }; // Default to black with full opacity if invalid
+  }
+  const rgbaArray = match.map(Number);
   const [r, g, b, a = 1] = rgbaArray; // Default alpha to 1 if not present
   return { r, g, b, a: parseFloat(a.toFixed(2)) }; // Ensure alpha is limited to two decimal places
 }
@@ -193,9 +198,7 @@ function setupCopyColorInputButton() {
     colorInput.select();
     colorInput.setSelectionRange(0, 99999); // For mobile devices
     copyColorBtn.style.backgroundColor = '#007bff'
-    console.log('copyColorBtn.querySelector("img")', copyColorBtn.querySelector("img"))
-    copyColorBtn.querySelector("img").style.filter = "brightness(0);"
-       copyColorBtn.querySelector("img").style.filter = "invert(1)"
+    copyColorBtn.querySelector("img").style.filter = "invert(1)";
 
     try {
       document.execCommand("copy");

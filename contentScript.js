@@ -271,11 +271,11 @@ function activateZoom(dataUrl) {
         // Send the font data to the background script to save it
         chrome.runtime.sendMessage({ action: "saveFontData", fontData: fontData });
 
-        showModal(fontData, event.clientX, event.clientY);
+        showModal(fontData, event.pageX, event.pageY);
       }
     }
 
-    function showModal(fontData, x, y) {
+    function showModal(fontData, pageX, pageY) {
       const modal = document.createElement("div");
       modal.className = "typography-modal";
       Object.assign(modal.style, modalStyles);
@@ -326,14 +326,18 @@ function activateZoom(dataUrl) {
       Object.assign(modal.querySelector("#closeButton").style, closeButtonStyles);
 
       const modalRect = modal.getBoundingClientRect();
-      if (x + modalRect.width > window.innerWidth) {
-        x = window.innerWidth - modalRect.width - 10;
+      const viewportX = pageX - window.scrollX;
+      const viewportY = pageY - window.scrollY;
+
+      if (viewportX + modalRect.width > window.innerWidth) {
+        pageX = window.innerWidth - modalRect.width - 10 + window.scrollX;
       }
-      if (y + modalRect.height > window.innerHeight) {
-        y = window.innerHeight - modalRect.height - 10;
+      if (viewportY + modalRect.height > window.innerHeight) {
+        pageY = window.innerHeight - modalRect.height - 10 + window.scrollY;
       }
-      modal.style.left = `${x}px`;
-      modal.style.top = `${y}px`;
+
+      modal.style.left = `${pageX}px`;
+      modal.style.top = `${pageY}px`;
 
       modal.querySelector("#copyButton").addEventListener("click", () => {
         copyAllToClipboard(
@@ -425,6 +429,8 @@ function activateZoom(dataUrl) {
     };
   }
 })();
+
+
 
 
 

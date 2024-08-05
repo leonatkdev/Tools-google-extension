@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Dev Tools (Alfa)",
     "version": "0.1.1",
-    "description": "The best tool for designer to pick color from web page and get the color code easily.",
+    "description": "Tool for developers and designers including a color picker, lorem ipsum generator, typography analyzer, and image resizer/converter. ",
     "action": {
       "default_popup": "ColorPickerHtml.html",
       "default_icon": {

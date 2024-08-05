@@ -234,37 +234,38 @@ function setupColorCanvas() {
 
   function drawOffscreenColorSpectrum(hue, alpha) {
     offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
-
+  
     const colorGradient = offscreenCtx.createLinearGradient(0, 0, offscreenCanvas.width, 0);
     colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
     colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
     offscreenCtx.fillStyle = colorGradient;
     offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
-
-    const hueGradient = offscreenCtx.createLinearGradient(0, 0, 0, offscreenCanvas.height);
-    hueGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
-    hueGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
-    offscreenCtx.fillStyle = hueGradient;
+  
+    const alphaGradient = offscreenCtx.createLinearGradient(0, 0, 0, offscreenCanvas.height);
+    alphaGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
+    alphaGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
+    offscreenCtx.fillStyle = alphaGradient;
     offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
   }
-
+  
   function drawColorSpectrum(hue, alpha) {
     ctx.clearRect(0, 0, colorCanvas.width, colorCanvas.height);
-
+  
     const colorGradient = ctx.createLinearGradient(0, 0, colorCanvas.width, 0);
     colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
     colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
     ctx.fillStyle = colorGradient;
     ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
-
-    const hueGradient = ctx.createLinearGradient(0, 0, 0, colorCanvas.height);
-    hueGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
-    hueGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
-    ctx.fillStyle = hueGradient;
+  
+    const alphaGradient = ctx.createLinearGradient(0, 0, 0, colorCanvas.height);
+    alphaGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
+    alphaGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
+    ctx.fillStyle = alphaGradient;
     ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
-
+  
     drawBall();
   }
+
 
   function drawBall() {
     // Save the current state
@@ -383,22 +384,28 @@ function setupColorCanvas() {
     setColorFromHex(e.target.value);
   });
 
+
+
   function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
     const [h, s, l] = rgbToHsl(r, g, b);
-
+  
     currentHue = h;
     currentAlpha = a;
     hueRange.value = h;
     alphaRange.value = a;
-
+  
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
-
+  
     let found = false;
     for (let y = 0; y < offscreenCanvas.height; y++) {
       for (let x = 0; x < offscreenCanvas.width; x++) {
         const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-        if (imageData[0] === r && imageData[1] === g && imageData[2] === b && Math.round(imageData[3] / 255 * 100) === Math.round(a * 100)) {
+        if (
+          imageData[0] === r &&
+          imageData[1] === g &&
+          imageData[2] === b
+        ) {
           ballPosition.x = x;
           ballPosition.y = y;
           found = true;
@@ -407,9 +414,7 @@ function setupColorCanvas() {
       }
       if (found) break;
     }
-
-    // locateColorOnCanvas(r, g, b, a);
-
+  
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   }

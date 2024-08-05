@@ -18,57 +18,132 @@ document.addEventListener("keydown", function (event) {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "capture") {
-    activateZoom(message.screenshotUrl);
+    try {
+      activateZoom(message.screenshotUrl);
+    } catch (e) {
+      console.error("Failed to activate zoom:", e);
+    }
   }
 });
 
 function injectUI() {
-  if (document.getElementById("colorPickerCanvas")) return;
+  // Check if elements already exist
+  if (document.getElementById("colorPickerCanvas")) {
+    return {
+      canvas: document.getElementById("colorPickerCanvas"),
+      lens: document.getElementById("zoomLens"),
+      gridSquares: document.getElementById("zoomGridSquares"),
+      overlay: document.getElementById("colorPickerOverlay"),
+    };
+  }
 
-  const overlay = document.createElement("div");
-  overlay.id = "colorPickerOverlay";
-  overlay.style.cssText =
-    "position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999998; background: rgba(0, 0, 0, 0.5); pointer-events: none;";
-  document.body.appendChild(overlay);
+  try {
+    const overlay = document.createElement("div");
+    overlay.id = "colorPickerOverlay";
+    overlay.style.cssText =
+      "position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999998; background: rgba(0, 0, 0, 0.5); pointer-events: none;";
+    document.body.appendChild(overlay);
 
-  const canvas = document.createElement("canvas");
-  canvas.id = "colorPickerCanvas";
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  canvas.style.cssText =
-    "position: fixed; top: 0; left: 0; z-index: 999999; pointer-events: none;";
-  document.body.appendChild(canvas);
+    const canvas = document.createElement("canvas");
+    canvas.id = "colorPickerCanvas";
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.cssText =
+      "position: fixed; top: 0; left: 0; z-index: 999999; pointer-events: none;";
+    document.body.appendChild(canvas);
 
-  const lens = document.createElement("div");
-  lens.id = "zoomLens";
-  lens.style.cssText =
-    "position: fixed; border: 1px solid #000; border-radius: 50%; width: 150px; height: 150px; overflow: hidden; pointer-events: none; z-index: 100000000; background-position: center;";
-  document.body.appendChild(lens);
+    const lens = document.createElement("div");
+    lens.id = "zoomLens";
+    lens.style.cssText =
+      "position: fixed; border: 1px solid #000; border-radius: 50%; width: 150px; height: 150px; overflow: hidden; pointer-events: none; z-index: 100000000; background-position: center;";
+    document.body.appendChild(lens);
 
-  const gridSquares = document.createElement("div");
-  gridSquares.id = "zoomGridSquares";
-  gridSquares.style.cssText =
-    "overflow: hidden; z-index: 100000000; width: 150px; height: 150px; border-radius: 50%; position: fixed; background-position: center; pointer-events: none;";
-  gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='10' height='10' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E")`;
-  document.body.appendChild(gridSquares);
+    const gridSquares = document.createElement("div");
+    gridSquares.id = "zoomGridSquares";
+    gridSquares.style.cssText =
+      "overflow: hidden; z-index: 100000000; width: 150px; height: 150px; border-radius: 50%; position: fixed; background-position: center; pointer-events: none;";
+    gridSquares.style.backgroundImage = `url("data:image/svg+xml,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='10' height='10' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E")`;
+    document.body.appendChild(gridSquares);
 
-  gridSquares.innerHTML += `
-    <style>
-      #zoomGridSquares::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 15px;
-        height: 15px;
-        border: 2px solid red; /* Change color as needed */
-      }
-    </style>
-  `;
+    gridSquares.innerHTML += `
+      <style>
+        #zoomGridSquares::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 15px;
+          height: 15px;
+          border: 2px solid red; /* Change color as needed */
+        }
+      </style>
+    `;
 
-  return { canvas, lens, gridSquares, overlay };
+    return { canvas, lens, gridSquares, overlay };
+  } catch (error) {
+    console.error("Error in injectUI:", error);
+    return {}; // Return an empty object if creation fails
+  }
 }
+
+function activateZoom(dataUrl) {
+  const { canvas, lens, gridSquares, overlay } = injectUI();
+  if (!canvas || !lens || !gridSquares || !overlay) {
+    console.error("Failed to inject UI elements.");
+    return;
+  }
+
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    document.addEventListener("mousemove", onDocumentMouseMove);
+    document.addEventListener("click", onDocumentClick);
+  };
+
+  img.onerror = () => {
+    console.error("Failed to load image for zoom.");
+  };
+
+  try {
+    img.src = dataUrl;
+  } catch (error) {
+    console.error("Invalid dataUrl:", error);
+  }
+
+  function onDocumentMouseMove(event) {
+    const x = event.clientX;
+    const y = event.clientY;
+    updateZoomLensPosition(event);
+    updateZoomBackground(canvas, lens, x, y, dataUrl);
+  }
+
+  function onDocumentClick(event) {
+    event.preventDefault(); // Prevent default click behavior
+    const x = event.clientX;
+    const y = event.clientY;
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1)}`;
+
+    console.log('Picked color:', hex); // Log the picked color
+    chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
+
+    cleanUp(); // Clean up the UI elements and event listeners after picking the color
+  }
+
+  function cleanUp() {
+    document.removeEventListener("mousemove", onDocumentMouseMove);
+    document.removeEventListener("click", onDocumentClick);
+
+    ["colorPickerCanvas", "zoomLens", "zoomGridSquares", "colorPickerOverlay"].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) element.remove();
+    });
+  }
+}
+
 
 function updateZoomLensPosition(event) {
   const x = event.clientX;
@@ -159,48 +234,69 @@ function updateZoomBackground(canvas, lens, x, y, dataUrl) {
 
 function activateZoom(dataUrl) {
   const { canvas, lens, gridSquares, overlay } = injectUI();
+  if (!canvas || !lens || !gridSquares || !overlay) {
+    console.error("Failed to inject UI elements.");
+    return;
+  }
+
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   const img = new Image();
   img.onload = () => {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    document.addEventListener("mousemove", (event) => {
-      const x = event.clientX;
-      const y = event.clientY;
-
-      updateZoomLensPosition(event);
-      updateZoomBackground(canvas, lens, x, y, dataUrl);
-    });
-
-    document.addEventListener("click", (event) => {
-      event.preventDefault(); // Prevent default click behavior
-      const x = event.clientX;
-      const y = event.clientY;
-      const pixel = ctx.getImageData(x, y, 1, 1);
-      const data = pixel.data;
-      const hex =
-        "#" +
-        ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2])
-          .toString(16)
-          .slice(1);
-
-      chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
-
-      [
-        "colorPickerCanvas",
-        "zoomLens",
-        "zoomGridSquares",
-        "colorPickerOverlay",
-      ].forEach((id) => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.remove();
-        }
-      });
-    });
+    document.addEventListener("mousemove", onDocumentMouseMove);
+    document.addEventListener("click", onDocumentClick);
   };
 
   img.src = dataUrl;
+
+  function onDocumentMouseMove(event) {
+    const x = event.clientX;
+    const y = event.clientY;
+    updateZoomLensPosition(event);
+    updateZoomBackground(canvas, lens, x, y, dataUrl);
+  }
+
+  function onDocumentClick(event) {
+    event.preventDefault(); // Prevent default click behavior
+    const x = event.clientX;
+    const y = event.clientY;
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1)}`;
+
+    console.log('Picked color:', hex); // Log the picked color
+    chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
+
+    cleanUp(); // Clean up the UI elements and event listeners after picking the color
+  }
+
+  function cleanUp() {
+    document.removeEventListener("mousemove", onDocumentMouseMove);
+    document.removeEventListener("click", onDocumentClick);
+
+    ["colorPickerCanvas", "zoomLens", "zoomGridSquares", "colorPickerOverlay"].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) element.remove();
+    });
+  }
+}
+
+
+function cleanUp() {
+  [
+    "colorPickerCanvas",
+    "zoomLens",
+    "zoomGridSquares",
+    "colorPickerOverlay"
+  ].forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.remove();
+    }
+  });
+
+  document.removeEventListener("mousemove", updateZoomLensPosition);
+  // document.removeEventListener("click", pickColor);
 }
 
 

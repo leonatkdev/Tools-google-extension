@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("lorem").addEventListener("click", () => openTab("lorem"));
   document.getElementById("images").addEventListener("click", () => openTab("images"));
   document.getElementById("typografy").addEventListener("click", () => openTab("typografy"));
+  document.getElementById("textTransformer").addEventListener("click", () => openTab("textTransformer"));
 
   function openTab(tag) {
     if (selected !== tag && selected !== undefined) {

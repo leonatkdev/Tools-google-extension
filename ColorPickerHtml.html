@@ -241,9 +241,11 @@
                             </path>
                         </svg>
                     </span>
-                    <span id="wordCount">
-                        0 Words
-                    </span>
+             
+                    <span id="characterLorem">0 Character</span>
+                    <span id="wordCountLorem">0 Words</span>
+                    <span id="sentenceLorem">0 Sentence</span>
+                    <span id="linelorem">0 Line</span>
                 </div>
             </div>
         </div>
@@ -474,10 +476,12 @@
             </div>
         
             <div class="textTransformerBottom">
-                <button class="undo" id="textTransformerUndo"><svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                <button class="undo" id="textTransformerUndo">
+                    <svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7.18,4,8.6,5.44,6.06,8h9.71a6,6,0,0,1,0,12h-2V18h2a4,4,0,0,0,0-8H6.06L8.6,12.51,7.18,13.92,2.23,9Z"></path>
                     </svg></button>
-                <button class="redo" id="textTransformerRedo"><svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                <button class="redo" id="textTransformerRedo">
+                    <svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                         <path d="M16.82,4,15.4,5.44,17.94,8H8.23a6,6,0,0,0,0,12h2V18h-2a4,4,0,0,1,0-8h9.71L15.4,12.51l1.41,1.41L21.77,9Z"></path>
                     </svg></button>
                 <button class="ttDownload" id="download-text">Download Text</button>

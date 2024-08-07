@@ -21,7 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('copy-text').addEventListener('click', copyToClipboard);
     document.getElementById('clear-text').addEventListener('click', clearText);
 
-    document.getElementById('texttArea').addEventListener('input', updateWordCount);
+    document.getElementById('textTransformerUndo').addEventListener('click', undo);
+    document.getElementById('textTransformerRedo').addEventListener('click', redo);
+
+    document.getElementById('texttArea').addEventListener('input', updateTextMetrics);
 });
 
 function setActiveButton(activeButtonId) {
@@ -65,7 +68,7 @@ function formatText(caseType) {
     }
 
     textarea.value = formattedText;
-    updateWordCount();
+    updateTextMetrics();
 }
 
 function downloadText() {
@@ -88,13 +91,21 @@ function copyToClipboard() {
 
 function clearText() {
     document.getElementById('texttArea').value = '';
-    updateWordCount();
+    updateTextMetrics();
 }
 
-function updateWordCount() {
+function updateTextMetrics() {
     const text = document.getElementById('texttArea').value;
+
+    const characterCount = text.length;
     const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const sentenceCount = text.split(/[.!?]+/).filter(Boolean).length;
+    const lineCount = text.split(/\r\n|\r|\n/).length;
+
+    document.getElementById('characterTextt').innerText = `${characterCount} Characters`;
     document.getElementById('wordCountTextt').innerText = `${wordCount} Words`;
+    document.getElementById('sentenceTextt').innerText = `${sentenceCount} Sentences`;
+    document.getElementById('lineTextt').innerText = `${lineCount} Lines`;
 }
 
 let undoStack = [];
@@ -109,7 +120,7 @@ function undo() {
     if (undoStack.length > 1) {
         redoStack.push(undoStack.pop());
         document.getElementById('texttArea').value = undoStack[undoStack.length - 1];
-        updateWordCount();
+        updateTextMetrics();
     }
 }
 
@@ -118,6 +129,6 @@ function redo() {
         const value = redoStack.pop();
         undoStack.push(value);
         document.getElementById('texttArea').value = value;
-        updateWordCount();
+        updateTextMetrics();
     }
 }

@@ -651,6 +651,19 @@
   align-items: center;
 }
 
+.loremBottomArea span {
+  border-right: 1px solid lightgrey;
+  padding: 0 6px;
+}
+
+.loremBottomArea span:last-child {
+  border-right: none;
+}
+
+#characterLorem{
+margin-left: auto;
+}
+
 .scrollTop {
   background-color: #007bff;
   height: 20px;

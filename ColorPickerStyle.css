@@ -888,6 +888,32 @@
   width: 100%;
 }
 
+.textTransformerArea {
+  position: absolute;
+  bottom: 4px;
+  padding: 6px 12px;
+  right: 1px;
+  background: #f5f5f5;
+  width: calc(100% - 2px);
+  text-align: end;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.textTransformerArea span {
+  border-right: 1px solid lightgrey;
+  padding: 0 6px;
+}
+
+.textTransformerArea span:last-child {
+  border-right: none;
+}
+
 .scrollTopTextt {
   background-color: #007bff;
   height: 20px;
@@ -896,6 +922,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
+  margin-right: auto;
 }
 
 .scrollTopSvgTextt {
@@ -975,3 +1002,4 @@
   background-color: #007bff !important;
   color: white !important;
 }
+

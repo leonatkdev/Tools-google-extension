@@ -59,9 +59,10 @@
   justify-content: center;
   padding: 24px;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   min-height: 180px;
   text-align: center;
+  cursor: pointer;
   border-bottom: 1px solid lightgray;
 }
 
@@ -214,6 +215,10 @@
   transform: scale(1.13);
 }
 
+.selected-for-deletion {
+  outline: 2px solid red;
+}
+
 #hueRange {
   -webkit-appearance: none;
   width: 100%;
@@ -294,6 +299,7 @@
   border: 1px solid lightgray;
   border-radius: 8px;
   font-size: 13px;
+  cursor: pointer;
 }
 
 .activeType {
@@ -320,6 +326,7 @@
   border: 1px solid lightgray;
   min-width: 80px;
   max-width: 36px;
+  cursor: pointer;
 }
 
 #selectedColor {
@@ -351,6 +358,33 @@
   border-top: 1px solid #f1f1f1;
 }
 
+.deleteRecentContainer,
+.deleteContainer {
+  /* display: flex; */
+  display: none;
+  border-left: 1px solid lightgrey;
+}
+
+.deleteRecentContainer div,
+.deleteContainer div {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: gray;
+  padding: 0 6px;
+}
+
+.selectRecentColor,
+.selectFavColor {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #007bff;
+  margin-left: auto;
+  padding-right: 6px;
+  /* margin-right: 4px; */
+  /* border-right: 1px solid lightgrey; */
+  cursor: pointer;
+}
+
 #resetRecent,
 #resetFav {
   font-size: 12.5px;
@@ -360,6 +394,40 @@
 
 .colorMidSecton {
   margin-top: 12px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.modal-content button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #0056b3;
 }
 
 .colorTypeTabs {
@@ -397,6 +465,7 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-left: 0;
+  cursor: pointer;
 }
 
 #star {
@@ -408,6 +477,7 @@
   height: 35px;
   border: 1px solid lightgray;
   margin-left: 8px;
+  cursor: pointer;
 }
 
 .colorsContainer {
@@ -522,6 +592,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
 }
 
 #activateButton {
@@ -534,6 +605,7 @@
   color: white;
   border: none;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 #activateButton {
@@ -576,6 +648,7 @@
   justify-content: center;
   background-color: #007bff;
   color: white;
+  cursor: pointer;
 }
 
 #loremCopyBtn img {
@@ -610,6 +683,7 @@
   border-radius: 6px;
   width: 25%;
   font-size: 14px;
+  cursor: pointer;
 }
 
 .loremTypeSelected {
@@ -660,8 +734,8 @@
   border-right: none;
 }
 
-#characterLorem{
-margin-left: auto;
+#characterLorem {
+  margin-left: auto;
 }
 
 .scrollTop {
@@ -672,6 +746,7 @@ margin-left: auto;
   justify-content: center;
   align-items: center;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .scrollTopSvg {
@@ -685,6 +760,27 @@ margin-left: auto;
 .preview {
   max-width: 100%;
   max-height: 150px;
+}
+
+.imageTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.imageTab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  color: gray;
+  background-color: white;
+  border: 1px solid lightgrey;
+}
+
+.imageTabActive {
+  color: white;
+  background-color: #007bff;
 }
 
 .imageInput {
@@ -749,7 +845,8 @@ margin-left: auto;
 
 .imageWidthHeightContainer {
   display: flex;
-  gap: 16px;
+  margin-top: 14px;
+  gap: 12px;
 }
 
 .imageInputLabel {
@@ -867,17 +964,19 @@ margin-left: auto;
 }
 
 .imageFormatContainer {
-  margin-top: 12px;
+  margin-top: 18px;
 }
 
 .inputContainerFormat {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   width: 100%;
   padding: 5px;
   font-size: 14px;
   background-color: #f5f5f5;
   border-radius: 8px;
   margin-top: 4px;
+  gap: 4px;
 }
 
 .inputContainerFormat button {
@@ -886,9 +985,24 @@ margin-left: auto;
   background: transparent;
   color: gray;
   border-radius: 6px;
-  width: 25%;
+  /* width: 25%; */
   font-size: 14px;
 }
+
+.linkContainerStyle {
+  background: #fefefe;
+  border: 1px solid lightgray;
+  border-radius: 6px;
+  height: 35px;
+  width: 35px;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+}
+
+
 
 #texttArea {
   resize: none;
@@ -936,6 +1050,7 @@ margin-left: auto;
   align-items: center;
   border-radius: 4px;
   margin-right: auto;
+  cursor: pointer;
 }
 
 .scrollTopSvgTextt {
@@ -962,6 +1077,7 @@ margin-left: auto;
   /* width: 25%; */
   border: 1px solid gray;
   padding: 8px 12px;
+  cursor: pointer;
 }
 
 .textTransformerBottom {
@@ -984,6 +1100,7 @@ margin-left: auto;
   background: white;
   padding: 10px 12px;
   color: #007bff;
+  cursor: pointer;
 }
 
 .undo,
@@ -1000,19 +1117,18 @@ margin-left: auto;
   fill: white;
 }
 
-.undo svg,  
+.undo svg,
 .redo svg {
   fill: #007bff;
   width: 14px;
-    height: 14px;
+  height: 14px;
 }
 
-.ttDownload{
+.ttDownload {
   margin-left: auto;
 }
 
-.ttClear{
+.ttClear {
   background-color: #007bff !important;
   color: white !important;
 }
-

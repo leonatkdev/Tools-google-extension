@@ -12,12 +12,98 @@ document.addEventListener('DOMContentLoaded', function() {
   const heightInput = document.getElementById('height');
   const originalWidth = document.getElementById('originalWidth');
   const originalHeight = document.getElementById('originalHeight');
-  const supportedFormats = ['jpeg', 'png', 'webp', 'svg+xml'];
+  const sameAspectCheckbox = document.querySelector('input[type="checkbox"]');
+  const zoomInButton = document.querySelector('.imageTab:nth-child(3)');
+  const zoomOutButton = document.querySelector('.imageTab:nth-child(4)');
   let originalImage = null;
-  let resizedImage = null;
+  let zoomFactor = 1;
+  let dragStartX = 0, dragStartY = 0;
+  let imgOffsetX = 0, imgOffsetY = 0;
+  let isDragging = false;
   let fileReader = null;
   let selectedFormat = 'original';
   let originalFileType = '';
+  const supportedFormats = ['jpeg', 'png', 'webp', 'svg+xml'];
+
+  // Existing code here...
+
+  // Zoom In
+  zoomInButton.addEventListener('click', function() {
+    if (originalImage) {
+      zoomFactor *= 1.1;
+      drawZoomedImage();
+    }
+  });
+
+  // Zoom Out
+  zoomOutButton.addEventListener('click', function() {
+    if (originalImage) {
+      zoomFactor /= 1.1;
+      drawZoomedImage();
+    }
+  });
+
+  // Handle dragging
+  canvasImgUploaded.addEventListener('mousedown', function(event) {
+    if (originalImage) {
+      isDragging = true;
+      dragStartX = event.clientX - imgOffsetX;
+      dragStartY = event.clientY - imgOffsetY;
+    }
+  });
+
+  canvasImgUploaded.addEventListener('mousemove', function(event) {
+    if (isDragging) {
+      imgOffsetX = event.clientX - dragStartX;
+      imgOffsetY = event.clientY - dragStartY;
+      drawZoomedImage();
+    }
+  });
+
+  canvasImgUploaded.addEventListener('mouseup', function() {
+    isDragging = false;
+  });
+
+  canvasImgUploaded.addEventListener('mouseleave', function() {
+    isDragging = false;
+  });
+
+  // Handle aspect ratio constraint
+  sameAspectCheckbox.addEventListener('change', function() {
+    if (this.checked && originalImage) {
+      const aspectRatio = originalImage.width / originalImage.height;
+      heightInput.value = Math.round(widthInput.value / aspectRatio);
+    }
+  });
+
+  widthInput.addEventListener('input', function() {
+    if (sameAspectCheckbox.checked && originalImage) {
+      const aspectRatio = originalImage.width / originalImage.height;
+      heightInput.value = Math.round(this.value / aspectRatio);
+    }
+  });
+
+  heightInput.addEventListener('input', function() {
+    if (sameAspectCheckbox.checked && originalImage) {
+      const aspectRatio = originalImage.height / originalImage.width;
+      widthInput.value = Math.round(this.value / aspectRatio);
+    }
+  });
+
+  function drawZoomedImage() {
+    const canvasWidth = canvasImgUploaded.width;
+    const canvasHeight = canvasImgUploaded.height;
+    const scaledWidth = originalImage.width * zoomFactor;
+    const scaledHeight = originalImage.height * zoomFactor;
+
+    ctxImgUploaded.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctxImgUploaded.drawImage(
+      originalImage,
+      imgOffsetX, imgOffsetY, scaledWidth, scaledHeight // Draw with current offset
+    );
+  }
+  
+
   const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
   // Handle drag and drop

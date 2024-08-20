@@ -1,6 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
   initializeUI();
   setupColorConversionListeners();
+
+
+    // Initialize selection and deletion for both Recent and Favorite colors
+    initializeColorSelection('.selectRecentColor', '.colorTabRecent', 'recentColors', '.deleteRecentContainer');
+    initializeColorSelection('.selectFavColor', '.colorTabFavorite', 'favoriteColors', '.deleteContainer');
+
 });
 
 function initializeUI() {
@@ -31,6 +37,85 @@ function setRecentColors() {
   });
 }
 
+function enableFavoriteColorSelection() {
+  const favoriteTabs = document.querySelectorAll(".colorTabFavorite");
+  favoriteTabs.forEach(tab => {
+    tab.addEventListener('click', toggleColorSelection);
+    tab.style.cursor = 'pointer';
+  });
+}
+
+function initializeColorSelection(selectClass, colorClass, storageKey, deleteContainerClass) {
+  const selectElement = document.querySelector(selectClass);
+  selectElement.addEventListener('click', () => {
+    toggleSelectionMode(selectElement, colorClass, deleteContainerClass);
+  });
+
+  document.querySelector(`${deleteContainerClass} div:first-child`).addEventListener('click', () => {
+    deleteSelectedColors(colorClass, storageKey);
+  });
+}
+
+function toggleSelectionMode(selectElement, colorClass, deleteContainerClass) {
+  if (selectElement.textContent === 'Select') {
+    selectElement.textContent = 'Cancel';
+    document.querySelector(deleteContainerClass).style.display = 'flex';
+    enableColorSelection(colorClass);
+  } else {
+    selectElement.textContent = 'Select';
+    document.querySelector(deleteContainerClass).style.display = 'none';
+    disableColorSelection(colorClass);
+  }
+}
+
+function enableColorSelection(colorClass) {
+  const colorTabs = document.querySelectorAll(colorClass);
+  colorTabs.forEach(tab => {
+    tab.addEventListener('click', toggleColorSelection);
+    tab.style.cursor = 'pointer';
+  });
+}
+
+function disableColorSelection(colorClass) {
+  const colorTabs = document.querySelectorAll(colorClass);
+  colorTabs.forEach(tab => {
+    tab.removeEventListener('click', toggleColorSelection);
+    tab.classList.remove('selected-for-deletion');
+    tab.style.cursor = 'default';
+  });
+}
+
+function toggleColorSelection(event) {
+  event.currentTarget.classList.toggle('selected-for-deletion');
+}
+
+function deleteSelectedColors(colorClass, storageKey) {
+  const selectedTabs = document.querySelectorAll(`${colorClass}.selected-for-deletion`);
+  chrome.storage.local.get({ [storageKey]: [] }, function (result) {
+    let colors = result[storageKey];
+    selectedTabs.forEach(tab => {
+      const color = window.getComputedStyle(tab).backgroundColor;
+      const rgbaColor = parseRgba(color);
+      const hexColor = rgbaToHex(rgbaColor.r, rgbaColor.g, rgbaColor.b, rgbaColor.a);
+
+      // Remove the color from the array
+      colors = colors.filter(col => col !== hexColor);
+
+      // Reset the tab's background color
+      tab.style.backgroundColor = "#f1f1f1";
+    }); 
+
+    // Update storage and UI
+    chrome.storage.local.set({ [storageKey]: colors }, function () {
+      if (storageKey === 'favoriteColors') {
+        updateFavoriteColorUI(colors);
+      } else if (storageKey === 'recentColors') {
+        updateRecentColorsUI(colors);
+      }
+    });
+  });
+}
+
 function setupRecentColorResetButton() {
   document.getElementById("resetRecent").addEventListener("click", function () {
     document.querySelectorAll(".colorTabRecent").forEach((box) => {
@@ -39,26 +124,51 @@ function setupRecentColorResetButton() {
     chrome.storage.local.set({ recentColors: [] });
   });
 }
+function showModal(modalId, onConfirm) {
+  const modal = document.getElementById(modalId);
+  modal.style.display = "flex";
+
+  if (onConfirm) {
+      const confirmBtn = modal.querySelector("#confirmDeleteBtn");
+      confirmBtn.addEventListener("click", function () {
+          onConfirm();
+          closeModal(modal);
+      }, { once: true });
+  }
+
+  const closeButtons = modal.querySelectorAll("button:not(#confirmDeleteBtn)");
+  closeButtons.forEach(button => {
+      button.addEventListener("click", function () {
+          closeModal(modal);
+      });
+  });
+}
+
+function closeModal(modal) {
+  modal.style.display = "none";
+}
+
+
 
 function setupStarClicks() {
   document.getElementById("star").addEventListener("click", function () {
-    const input = document.querySelector("#colorValue");
-    const colorValue = input.value;
+      const input = document.querySelector("#colorValue");
+      const colorValue = input.value;
 
-    chrome.storage.local.get({ favoriteColors: [] }, function (result) {
-      let favorites = result.favoriteColors;
-      const maxFavorites = 20;
-      if (favorites.length < maxFavorites) {
-        const rgba = parseRgba(colorValue);
-        const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
-        favorites.unshift(hexColor);  // Add to the start of the array
-        chrome.storage.local.set({ favoriteColors: favorites }, function () {
-          updateFavoriteColorUI(favorites);
-        });
-      } else {
-        console.error("Maximum number of favorite colors reached.");
-      }
-    });
+      chrome.storage.local.get({ favoriteColors: [] }, function (result) {
+          let favorites = result.favoriteColors;
+          const maxFavorites = 20;
+          if (favorites.length < maxFavorites) {
+              const rgba = parseRgba(colorValue);
+              const hexColor = colorValue.startsWith('#') ? colorValue : rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+              favorites.unshift(hexColor);  // Add to the start of the array
+              chrome.storage.local.set({ favoriteColors: favorites }, function () {
+                  updateFavoriteColorUI(favorites);
+              });
+          } else {
+              showModal("favoriteFullModal");
+          }
+      });
   });
 }
 
@@ -79,12 +189,25 @@ function loadFavoriteColors() {
 }
 
 function setupFavResetButton() {
-  document.getElementById("resetFav").addEventListener("click", function () {
-    document.querySelectorAll(".colorTabFavorite").forEach((box) => {
-      box.style.backgroundColor = "#f1f1f1";
+  document.getElementById("resetRecent").addEventListener("click", function () {
+    showModal("confirmDeleteModal", function () {
+        // Proceed with deletion after confirmation
+        document.querySelectorAll(".colorTabRecent").forEach((box) => {
+            box.style.backgroundColor = "#f1f1f1";
+        });
+        chrome.storage.local.set({ recentColors: [] });
     });
-    chrome.storage.local.set({ favoriteColors: [] });
-  });
+});
+
+document.getElementById("resetFav").addEventListener("click", function () {
+    showModal("confirmDeleteModal", function () {
+        // Proceed with deletion after confirmation
+        document.querySelectorAll(".colorTabFavorite").forEach((box) => {
+            box.style.backgroundColor = "#f1f1f1";
+        });
+        chrome.storage.local.set({ favoriteColors: [] });
+    });
+});
 }
 
 function setupColorConversionListeners() {

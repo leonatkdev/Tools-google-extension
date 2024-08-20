@@ -70,6 +70,9 @@
         </div>
 
         <div class="content" style="display: flex; flex-direction: column;">
+
+
+
             <!-- <div id="errorMessage">
                 <p></p>
             </div> -->
@@ -109,8 +112,8 @@
                         RGBA
                     </span>
                     <!-- <span id="hsl" class="colorType">
-                        HSL
-                    </span> -->
+                            HSL
+                        </span> -->
 
                 </div>
                 <div style="display: flex;  align-items: center;">
@@ -124,11 +127,18 @@
                     </span>
                 </div>
 
-
                 <div class="sectionColorType">
                     Recent Colors
-                    <div id="resetRecent">
-                        Clear All
+                    <span class="selectRecentColor">
+                        Select
+                    </span>
+                    <div class="deleteRecentContainer">
+                        <div>
+                            Delete
+                        </div>
+                        <div id="resetRecent">
+                            Delete All
+                        </div>
                     </div>
                 </div>
 
@@ -159,8 +169,17 @@
                 <div class="sectionColorType">
 
                     Favorite Colors
-                    <div id="resetFav">
-                        Clear All
+
+                    <span class="selectFavColor">
+                        Select
+                    </span>
+                    <div class="deleteContainer">
+                        <div>
+                            Delete
+                        </div>
+                        <div id="resetFav">
+                            Delete All
+                        </div>
                     </div>
                 </div>
 
@@ -187,10 +206,24 @@
                     <span class="colorTabFavorite"></span>
                 </div>
 
-
-
             </div>
 
+
+            <div id="confirmDeleteModal" class="modal">
+                <div class="modal-content">
+                    <p>Are you sure you want to delete all colors?</p>
+                    <button id="confirmDeleteBtn">Yes, Delete</button>
+                    <button id="cancelDeleteBtn">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Favorite Full Warning Modal -->
+            <div id="favoriteFullModal" class="modal">
+                <div class="modal-content">
+                    <p>You have reached the maximum number of favorite colors (20).</p>
+                    <button id="closeFullModalBtn">OK</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -241,7 +274,7 @@
                             </path>
                         </svg>
                     </span>
-             
+
                     <span id="characterLorem">0 Character</span>
                     <span id="wordCountLorem">0 Words</span>
                     <span id="sentenceLorem">0 Sentence</span>
@@ -364,6 +397,22 @@
         </div>
 
         <div class="content" style="display: flex; flex-direction: column;">
+
+            <div class="imageTabs">
+                <div class="imageTab imageTabActive">
+                    Resize
+                </div>
+                <div class="imageTab">
+                    Crop
+                </div>
+                <div class="imageTab" style="margin-left: auto;">
+                    +
+                </div>
+                <div class="imageTab">
+                     -
+                </div>
+            </div>
+
             <div class="addImage" id="addImage">
                 <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
                     stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
@@ -378,6 +427,8 @@
             </div>
             <div id="statusContainer" class="statusContainer" style="display: none;">
                 <canvas id="ImgUploaded" class="ImgUploaded" width="300" height="150"></canvas>
+                
+                
                 <div class="imageInfoContainer">
                     <div style="width: 100%;">
                         <div id="fileName" class="fileName"></div>
@@ -386,10 +437,7 @@
                     <button id="cancelButton" class="cancelButton">Cancel</button>
                 </div>
             </div>
-            <div class="infoImageText">
-                <div>Supported: JPG, PNG, Webp</div>
-                <!-- <div>Max Size: 100MB</div>  -->
-            </div>
+
             <div class="imageWidthHeightContainer">
                 <div>
                     <div class="imageInputLabel">
@@ -401,6 +449,18 @@
                         <div class="versionBtn" id="versionBtn">PX</div>
                     </div>
                 </div>
+
+                <span class="linkContainerStyle">
+                    <svg stroke="currentColor" id="linkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+                        stroke-linejoin="round" height="24px" width="24px" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 15l6 -6"></path>
+                        <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                        <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
+                        </path>
+                    </svg>
+                </span>
+
+                <!-- <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px" xmlns="http://www.w3.org/2000/svg"><path d="M17 22v-2"></path><path d="M9 15l6 -6"></path><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path><path d="M20 17h2"></path><path d="M2 7h2"></path><path d="M7 2v2"></path></svg> -->
                 <div>
                     <div class="imageInputLabel">
                         <label for="height" class="label">Height</label>
@@ -412,6 +472,13 @@
                     </div>
                 </div>
             </div>
+
+            <div style="display: flex; align-items: center; margin-top: 8px;">
+                <input type="checkbox" checked>
+                <label>Use the same aspect</label>
+            </div>
+
+
             <div class="imageFormatContainer">
                 <label for="format" class="label">Convert Format</label>
                 <div id="format" class="inputContainerFormat">
@@ -420,8 +487,11 @@
                     <button id="pngFormat">PNG</button>
                     <button id="jpegFormat">JPEG</button>
                     <button id="webpFormat">WebP</button>
+                    <button id="jpegFormat">ICO</button>
+                    <button id="webpFormat">SVG</button>
                 </div>
             </div>
+
             <button id="download-button" class="button">Download Resized Image</button>
         </div>
 
@@ -455,8 +525,11 @@
                 <textarea id="texttArea" style="width: 100%; height: 200px;"></textarea>
                 <div class="textTransformerArea">
                     <span class="scrollTopTextt" id="scrollTopBtnTextt">
-                        <svg stroke="currentColor" class="scrollTopSvgTextt" fill="white" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"></path>
+                        <svg stroke="currentColor" class="scrollTopSvgTextt" fill="white" stroke-width="0"
+                            viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z">
+                            </path>
                         </svg>
                     </span>
                     <span id="characterTextt">0 Character</span>
@@ -474,22 +547,28 @@
                 <button id="title-case">Title Case</button>
                 <button id="inverse-case">InVeRsE CaSe</button>
             </div>
-        
+
             <div class="textTransformerBottom">
                 <button class="undo" id="textTransformerUndo">
-                    <svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.18,4,8.6,5.44,6.06,8h9.71a6,6,0,0,1,0,12h-2V18h2a4,4,0,0,0,0-8H6.06L8.6,12.51,7.18,13.92,2.23,9Z"></path>
+                    <svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M7.18,4,8.6,5.44,6.06,8h9.71a6,6,0,0,1,0,12h-2V18h2a4,4,0,0,0,0-8H6.06L8.6,12.51,7.18,13.92,2.23,9Z">
+                        </path>
                     </svg></button>
                 <button class="redo" id="textTransformerRedo">
-                    <svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16.82,4,15.4,5.44,17.94,8H8.23a6,6,0,0,0,0,12h2V18h-2a4,4,0,0,1,0-8h9.71L15.4,12.51l1.41,1.41L21.77,9Z"></path>
+                    <svg stroke="#007bff" fill="white" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M16.82,4,15.4,5.44,17.94,8H8.23a6,6,0,0,0,0,12h2V18h-2a4,4,0,0,1,0-8h9.71L15.4,12.51l1.41,1.41L21.77,9Z">
+                        </path>
                     </svg></button>
                 <button class="ttDownload" id="download-text">Download Text</button>
                 <button id="copy-text">Copy Text</button>
                 <button class="ttClear" id="clear-text">Clear</button>
             </div>
         </div>
-        
+
 
     </div>
 

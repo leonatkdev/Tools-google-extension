@@ -402,14 +402,14 @@
                 <div class="imageTab imageTabActive">
                     Resize
                 </div>
-                <div class="imageTab">
+                <div class="imageTab" style="display: none;">
                     Crop
                 </div>
                 <div class="imageTab" style="margin-left: auto;">
                     +
                 </div>
                 <div class="imageTab">
-                     -
+                    -
                 </div>
             </div>
 
@@ -426,9 +426,9 @@
                 <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">
             </div>
             <div id="statusContainer" class="statusContainer" style="display: none;">
-                <canvas id="ImgUploaded" class="ImgUploaded" width="300" height="150"></canvas>
-                
-                
+                <canvas id="ImgUploaded" class="ImgUploaded" width="350" height="175"></canvas>
+
+
                 <div class="imageInfoContainer">
                     <div style="width: 100%;">
                         <div id="fileName" class="fileName"></div>
@@ -451,16 +451,28 @@
                 </div>
 
                 <span class="linkContainerStyle">
-                    <svg stroke="currentColor" id="linkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
-                        stroke-linejoin="round" height="24px" width="24px" xmlns="http://www.w3.org/2000/svg">
+                    <svg stroke="currentColor" id="linkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                        stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 15l6 -6"></path>
                         <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
                         <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
                         </path>
                     </svg>
+                    <svg stroke="currentColor" id="unlinkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                        stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 22v-2"></path>
+                        <path d="M9 15l6 -6"></path>
+                        <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                        <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
+                        </path>
+                        <path d="M20 17h2"></path>
+                        <path d="M2 7h2"></path>
+                        <path d="M7 2v2"></path>
+                    </svg>
                 </span>
 
-                <!-- <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px" xmlns="http://www.w3.org/2000/svg"><path d="M17 22v-2"></path><path d="M9 15l6 -6"></path><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path><path d="M20 17h2"></path><path d="M2 7h2"></path><path d="M7 2v2"></path></svg> -->
                 <div>
                     <div class="imageInputLabel">
                         <label for="height" class="label">Height</label>
@@ -474,7 +486,7 @@
             </div>
 
             <div style="display: flex; align-items: center; margin-top: 8px;">
-                <input type="checkbox" checked>
+                <input type="checkbox" checked id="aspectCheckbox">
                 <label>Use the same aspect</label>
             </div>
 
@@ -487,8 +499,6 @@
                     <button id="pngFormat">PNG</button>
                     <button id="jpegFormat">JPEG</button>
                     <button id="webpFormat">WebP</button>
-                    <button id="jpegFormat">ICO</button>
-                    <button id="webpFormat">SVG</button>
                 </div>
             </div>
 

@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const heightInput = document.getElementById('height');
   const originalWidth = document.getElementById('originalWidth');
   const originalHeight = document.getElementById('originalHeight');
-  const sameAspectCheckbox = document.querySelector('input[type="checkbox"]');
+  const sameAspectCheckbox = document.getElementById('aspectCheckbox');
+  const sameAspectCheckboxSVGConatiner = document.querySelector('.linkContainerStyle');
   const zoomInButton = document.querySelector('.imageTab:nth-child(3)');
   const zoomOutButton = document.querySelector('.imageTab:nth-child(4)');
   let originalImage = null;
@@ -25,10 +26,22 @@ document.addEventListener('DOMContentLoaded', function() {
   let originalFileType = '';
   const supportedFormats = ['jpeg', 'png', 'webp', 'svg+xml'];
 
-  // Existing code here...
+  function updateIconVisibility() {
+    if (sameAspectCheckbox.checked) {
+      linkIcon.style.display = 'inline-block';
+      unlinkIcon.style.display = 'none';
+      sameAspectCheckboxSVGConatiner.style.background='#fff'
+    } else {
+      linkIcon.style.display = 'none';
+      unlinkIcon.style.display = 'inline-block';
+       sameAspectCheckboxSVGConatiner.style.background='#ededed'
+    }
+  }
+
+  updateIconVisibility();
 
   // Zoom In
-  zoomInButton.addEventListener('click', function() {
+  zoomInButton?.addEventListener('click', function() {
     if (originalImage) {
       zoomFactor *= 1.1;
       drawZoomedImage();
@@ -36,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Zoom Out
-  zoomOutButton.addEventListener('click', function() {
+  zoomOutButton?.addEventListener('click', function() {
     if (originalImage) {
       zoomFactor /= 1.1;
       drawZoomedImage();
@@ -68,13 +81,25 @@ document.addEventListener('DOMContentLoaded', function() {
     isDragging = false;
   });
 
-  // Handle aspect ratio constraint
+
+
   sameAspectCheckbox.addEventListener('change', function() {
+    updateIconVisibility();
     if (this.checked && originalImage) {
       const aspectRatio = originalImage.width / originalImage.height;
       heightInput.value = Math.round(widthInput.value / aspectRatio);
     }
   });
+
+  
+  sameAspectCheckboxSVGConatiner.addEventListener('click', function() {
+    // Toggle the checkbox state
+    sameAspectCheckbox.checked = !sameAspectCheckbox.checked;
+
+    // Manually trigger the 'change' event
+    sameAspectCheckbox.dispatchEvent(new Event('change'));
+});
+
 
   widthInput.addEventListener('input', function() {
     if (sameAspectCheckbox.checked && originalImage) {
@@ -102,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
       imgOffsetX, imgOffsetY, scaledWidth, scaledHeight // Draw with current offset
     );
   }
-  
 
   const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
@@ -190,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         heightInput.value = img.height;
         originalWidth.textContent = img.width + ' PX';
         originalHeight.textContent = img.height + ' PX';
-        drawImageWithObjectFit(ctxImgUploaded, img, 300, 150, 'contain');
+        drawImageWithObjectFit(ctxImgUploaded, img, 350, 175, 'contain');
         hideStatusMessage();
       };
       img.onerror = function() {

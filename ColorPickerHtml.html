@@ -427,17 +427,11 @@
             </div>
             <div id="statusContainer" class="statusContainer" style="display: none;">
                 <canvas id="ImgUploaded" class="ImgUploaded" width="350" height="175"></canvas>
-
-
-                <div class="imageInfoContainer">
-                    <div style="width: 100%;">
-                        <div id="fileName" class="fileName"></div>
-                        <progress id="progressBar" class="progressBar" value="0" max="100"></progress>
-                    </div>
-                    <button id="cancelButton" class="cancelButton">Cancel</button>
-                </div>
             </div>
-
+            <div id="imageInfoContainer" class="imageInfoContainer">
+                <input id="fileName" class="fileName" placeholder="fileName"></input>
+                <button id="cancelButton" class="cancelButton">Cancel</button>
+            </div>
             <div class="imageWidthHeightContainer">
                 <div>
                     <div class="imageInputLabel">
@@ -502,10 +496,13 @@
                 </div>
             </div>
 
+            <div style="display: flex; align-items: center; margin-top: 8px;">
+                <input type="checkbox" checked id="autoDownload">
+                <label>Auto download no need to ask for name</label>
+            </div>
+
             <button id="download-button" class="button">Download Resized Image</button>
         </div>
-
-
     </div>
 
     <!-- //ConvertCase -->

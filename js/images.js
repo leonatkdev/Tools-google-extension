@@ -2,12 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const addImage = document.getElementById('addImage');
   const upload = document.getElementById('upload');
   const downloadButton = document.getElementById('download-button');
+  const autoDownloadCheckbox = document.getElementById('autoDownload');
   const canvasImgUploaded = document.getElementById('ImgUploaded');
   const ctxImgUploaded = canvasImgUploaded.getContext('2d');
   const statusContainer = document.getElementById('statusContainer');
   const fileNameDisplay = document.getElementById('fileName');
   const cancelButton = document.getElementById('cancelButton');
-  const progressBar = document.getElementById('progressBar');
+  const imageInfoContainer = document.getElementById('imageInfoContainer');
   const widthInput = document.getElementById('width');
   const heightInput = document.getElementById('height');
   const originalWidth = document.getElementById('originalWidth');
@@ -168,20 +169,21 @@ document.addEventListener('DOMContentLoaded', function() {
   function handleFileUpload(file) {
     const fileType = file.type.split('/')[1];
     if (!supportedFormats.includes(fileType)) {
-      addImage.innerHTML = `
-        <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
-            stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
-            <polyline points="16 16 12 12 8 16"></polyline>
-            <line x1="12" y1="12" x2="12" y2="21"></line>
-            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 1 0 0 3 16.3"></path>
-            <polyline points="16 16 12 12 8 16"></polyline>
-        </svg>
-        File format not supported
-        <button class="fileSelectImage">Select File</button>
-        <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">`;
-      addImage.style.backgroundColor = '#fdf3f3';
-      addImage.style.border = '2px dashed red';
-      return;
+    //   addImage.innerHTML = `
+    //     <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+    //         stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
+    //         <polyline points="16 16 12 12 8 16"></polyline>
+    //         <line x1="12" y1="12" x2="12" y2="21"></line>
+    //         <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 1 0 0 3 16.3"></path>
+    //         <polyline points="16 16 12 12 8 16"></polyline>
+    //     </svg>
+    //     File format not supported
+    //     <button class="fileSelectImage">Select File</button>
+    //     <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">`;
+    //   addImage.style.backgroundColor = '#fdf3f3';
+    //   addImage.style.border = '2px dashed red';
+    //   return;
+    alert("Format no supported")
     }
 
     if (file.size > MAX_FILE_SIZE) {
@@ -190,17 +192,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     fileReader = new FileReader();
-    fileNameDisplay.textContent = file.name;
+    fileNameDisplay.value = file.name;
     statusContainer.style.display = 'flex';
-    progressBar.value = 0;
+    imageInfoContainer.style.display = 'flex';
     originalFileType = fileType;
-
-    fileReader.onprogress = function(event) {
-      if (event.lengthComputable) {
-        const percentLoaded = Math.round((event.loaded / event.total) * 100);
-        progressBar.value = percentLoaded;
-      }
-    };
 
     fileReader.onloadstart = function() {
       showStatusMessage(`Uploading ${file.name}...`);
@@ -269,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
       offscreenCanvas.height = height;
       offscreenCtx.drawImage(originalImage, 0, 0, originalImage.width, originalImage.height, 0, 0, width, height);
 
+      let resizedImage;
       if (selectedFormat === 'jpeg') {
         resizedImage = offscreenCanvas.toDataURL('image/jpeg', 0.9); // Use quality parameter for JPEG
       } else if (selectedFormat === 'webp') {
@@ -280,8 +276,20 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const link = document.createElement('a');
-      link.download = `resized-image.${selectedFormat === 'original' ? originalFileType : selectedFormat}`;
       link.href = resizedImage;
+
+      if (autoDownloadCheckbox.checked) {
+        link.download = `resized-image.${selectedFormat === 'original' ? originalFileType : selectedFormat}`;
+      } else {
+        const fileName = prompt('Please enter the file name', 'resized-image');
+        if (fileName) {
+          link.download = `${fileName}.${selectedFormat === 'original' ? originalFileType : selectedFormat}`;
+        } else {
+          // Exit if the user cancels the prompt
+          return;
+        }
+      }
+
       link.click();
     } else {
       alert('Please resize the image first.');
@@ -289,12 +297,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function showStatusMessage(message, isError = false) {
-    fileNameDisplay.textContent = message;
+    fileNameDisplay.value = message;
     fileNameDisplay.style.color = isError ? 'red' : 'black';
   }
 
   function hideStatusMessage() {
-    fileNameDisplay.textContent = '';
+    // fileNameDisplay.textContent = '';
   }
 
   function drawImageWithObjectFit(ctx, img, canvasWidth, canvasHeight, fitType) {
@@ -346,8 +354,8 @@ document.addEventListener('DOMContentLoaded', function() {
     originalFileType = '';
 
     // Reset UI elements
-    fileNameDisplay.textContent = '';
-    progressBar.value = 0;
+    fileNameDisplay.value = '';
+    // progressBar.value = 0;
     widthInput.value = '';
     heightInput.value = '';
     originalWidth.textContent = '';
@@ -355,6 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addImage.style.display = 'flex';
     addImage.style.backgroundColor = ''; // Reset background color
     statusContainer.style.display = 'none';
+    imageInfoContainer.style.display = 'none';
     ctxImgUploaded.clearRect(0, 0, canvasImgUploaded.width, canvasImgUploaded.height);
 
     // Reset format buttons

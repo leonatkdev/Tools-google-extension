@@ -148,8 +148,6 @@ function closeModal(modal) {
   modal.style.display = "none";
 }
 
-
-
 function setupStarClicks() {
   document.getElementById("star").addEventListener("click", function () {
       const input = document.querySelector("#colorValue");

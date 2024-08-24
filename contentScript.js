@@ -1,72 +1,83 @@
-document.addEventListener("keydown", function (event) {
-  if (event?.key === "Escape") {
-    cleanUp();
-  }
-});
+(function () {
+  let isColorPicked = false;
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "capture") {
-    try {
-      activateZoom(message.screenshotUrl);
-    } catch (e) {
-      console.error("Failed to activate zoom:", e);
+  document.addEventListener("keydown", function (event) {
+    if (event?.key === "Escape") {
+      cleanUp();
     }
+  });
+
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "cleanup") {
+      // Clean up any existing UI elements
+      cleanUp();
+      // Send a response back to indicate cleanup is complete
+      sendResponse({ status: "cleanup complete" });
+    }
+
+    if (message.action === "capture") {
+      try {
+        activateZoom(message.screenshotUrl);
+        isColorPicked = false
+      } catch (e) {
+        console.error("Failed to activate zoom:", e);
+      }
+    }
+  });
+
+  function createAndAppendElement(tag, id, styles) {
+    const element = document.createElement(tag);
+    element.id = id;
+    Object.assign(element.style, styles);
+    document.body.appendChild(element);
+    return element;
   }
-});
 
-function createAndAppendElement(tag, id, styles) {
-  const element = document.createElement(tag);
-  element.id = id;
-  Object.assign(element.style, styles);
-  document.body.appendChild(element);
-  return element;
-}
+  function injectUI() {
+    cleanUp(); // Ensure all elements and listeners are cleaned up before injecting new ones
 
-function injectUI() {
-  cleanUp(); // Ensure all elements and listeners are cleaned up before injecting new ones
+    const overlay = createAndAppendElement("div", "colorPickerOverlay", {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      width: "100%",
+      height: "100%",
+      zIndex: "999998",
+      background: "rgba(0, 0, 0, 0.5)",
+      pointerEvents: "none",
+    });
 
-  const overlay = createAndAppendElement("div", "colorPickerOverlay", {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    width: "100%",
-    height: "100%",
-    zIndex: "999998",
-    background: "rgba(0, 0, 0, 0.5)",
-    pointerEvents: "none",
-  });
+    const canvas = createAndAppendElement("canvas", "colorPickerCanvas", {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      zIndex: "999999",
+      pointerEvents: "none",
+    });
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-  const canvas = createAndAppendElement("canvas", "colorPickerCanvas", {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    zIndex: "999999",
-    pointerEvents: "none",
-  });
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+    const lens = createAndAppendElement("div", "zoomLens", {
+      position: "fixed",
+      borderRadius: "50%",
+      width: "150px",
+      height: "150px",
+      overflow: "hidden",
+      pointerEvents: "none",
+      zIndex: "100000000",
+    });
 
-  const lens = createAndAppendElement("div", "zoomLens", {
-    position: "fixed",
-    borderRadius: "50%",
-    width: "150px",
-    height: "150px",
-    overflow: "hidden",
-    pointerEvents: "none",
-    zIndex: "100000000",
-  });
-
-  const gridSquares = createAndAppendElement("div", "zoomGridSquares", {
-    overflow: "hidden",
-    zIndex: "100000000",
-    width: "150px",
-    height: "150px",
-    borderRadius: "50%",
-    position: "fixed",
-    pointerEvents: "none",
-    boxShadow: "0px 0px 2px 2px lightgrey",
-  });
-  gridSquares.innerHTML = `
+    const gridSquares = createAndAppendElement("div", "zoomGridSquares", {
+      overflow: "hidden",
+      zIndex: "100000000",
+      width: "150px",
+      height: "150px",
+      borderRadius: "50%",
+      position: "fixed",
+      pointerEvents: "none",
+      boxShadow: "0px 0px 2px 2px lightgrey",
+    });
+    gridSquares.innerHTML = `
     <style>
       #zoomGridSquares::after {
         content: '';
@@ -81,169 +92,188 @@ function injectUI() {
     </style>
   `;
 
-  const colorHex = createAndAppendElement("div", "colorHexDisplay", {
-    position: "fixed",
-    zIndex: "100000001",
-    padding: "5px 8px",
-    background: "white",
-    color: "black",
-    fontSize: "12px",
-    borderRadius: "8px",
-    border: "1px solid lightgray",
-    pointerEvents: "none",
-  });
+    const colorHex = createAndAppendElement("div", "colorHexDisplay", {
+      position: "fixed",
+      zIndex: "100000001",
+      padding: "5px 8px",
+      background: "white",
+      color: "black",
+      fontSize: "12px",
+      borderRadius: "8px",
+      border: "1px solid lightgray",
+      pointerEvents: "none",
+    });
 
-  return { canvas, lens, gridSquares, overlay, colorHex };
-}
-
-function activateZoom(dataUrl) {
-  const { canvas, lens, gridSquares, overlay, colorHex } = injectUI();
-  if (!canvas || !lens || !gridSquares || !overlay || !colorHex) {
-    console.error("Failed to inject UI elements.");
-    return;
+    return { canvas, lens, gridSquares, overlay, colorHex };
   }
 
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  const img = new Image();
-  img.onload = () => {
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    document.addEventListener("mousemove", (event) =>
-      onDocumentMouseMove(event, ctx, canvas, lens)
-    );
-    document.addEventListener("click", (event) => onDocumentClick(event, ctx, canvas));
-  };
+  function activateZoom(dataUrl) {
+    const { canvas, lens, gridSquares, overlay, colorHex } = injectUI();
+    if (!canvas || !lens || !gridSquares || !overlay || !colorHex) {
+      console.error("Failed to inject UI elements.");
+      return;
+    }
 
-  img.onerror = () => console.error("Failed to load image for zoom.");
-  img.src = dataUrl;
-}
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-function onDocumentMouseMove(event, ctx, canvas, lens) {
-  const x = event.clientX;
-  const y = event.clientY;
-  updateZoomLensPosition(event, ctx);
-  updateZoomBackground(canvas, lens, x, y);
-}
+      const handleMouseMove = (event) => {
+        !isColorPicked ? onDocumentMouseMove(event, ctx, canvas, lens) : {};
+      };
+      const handleClick = (event) => {
+        !isColorPicked
+          ? onDocumentClick(event, ctx, canvas, handleMouseMove)
+          : {};
+      };
 
-function onDocumentClick(event, ctx, canvas) {
-  event.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  const pixel = ctx.getImageData(x, y, 1, 1).data;
-  const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2])
-    .toString(16)
-    .slice(1)}`;
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("click", handleClick);
+    };
 
-  console.log("Picked color:", hex);
-  chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
-  cleanUp();
-}
-
-function updateZoomLensPosition(event, ctx) {
-  const x = event.clientX;
-  const y = event.clientY;
-  const lens = document.getElementById("zoomLens");
-  const gridSquares = document.getElementById("zoomGridSquares");
-  const colorHexDisplay = document.getElementById("colorHexDisplay");
-  const pixel = ctx.getImageData(x, y, 1, 1).data;
-  const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2])
-    .toString(16)
-    .slice(1)}`;
-
-  const offsetX = x + 150 + 100 > window.innerWidth ? -150 : 150;
-  const offsetY = y + 100 + 100 > window.innerHeight ? -100 : 100;
-
-  if (!lens || !gridSquares) return;
-
-  lens.style.left = `${x - lens.offsetWidth / 2 + offsetX}px`;
-  lens.style.top = `${y - lens.offsetHeight / 2 + offsetY}px`;
-
-  gridSquares.style.left = `${x - gridSquares.offsetWidth / 2 + offsetX}px`;
-  gridSquares.style.top = `${y - gridSquares.offsetHeight / 2 + offsetY}px`;
-  gridSquares.style.border = `12px solid ${hex}`;
-
-  if (colorHexDisplay) {
-    colorHexDisplay.textContent = hex;
-    colorHexDisplay.style.left = `${x - lens.offsetWidth / 2 + offsetX + 45}px`;
-    colorHexDisplay.style.top = `${
-      y - lens.offsetHeight / 2 + offsetY + 125
-    }px`;
-  }
-}
-
-function updateZoomBackground(canvas, lens, x, y) {
-  const scaleFactor = 10;
-  const lensSize = lens.offsetWidth;
-  const gridSquares = document.getElementById("zoomGridSquares");
-  const ctx = canvas.getContext("2d");
-
-  const startX = Math.max(0, x - lensSize / (2 * scaleFactor));
-  const startY = Math.max(0, y - lensSize / (2 * scaleFactor));
-  const width = Math.min(lensSize / scaleFactor, canvas.width - startX);
-  const height = Math.min(lensSize / scaleFactor, canvas.height - startY);
-
-  if (width <= 0 || height <= 0) return;
-
-  const pixelData = ctx.getImageData(startX, startY, width, height).data;
-  const pixelatedCanvas = document.createElement("canvas");
-  const pixelatedCtx = pixelatedCanvas.getContext("2d");
-
-  pixelatedCanvas.width = width;
-  pixelatedCanvas.height = height;
-
-  for (let i = 0; i < pixelData.length; i += 4) {
-    const r = pixelData[i];
-    const g = pixelData[i + 1];
-    const b = pixelData[i + 2];
-    const a = pixelData[i + 3] / 255;
-
-    const col = (i / 4) % width;
-    const row = Math.floor(i / 4 / width);
-
-    pixelatedCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
-    pixelatedCtx.fillRect(col, row, 1, 1);
+    img.onerror = () => console.error("Failed to load image for zoom.");
+    img.src = dataUrl;
   }
 
-  const pixelatedDataUrl = pixelatedCanvas.toDataURL();
+  function onDocumentMouseMove(event, ctx, canvas, lens) {
+    const x = event.clientX;
+    const y = event.clientY;
+    updateZoomLensPosition(event, ctx);
+    updateZoomBackground(canvas, lens, x, y);
+  }
 
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
+  function onDocumentClick(event, ctx, canvas, handleMouseMove) {
+    event.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const pixel = ctx.getImageData(x - 1, y - 1, 1, 1).data;
+    const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2])
+      .toString(16)
+      .slice(1)}`;
 
-  tempCanvas.width = lensSize;
-  tempCanvas.height = lensSize;
+    console.log("Picked color:", hex);
+    chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
 
-  tempCtx.msImageSmoothingEnabled = false;
-  tempCtx.mozImageSmoothingEnabled = false;
-  tempCtx.webkitImageSmoothingEnabled = false;
-  tempCtx.imageSmoothingEnabled = false;
+    // Clean up event listeners and UI elements
+    cleanUp();
 
-  const img = new Image();
-  img.onload = () => {
-    tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
-    lens.style.backgroundImage = `url('${tempCanvas.toDataURL()}')`;
-    lens.style.backgroundSize = `${lensSize}px ${lensSize}px`;
+    isColorPicked = true;
+  }
 
-    const gridSize = lensSize / scaleFactor;
-    gridSquares.style.backgroundSize = `${gridSize}px ${gridSize}px`;
-  };
-  img.src = pixelatedDataUrl;
-}
+  function updateZoomLensPosition(event, ctx) {
+    const x = event.clientX;
+    const y = event.clientY;
+    const lens = document.getElementById("zoomLens");
+    const gridSquares = document.getElementById("zoomGridSquares");
+    const colorHexDisplay = document.getElementById("colorHexDisplay");
 
-function cleanUp() {
-  [
-    "colorPickerCanvas",
-    "zoomLens",
-    "zoomGridSquares",
-    "colorPickerOverlay",
-    "colorHexDisplay",
-  ].forEach((id) => {
-    const element = document.getElementById(id);
-    if (element) element.remove();
-  });
+    // Adjust the sampling point slightly to align with the red square
+    const pixel = ctx.getImageData(x - 1, y - 1, 1, 1).data;
+    const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2])
+      .toString(16)
+      .slice(1)}`;
 
-  document.removeEventListener("mousemove", onDocumentMouseMove);
-  document.removeEventListener("click", onDocumentClick);
-}
+    const offsetX = x + 150 + 100 > window.innerWidth ? -150 : 150;
+    const offsetY = y + 100 + 100 > window.innerHeight ? -100 : 100;
+
+    if (!lens || !gridSquares) return;
+
+    lens.style.left = `${x - lens.offsetWidth / 2 + offsetX}px`;
+    lens.style.top = `${y - lens.offsetHeight / 2 + offsetY}px`;
+
+    gridSquares.style.left = `${x - gridSquares.offsetWidth / 2 + offsetX}px`;
+    gridSquares.style.top = `${y - gridSquares.offsetHeight / 2 + offsetY}px`;
+
+    // Optionally, apply the correct border color to gridSquares
+    gridSquares.style.border = `12px solid ${hex}`;
+
+    if (colorHexDisplay) {
+      colorHexDisplay.textContent = hex;
+      colorHexDisplay.style.left = `${
+        x - lens.offsetWidth / 2 + offsetX + 45
+      }px`;
+      colorHexDisplay.style.top = `${
+        y - lens.offsetHeight / 2 + offsetY + 125
+      }px`;
+    }
+  }
+
+  function updateZoomBackground(canvas, lens, x, y) {
+    const scaleFactor = 10;
+    const lensSize = lens.offsetWidth;
+    const gridSquares = document.getElementById("zoomGridSquares");
+    const ctx = canvas.getContext("2d");
+
+    const startX = Math.max(0, x - lensSize / (2 * scaleFactor));
+    const startY = Math.max(0, y - lensSize / (2 * scaleFactor));
+    const width = Math.min(lensSize / scaleFactor, canvas.width - startX);
+    const height = Math.min(lensSize / scaleFactor, canvas.height - startY);
+
+    if (width <= 0 || height <= 0) return;
+
+    const pixelData = ctx.getImageData(startX, startY, width, height).data;
+    const pixelatedCanvas = document.createElement("canvas");
+    const pixelatedCtx = pixelatedCanvas.getContext("2d");
+
+    pixelatedCanvas.width = width;
+    pixelatedCanvas.height = height;
+
+    for (let i = 0; i < pixelData.length; i += 4) {
+      const r = pixelData[i];
+      const g = pixelData[i + 1];
+      const b = pixelData[i + 2];
+      const a = pixelData[i + 3] / 255;
+
+      const col = (i / 4) % width;
+      const row = Math.floor(i / 4 / width);
+
+      pixelatedCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+      pixelatedCtx.fillRect(col, row, 1, 1);
+    }
+
+    const pixelatedDataUrl = pixelatedCanvas.toDataURL();
+
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+
+    tempCanvas.width = lensSize;
+    tempCanvas.height = lensSize;
+
+    tempCtx.msImageSmoothingEnabled = false;
+    tempCtx.mozImageSmoothingEnabled = false;
+    tempCtx.webkitImageSmoothingEnabled = false;
+    tempCtx.imageSmoothingEnabled = false;
+
+    const img = new Image();
+    img.onload = () => {
+      tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+      lens.style.backgroundImage = `url('${tempCanvas.toDataURL()}')`;
+      lens.style.backgroundSize = `${lensSize}px ${lensSize}px`;
+
+      const gridSize = lensSize / scaleFactor;
+      gridSquares.style.backgroundSize = `${gridSize}px ${gridSize}px`;
+    };
+    img.src = pixelatedDataUrl;
+  }
+
+  function cleanUp() {
+    [
+      "colorPickerCanvas",
+      "zoomLens",
+      "zoomGridSquares",
+      "colorPickerOverlay",
+      "colorHexDisplay",
+    ].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) element.remove();
+    });
+
+    document.removeEventListener("mousemove", onDocumentMouseMove);
+    document.removeEventListener("click", onDocumentClick);
+  }
+})();
 
 /////Typography
 (function () {

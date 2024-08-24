@@ -50,6 +50,8 @@
   padding: 16px;
   border-bottom: 1px solid lightgray;
   gap: 16px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .sectionType {
@@ -536,7 +538,7 @@
 
 #fontFamily {
   color: rgb(33, 39, 42);
-  font-size: 16px;
+  font-size: 15px;
   margin-top: 6px;
 }
 
@@ -556,6 +558,7 @@
   display: block;
   font-size: 13px;
   margin-bottom: 4px;
+  color: dimgray;
 }
 
 .fontInputBox {

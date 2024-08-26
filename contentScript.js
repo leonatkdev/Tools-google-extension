@@ -4,6 +4,7 @@
   document.addEventListener("keydown", function (event) {
     if (event?.key === "Escape") {
       cleanUp();
+      isColorPicked = true;
     }
   });
 

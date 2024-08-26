@@ -21,12 +21,10 @@
 }
 
 #errorMessage {
-  /* position: absolute; */
-  /* background-color: #ffffffb0; */
   top: 0;
   right: 0;
   left: 0;
-  /* bottom: 0; */
+
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -46,7 +44,7 @@
   align-items: center;
   justify-content: space-between;
   grid-column: 1/3;
-  /* background-color: grey; */
+
   padding: 16px;
   border-bottom: 1px solid lightgray;
   gap: 16px;
@@ -72,14 +70,6 @@
   border-right: 1px solid lightgray;
 }
 
-/* .sectionType:nth-child(4) {
-  border-right: 1px solid lightgray;
-}
-
-.sectionType:not(:nth-last-child(n + 3)) {
-  border-top: 1px solid lightgray;
-} */
-
 .sectionType img {
   width: 75px;
   height: 75px;
@@ -88,11 +78,8 @@
 
 .header {
   display: flex;
-  /* justify-content: space-between; */
   align-items: center;
   cursor: pointer;
-  /* padding: 12px 16px; */
-  /* padding-right: 16px; */
   background: #f5f5f5;
   border: 1px solid #ececec;
   border-radius: 5px;
@@ -118,13 +105,11 @@
 }
 
 .goBack {
-  /* margin-left: 16px; */
-  /* margin-right: 8px; */
 }
 
 .ref {
   display: flex;
-  /* gap: 16px; */
+
   margin-left: auto;
 }
 
@@ -135,11 +120,6 @@
   border-left: 1px solid lightgrey;
   color: gray;
 }
-
-/* 
-.header.active svg {
-  transform: rotate(-180deg);
-} */
 
 .content {
   display: none;
@@ -200,6 +180,15 @@
   border-radius: 10px;
   border: 1px solid lightgray;
 }
+
+.colorCanvas404{
+  display: none;
+  margin: 0;
+  color: red;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .colorTabRecent,
 .colorTabFavorite {
   display: block;
@@ -320,6 +309,7 @@
 
 #pickColor {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
@@ -382,8 +372,6 @@
   color: #007bff;
   margin-left: auto;
   padding-right: 6px;
-  /* margin-right: 4px; */
-  /* border-right: 1px solid lightgrey; */
   cursor: pointer;
 }
 
@@ -479,7 +467,10 @@
   width: 45px;
   min-width: 100px;
   height: 35px;
-  border: 1px solid lightgray;
+  border-bottom: 1px solid #007bff;
+  border-top: 1px solid lightgray;
+  border-right: 1px solid #007bff;
+  border-left: 1px solid lightgray;
   margin-left: 8px;
   cursor: pointer;
 }
@@ -614,7 +605,6 @@
 }
 
 #activateButton {
-  /* margin-right: 12px; */
   margin-left: auto;
 }
 
@@ -631,13 +621,13 @@
 }
 
 .loremInput {
-  padding: 12px 16px;
+  padding: 11px 16px;
   flex: 1;
-  border-radius: 10px;
+  border-radius: 4px;
   border: none;
   border: 1px solid lightgray;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 #loremCopyBtn {
@@ -647,8 +637,7 @@
   font-size: 14px;
   padding: 10px 16px;
   border: none;
-  border-radius: 10px;
-  /* border: 1px solid black; */
+  border-radius: 4px;
   text-align: center;
   justify-content: center;
   background-color: #007bff;
@@ -712,9 +701,7 @@
   position: relative;
   margin-top: 6px;
   margin-bottom: 9px;
-
 }
-
 
 .loremBottomArea {
   position: absolute;
@@ -759,15 +746,6 @@
 
 .scrollTopSvg {
   transform: rotate(90deg);
-}
-
-/* .preview-container {
-  margin: 10px 0;
-} */
-
-.preview {
-  max-width: 100%;
-  max-height: 150px;
 }
 
 .imageTabs {
@@ -824,7 +802,6 @@
 .imageInfoContainer {
   display: none;
   gap: 16px;
-  /* background-color: lightgray; */
   width: 100%;
   padding: 8px 0px;
   margin-top: auto;
@@ -871,7 +848,6 @@
 .label {
   font-size: 13px;
   font-weight: 400;
-  /* padding-bottom: 4px; */
   display: block;
 }
 
@@ -912,7 +888,7 @@
   margin-top: 12px;
   border: none;
   padding: 12px 16px;
-  border-radius: 11px;
+  border-radius: 8px;
   font-weight: 500;
   font-size: 16px;
   color: white;
@@ -1010,8 +986,6 @@
   align-items: center;
   margin-top: auto;
 }
-
-
 
 #texttArea {
   resize: none;

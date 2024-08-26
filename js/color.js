@@ -21,7 +21,6 @@ function initializeUI() {
   setupStarClicks();
   loadFavoriteColors();
   setupFavResetButton();
-  setupRecentColorResetButton();
   setRecentColors();
   setupColorCanvas();
   setupPickColorButton();
@@ -32,7 +31,6 @@ function updateRecentColorsUI(colors) {
   const recentColorElements = document.querySelectorAll(".colorTabRecent");
   colors
     .slice(0, 20)
-    .reverse()
     .forEach((color, index) => {
       if (recentColorElements[index]) {
         recentColorElements[index].style.backgroundColor = color.startsWith("#")
@@ -77,7 +75,7 @@ function initializeColorSelection(
 }
 
 function toggleSelectionMode(selectElement, colorClass, deleteContainerClass) {
-  if (selectElement.textContent === "Select") {
+  if (selectElement.textContent.trim() === "Select") {
     selectElement.textContent = "Cancel";
     document.querySelector(deleteContainerClass).style.display = "flex";
     enableColorSelection(colorClass);
@@ -143,14 +141,6 @@ function deleteSelectedColors(colorClass, storageKey) {
   });
 }
 
-function setupRecentColorResetButton() {
-  document.getElementById("resetRecent").addEventListener("click", function () {
-    document.querySelectorAll(".colorTabRecent").forEach((box) => {
-      box.style.backgroundColor = "#f1f1f1";
-    });
-    chrome.storage.local.set({ recentColors: [] });
-  });
-}
 function showModal(modalId, onConfirm) {
   const modal = document.getElementById(modalId);
   modal.style.display = "flex";
@@ -283,15 +273,15 @@ function convertColorInput(value, type) {
           rgba.a
         ).toFixed(2)})`;
         break;
-      case "hsl":
-        const {
-          r: hr,
-          g: hg,
-          b: hb,
-        } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
-        const [h, s, l] = rgbToHsl(hr, hg, hb);
-        colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
-        break;
+      // case "hsl":
+      //   const {
+      //     r: hr,
+      //     g: hg,
+      //     b: hb,
+      //   } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
+      //   const [h, s, l] = rgbToHsl(hr, hg, hb);
+      //   colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+      //   break;
       default:
         console.error("Unsupported type for conversion.");
     }
@@ -391,6 +381,7 @@ function setupColorCanvas() {
   let isDragging = false;
 
   function drawOffscreenColorSpectrum(hue, alpha) {
+    console.log("drawOffscreenColorSpectrum hue", hue);
     offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
     const colorGradient = offscreenCtx.createLinearGradient(
@@ -417,6 +408,7 @@ function setupColorCanvas() {
   }
 
   function drawColorSpectrum(hue, alpha) {
+    console.log("drawColorSpectrum hue", hue);
     ctx.clearRect(0, 0, colorCanvas.width, colorCanvas.height);
 
     const colorGradient = ctx.createLinearGradient(0, 0, colorCanvas.width, 0);
@@ -473,6 +465,7 @@ function setupColorCanvas() {
   }
 
   function pickColor() {
+    console.log("currentAlpha", currentAlpha);
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
     const imageData = offscreenCtx.getImageData(
@@ -491,12 +484,22 @@ function setupColorCanvas() {
     const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${
       imageData[2]
     }, ${parseFloat(currentAlpha).toFixed(2)})`;
+
+    console.log("imageData[0],", imageData[0]);
+    console.log(" imageData[1],", imageData[1]);
+    console.log("  imageData[2]", imageData[2]);
+    console.log(" currentAlpha", currentAlpha);
+
     const [h, s, l] = rgbToHsl(
       imageData[0],
       imageData[1],
       imageData[2],
       currentAlpha
     );
+
+    console.log(" pickColor h", h);
+    console.log(" pickColor s", s);
+    console.log("pickColor l", l);
 
     const activeTypeSpan = document.querySelector("span.activeType").id;
 
@@ -577,7 +580,13 @@ function setupColorCanvas() {
   function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
 
+    console.log("{ r, g, b, a }", { r, g, b, a });
+
     const [h, s, l] = rgbToHsl(r, g, b);
+
+    console.log("h", h);
+
+    // h = "6.96"
 
     currentHue = h;
     currentAlpha = a;
@@ -586,11 +595,34 @@ function setupColorCanvas() {
 
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
+    // let found = false;
+    // for (let y = 0; y < offscreenCanvas.height; y++) {
+    //   for (let x = 0; x < offscreenCanvas.width; x++) {
+    //     const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+    //     if (imageData[0] === r && imageData[1] === g && imageData[2] === b) {
+    //       ballPosition.x = x;
+    //       ballPosition.y = y;
+    //       found = true;
+    //       break;
+    //     }
+    //   }
+    //   if (found) break;
+    // }
+    function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
+      return (
+        Math.abs(r1 - r2) <= tolerance &&
+        Math.abs(g1 - g2) <= tolerance &&
+        Math.abs(b1 - b2) <= tolerance
+      );
+    }
+
     let found = false;
     for (let y = 0; y < offscreenCanvas.height; y++) {
       for (let x = 0; x < offscreenCanvas.width; x++) {
         const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-        if (imageData[0] === r && imageData[1] === g && imageData[2] === b) {
+
+        // Replace the direct comparison with the colorMatches function
+        if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
           ballPosition.x = x;
           ballPosition.y = y;
           found = true;
@@ -695,39 +727,76 @@ function rgbaToHex(r, g, b, a = 1) {
   );
 }
 
-function rgbToHsl(r, g, b, a = 1) {
+// function rgbToHsl(r, g, b, a = 1) {
+//   r /= 255;
+//   g /= 255;
+//   b /= 255;
+//   let max = Math.max(r, g, b),
+//     min = Math.min(r, g, b);
+//   let h = 0,
+//     s,
+//     l = (max + min) / 2;
+
+//   if (max === min) {
+//     h = s = 0; // achromatic
+//   } else {
+//     let d = max - min;
+//     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+//     switch (max) {
+//       case r:
+//         h = (g - b) / d + (g < b ? 6 : 0);
+//         break;
+//       case g:
+//         h = (b - r) / d + 2;
+//         break;
+//       case b:
+//         h = (r - g) / d + 4;
+//         break;
+//     }
+//     h /= 6;
+//     h = h < 0 ? h + 1 : h; // Ensure h is not negative
+//   }
+
+//   return [
+//     (h * 360).toFixed(1), // Hue with one decimal place
+//     (s * 100).toFixed(1), // Saturation with one decimal place
+//     (l * 100).toFixed(1), // Lightness with one decimal place
+//     a.toFixed(2), // Alpha with two decimal places
+//   ];
+// }
+
+function rgbToHsl(r, g, b) {
   r /= 255;
   g /= 255;
   b /= 255;
-  let max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  let h,
-    s,
-    l = (max + min) / 2;
 
-  if (max === min) {
-    h = s = 0; // achromatic
-  } else {
-    let d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  var max = Math.max(r, g, b);
+  var min = Math.min(r, g, b);
+  var h = 0,
+    s = 0,
+    l = (max + min) / 2;
+  var c = max - min;
+
+  if (c !== 0) {
+    s = l > 0.5 ? c / (2 - max - min) : c / (max + min);
+
     switch (max) {
       case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
+        h = (g - b) / c + (g < b ? 6 : 0);
         break;
       case g:
-        h = (b - r) / d + 2;
+        h = (b - r) / c + 2;
         break;
       case b:
-        h = (r - g) / d + 4;
+        h = (r - g) / c + 4;
         break;
     }
     h /= 6;
   }
-  
+
   return [
-    (h * 360).toFixed(1),  // Hue with one decimal place
-    (s * 100).toFixed(1),  // Saturation with one decimal place
-    (l * 100).toFixed(1),  // Lightness with one decimal place
-    a.toFixed(2)           // Alpha with two decimal places
+    (h * 360).toFixed(2), // Hue with two decimal places
+    (s * 100).toFixed(2), // Saturation with two decimal places
+    (l * 100).toFixed(2), // Lightness with two decimal places
   ];
 }

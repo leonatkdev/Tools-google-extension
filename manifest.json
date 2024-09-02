@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ToolKit Pro",
   "version": "0.1.2",
-  "description": "Tool for developers and designers including a color picker, lorem ipsum generator, typography analyzer, image resizer/converter and text transform.",
+  "description": "Tool with color picker, lorem ipsum generator, typography checker, image resizer/converter, and text transformation.",
   "action": {
     "default_popup": "toolkit-pro.html",
     "default_icon": {

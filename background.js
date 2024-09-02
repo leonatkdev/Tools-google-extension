@@ -1,14 +1,18 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "capturePage") {
-    chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
-      if (chrome.runtime.lastError) {
-        console.error(`Error capturing page: ${chrome.runtime.lastError.message}`);
-        return;
-      }
+    // Step 1: Send a cleanup request to the content script
+    chrome.tabs.sendMessage(message.tabId, { action: "cleanup" }, () => {
+      // Step 2: After cleanup, capture the screenshot
+      chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
+        if (chrome.runtime.lastError) {
+          console.error(`Error capturing page: ${chrome.runtime.lastError.message}`);
+          return;
+        }
 
-      chrome.tabs.sendMessage(message.tabId, {
-        action: "capture",
-        screenshotUrl: dataUrl,
+        chrome.tabs.sendMessage(message.tabId, {
+          action: "capture",
+          screenshotUrl: dataUrl,
+        });
       });
     });
   }

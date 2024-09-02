@@ -42,7 +42,7 @@
 .tabLanding {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   grid-column: 1/3;
 
   padding: 16px;
@@ -79,7 +79,7 @@
 .header {
   display: flex;
   align-items: center;
-  cursor: pointer;
+  /* cursor: pointer; */
   background: #f5f5f5;
   border: 1px solid #ececec;
   border-radius: 5px;
@@ -90,35 +90,62 @@
 
 .header span {
   display: inline-block;
-  margin-right: 10px;
-  margin-left: 8px;
-  max-width: 90px;
-  min-width: 90px;
+  margin: auto;
+  /* margin-right: 10px;
+  margin-left: 8px; */
+  /* max-width: 90px;
+  min-width: 90px; */
   padding-top: 12px;
   padding-bottom: 12px;
 }
 
-.header svg {
-  width: 28px;
+.goBack {
+  width: 45px;
   height: 40px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.headerMenu {
+  padding: 0;  
+  width: 45px;
+  height: 40px;
+  padding: 0px 12px;
+  cursor: pointer;
+  stroke-width: 0.3px;
+}
+
+
+
+.ref {
+  display: none;
+  position: absolute;
+  right: 0;
+  /* display: flex; */
+  flex-direction: column;
+  z-index: 100;
+  background: #f5f5f5;
+  width: 50%;
+  height: calc(100% - 22px);
+  top: 43px;
+  text-align: start;
+  border-left: 1px solid lightgray;
   padding: 8px;
 }
 
-.goBack {
-}
-
-.ref {
-  display: flex;
-
-  margin-left: auto;
-}
-
 .ref div {
-  font-size: 12px;
-  align-self: center;
-  padding: 13px;
-  border-left: 1px solid lightgrey;
+  font-size: 14px;
+  padding: 12px 16px;
+  text-align: end;
+  cursor: pointer;
+  /* border-left: 1px solid lightgrey; */
   color: gray;
+}
+
+.ref div:hover {
+  background-color: lightgray;
+  color: white;
+  border-radius: 8px;
 }
 
 .content {
@@ -181,7 +208,7 @@
   border: 1px solid lightgray;
 }
 
-.colorCanvas404{
+.colorCanvas404 {
   display: none;
   margin: 0;
   color: red;

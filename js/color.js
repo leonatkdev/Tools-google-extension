@@ -29,15 +29,18 @@ function initializeUI() {
 
 function updateRecentColorsUI(colors) {
   const recentColorElements = document.querySelectorAll(".colorTabRecent");
-  colors
-    .slice(0, 20)
-    .forEach((color, index) => {
-      if (recentColorElements[index]) {
-        recentColorElements[index].style.backgroundColor = color.startsWith("#")
-          ? color
-          : rgbaToHex(parseRgba(color));
-      }
-    });
+  colors.slice(0, 20).forEach((color, index) => {
+    if (recentColorElements[index]) {
+      recentColorElements[index].style.backgroundColor = color.startsWith("#")
+        ? color
+        : rgbaToHex(parseRgba(color));
+    }
+  });
+
+  // Clear any remaining tabs if the number of recent colors is less than 20
+  for (let i = colors.length; i < recentColorElements.length; i++) {
+    recentColorElements[i].style.backgroundColor = "#f1f1f1"; // Default background color
+  }
 }
 
 function setRecentColors() {
@@ -111,8 +114,11 @@ function deleteSelectedColors(colorClass, storageKey) {
   const selectedTabs = document.querySelectorAll(
     `${colorClass}.selected-for-deletion`
   );
+
   chrome.storage.local.get({ [storageKey]: [] }, function (result) {
     let colors = result[storageKey];
+
+    // Iterate over each selected tab and remove its corresponding color from the array
     selectedTabs.forEach((tab) => {
       const color = window.getComputedStyle(tab).backgroundColor;
       const rgbaColor = parseRgba(color);
@@ -123,23 +129,30 @@ function deleteSelectedColors(colorClass, storageKey) {
         rgbaColor.a
       );
 
-      // Remove the color from the array
-      colors = colors.filter((col) => col !== hexColor);
-
-      // Reset the tab's background color
-      tab.style.backgroundColor = "#f1f1f1";
+      // Remove the first occurrence of this color in the array
+      const colorIndex = colors.indexOf(hexColor);
+      if (colorIndex > -1) {
+        colors.splice(colorIndex, 1);
+      }
     });
 
-    // Update storage and UI
+    // Update storage with the new array
     chrome.storage.local.set({ [storageKey]: colors }, function () {
+      // Refresh the UI using the existing update functions
       if (storageKey === "favoriteColors") {
         updateFavoriteColorUI(colors);
       } else if (storageKey === "recentColors") {
         updateRecentColorsUI(colors);
       }
+
+      // Deselect all selected tabs after deletion
+      selectedTabs.forEach((tab) => {
+        tab.classList.remove("selected-for-deletion");
+      });
     });
   });
 }
+
 
 function showModal(modalId, onConfirm) {
   const modal = document.getElementById(modalId);
@@ -200,6 +213,11 @@ function updateFavoriteColorUI(favorites) {
       colorTabs[index].style.backgroundColor = color;
     }
   });
+
+  // Clear any remaining tabs if the number of favorites is less than 20
+  for (let i = favorites.length; i < colorTabs.length; i++) {
+    colorTabs[i].style.backgroundColor = "#f1f1f1"; // Default background color
+  }
 }
 
 function loadFavoriteColors() {
@@ -485,10 +503,6 @@ function setupColorCanvas() {
       imageData[2]
     }, ${parseFloat(currentAlpha).toFixed(2)})`;
 
-    console.log("imageData[0],", imageData[0]);
-    console.log(" imageData[1],", imageData[1]);
-    console.log("  imageData[2]", imageData[2]);
-    console.log(" currentAlpha", currentAlpha);
 
     const [h, s, l] = rgbToHsl(
       imageData[0],
@@ -496,10 +510,6 @@ function setupColorCanvas() {
       imageData[2],
       currentAlpha
     );
-
-    console.log(" pickColor h", h);
-    console.log(" pickColor s", s);
-    console.log("pickColor l", l);
 
     const activeTypeSpan = document.querySelector("span.activeType").id;
 
@@ -580,13 +590,7 @@ function setupColorCanvas() {
   function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
 
-    console.log("{ r, g, b, a }", { r, g, b, a });
-
     const [h, s, l] = rgbToHsl(r, g, b);
-
-    console.log("h", h);
-
-    // h = "6.96"
 
     currentHue = h;
     currentAlpha = a;

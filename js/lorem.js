@@ -77,7 +77,7 @@ function generateWords(amount) {
   while (words.length < amount) {
     words = words.concat(getRandomSentence().split(" "));
   }
-  return words.slice(0, amount).join(" ") + "...";
+  return words.slice(0, amount).join(" ");
 }
 
 function generateBytes(amount) {
@@ -86,7 +86,7 @@ function generateBytes(amount) {
   while (result.length < amount) {
     result += getRandomSentence() + " ";
   }
-  return result.substring(0, amount) + "...";
+  return result.substring(0, amount);
 }
 
 function generateList(amount) {

@@ -1,0 +1,298 @@
+.versionBtn {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 6px;
+  height: 35px;
+  color: #007bff;
+  border: none;
+  border-radius: 6px;
+  border-top-left-radius: 0px;
+  border: 1px solid lightgray;
+  border-left: none;
+  border-bottom-left-radius: 0px;
+}
+
+.fontBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#htmlTag {
+  color: rgb(33, 39, 42);
+  font-size: 17px;
+  margin-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid lightgrey;
+}
+
+.body.dark-mode #htmlTag {
+  color: white;
+  border-bottom: 1px solid #738496;
+}
+
+#fontFamily {
+  color: rgb(33, 39, 42);
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+.body.dark-mode #fontFamily {
+  color: white;
+}
+
+.labelInput {
+  color: rgb(17, 24, 39);
+  font-size: 14px;
+  line-height: 24px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.typolabel {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: dimgray;
+}
+
+.body.dark-mode .typolabel {
+  color: lightgray;
+}
+
+.fontInputBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.inputContainer {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 14px;
+  max-height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  border: 1px solid lightgrey;
+  border-radius: 6px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.body.dark-mode .inputContainer {
+  background-color: #22272b;
+  color: white;
+}
+
+.inputRounded {
+  border-radius: 8px;
+}
+
+.saveResetTab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.reset {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+#activateButton {
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#activateButton {
+  margin-left: auto;
+}
+
+.loremTopContainer {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+#max_limit_typography {
+  color: red;
+  font-weight: 500;
+}
+
+.loremInput {
+  padding: 11px 16px;
+  flex: 1;
+  border-radius: 4px;
+  border: none;
+  border: 1px solid lightgray;
+  text-align: center;
+  font-size: 16px;
+}
+
+.body.dark-mode .loremInput {
+  background-color: #22272b;
+  color: white;
+}
+
+#loremCopyBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  text-align: center;
+  justify-content: center;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+#loremCopyBtn img {
+  filter: brightness(0) invert(1);
+}
+
+.copyButtonAnimation {
+  background-color: white !important;
+  color: #007bff !important;
+  border: 1px solid #007bff !important;
+}
+
+.loremTypeContainer {
+  display: flex;
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+body.dark-mode .loremTypeContainer {
+  background-color: #282e33;
+}
+
+.paragraphs,
+.words,
+.bytes,
+.lists,
+.start {
+  border: none;
+  padding: 8px 12px;
+  background: transparent;
+  color: gray;
+  border-radius: 6px;
+  width: 25%;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+body.dark-mode .paragraphs,
+.words,
+.bytes,
+.lists,
+.start {
+  color: white;
+}
+
+.loremTypeSelected {
+  color: white;
+  background: #4083f1;
+  font-size: 15px;
+}
+
+#loremArea {
+  resize: none;
+  border: 1px solid lightgray;
+  min-height: 230px;
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 6px 8px;
+  padding-bottom: 40px;
+  width: 100%;
+}
+
+.body.dark-mode #loremArea {
+  background-color: #1d2125;
+  color: white;
+}
+
+.loremMidmSection {
+  position: relative;
+  margin-top: 6px;
+  margin-bottom: 9px;
+}
+
+.loremBottomArea {
+  position: absolute;
+  bottom: 4px;
+  padding: 6px 12px;
+  right: 1px;
+  background: #f5f5f5;
+  width: calc(100% - 2px);
+  text-align: end;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+body.dark-mode .loremBottomArea{
+  background-color: #282e33;
+}
+
+.loremBottomArea span {
+  border-right: 1px solid lightgrey;
+  padding: 0 6px;
+}
+
+body.dark-mode  .loremBottomArea span {
+  color: white;
+}
+
+.loremBottomArea span:last-child {
+  border-right: none;
+}
+
+#characterLorem {
+  margin-left: auto;
+}
+
+.scrollTop {
+  background-color: #007bff;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.scrollTopSvg {
+  transform: rotate(90deg);
+}

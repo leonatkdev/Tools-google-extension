@@ -10,16 +10,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="toolkit-pro.css">
+    <link rel="stylesheet" href="css/color-module.css">
+    <link rel="stylesheet" href="css/images-module.css">
+    <link rel="stylesheet" href="css/lorem-module.css">
+    <link rel="stylesheet" href="css/typography-module.css">
+    <link rel="stylesheet" href="css/textCase-module.css">
 </head>
 
-<body class="colorPickerBody">
-
-
+<body class="body">
     <!-- LandingContainer -->
     <div class="landingContainer">
         <div class="tabLanding">
             ToolKit Pro
-            <!-- <img src="images/moon.png" alt="moon Icon" width="30" height="30" /> -->
+            <div id="toggleDarkMode" style="position: absolute; right: 16px;">
+                <img src="images/moon.png" alt="moon Icon" width="30" height="30" />
+
+            </div>
         </div>
         <div class="sectionType" id="colors">
             <img src="images/colors.png" alt="colors Icon" width="30" height="30" />
@@ -54,7 +60,10 @@
             </svg>
 
             <span>Color</span>
+            <div id="toggleDarkMode" style="position: absolute; right: 50px;">
+                <img src="images/moon.png" alt="moon Icon" width="30" height="30" />
 
+            </div>
             <svg class="headerMenu" id="headerMenu" stroke="currentColor" fill="none" stroke-width="0"
                 viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -67,6 +76,7 @@
                     d="M11 11C10.4477 11 10 11.4477 10 12C10 12.5523 10.4477 13 11 13H19C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11H11Z"
                     fill="currentColor"></path>
             </svg>
+
 
 
             <div class="ref">
@@ -255,6 +265,11 @@
             </svg>
             <span>Lorem Ipsum</span>
 
+            <div id="toggleDarkMode" style="position: absolute; right: 50px;">
+                <img src="images/moon.png" alt="moon Icon" width="30" height="30" />
+
+            </div>
+
             <svg class="headerMenu" id="headerMenu" stroke="currentColor" fill="none" stroke-width="0"
                 viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -267,6 +282,7 @@
                     d="M11 11C10.4477 11 10 11.4477 10 12C10 12.5523 10.4477 13 11 13H19C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11H11Z"
                     fill="currentColor"></path>
             </svg>
+
 
             <div class="ref">
                 <div id="colors">
@@ -489,7 +505,11 @@
                     <polyline points="16 16 12 12 8 16"></polyline>
                 </svg>
                 Drag and drop file to upload
+
                 <button class="fileSelectImage">Select File</button>
+                <span style="font-size: 10px; margin-top: 8px;">
+                    Supported: PNG, JPEG, WepP, SVG, HEIC
+                </span>
                 <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">
             </div>
             <div id="statusContainer" class="statusContainer" style="display: none;">
@@ -555,8 +575,8 @@
             <div class="imageFormatContainer">
                 <label for="format" class="label">Convert Format</label>
                 <div id="format" class="inputContainerFormat">
-                    <button id="originalFormat"
-                        style="color: white; background: #4083F1; font-size: 15px;">Original</button>
+                    <button id="originalFormat" style="color: white; background: #4083F1; font-size: 15px;">File
+                        Format</button>
                     <button id="pngFormat">PNG</button>
                     <button id="jpegFormat">JPEG</button>
                     <button id="webpFormat">WebP</button>

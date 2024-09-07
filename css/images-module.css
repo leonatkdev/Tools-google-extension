@@ -1,0 +1,260 @@
+.imageTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.imageTab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  color: gray;
+  background-color: white;
+  border: 1px solid lightgrey;
+}
+
+.imageTabActive {
+  color: white;
+  background-color: #007bff;
+}
+
+.imageInput {
+  display: none;
+}
+
+.addImage {
+  border: 2px dashed lightgray;
+  border-radius: 8px;
+  text-align: center;
+  padding: 24px;
+  font-size: 14px;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  justify-content: center;
+  gap: 8px;
+  min-height: 180px;
+  color: gray;
+}
+
+.addImage:hover {
+  background-color: #e9f2ff;
+  border: 2px dashed #326efe;
+}
+
+.body.dark-mode .addImage:hover {
+  background-color: #1f2c42;
+}
+
+.addImage:hover button {
+  background: #007bff;
+  color: #fff;
+}
+
+.imageInfoContainer {
+  display: none;
+  gap: 16px;
+  width: 100%;
+  padding: 8px 0px;
+  margin-top: auto;
+  border-bottom-right-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+
+.fileSelectImage {
+  margin-top: 12px;
+  background-color: white;
+  color: #007bff;
+  border: 1px solid #007bff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.infoImageText {
+  padding: 8px 0px;
+  padding-bottom: 12px;
+  color: gray;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.imageWidthHeightContainer {
+  display: flex;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+.imageInputLabel {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 4px;
+}
+
+.imageInputLabel span {
+  font-size: 10px;
+  align-content: flex-end;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 400;
+  display: block;
+}
+
+.imageWidthHeightContainer div input {
+  width: 100%;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  box-sizing: border-box;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.imageWidthHeightContainer div input:first-child {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0;
+}
+
+.imageWidthHeightContainer div input:first-child + input:last-child {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0;
+}
+
+.body.dark-mode .imageWidthHeightContainer div input:first-child {
+  background-color: #22272b;
+  color: white;
+}
+
+#resize-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  background-color: white;
+  border: none;
+  text-align: start;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#download-button {
+  margin-top: 12px;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  color: white;
+  background-color: #4083f1;
+}
+
+.Imagecanvas {
+  display: none;
+}
+
+/* ////// */
+
+.addImage {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.addImage.dragover {
+  border-color: #000;
+}
+
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 180px;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+}
+
+.fileName {
+  width: 100%;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  box-sizing: border-box;
+  border: transparent;
+  border-bottom: 1px solid lightgray;
+}
+
+.cancelButton {
+  padding: 6px 14px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.cancelButton:hover {
+  background-color: #ff1a1a;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+}
+
+.imageFormatContainer {
+  margin-top: 18px;
+}
+
+.inputContainerFormat {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 4px;
+  gap: 4px;
+}
+
+body.dark-mode .inputContainerFormat {
+  background-color: #282e33;
+}
+
+.inputContainerFormat button {
+  border: none;
+  padding: 8px 12px;
+  background: transparent;
+  color: gray;
+  border-radius: 6px;
+  /* width: 25%; */
+  font-size: 14px;
+}
+
+body.dark-mode .inputContainerFormat button {
+  color: white;
+}
+
+.linkContainerStyle {
+  background: #fefefe;
+  border: 1px solid lightgray;
+  border-radius: 6px;
+  height: 35px;
+  width: 35px;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+}
+
+.body.dark-mode .linkContainerStyle {
+  background: #22272b !important;
+  color: white;
+}

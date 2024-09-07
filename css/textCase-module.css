@@ -1,0 +1,147 @@
+#texttArea {
+  resize: none;
+  border: 1px solid lightgray;
+  min-height: 230px;
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 6px 8px;
+  padding-bottom: 40px;
+  width: 100%;
+}
+
+.body.dark-mode #texttArea {
+  background-color: #1d2125;
+  color: white;
+}
+
+.textTransformerArea {
+  position: absolute;
+  bottom: 4px;
+  padding: 6px 12px;
+  right: 1px;
+  background: #f5f5f5;
+  width: calc(100% - 2px);
+  text-align: end;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+body.dark-mode .textTransformerArea {
+  background-color: #282e33;
+}
+
+.textTransformerArea span {
+  border-right: 1px solid lightgrey;
+  padding: 0 6px;
+}
+
+body.dark-mode .textTransformerArea span {
+  color: white;
+}
+
+.textTransformerArea span:last-child {
+  border-right: none;
+}
+
+.scrollTopTextt {
+  background-color: #007bff;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+.scrollTopSvgTextt {
+  transform: rotate(90deg);
+}
+
+.textTransformerActions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+body.dark-mode .textTransformerActions {
+  background-color: #282e33;
+}
+
+.textTransformerActions button {
+  border: none;
+  padding: 8px 12px;
+  background: transparent;
+  color: gray;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+body.dark-mode .textTransformerActions button {
+  color: white;
+}
+
+.textTransformerBottom {
+  display: flex;
+  border-top: 1px solid lightgray;
+  padding-top: 11px;
+  gap: 4px;
+}
+
+.textActionActive {
+  color: white !important;
+  background: #4083f1 !important;
+  font-size: 15px !important;
+  border: none !important;
+}
+
+.textTransformerBottom button {
+  border-radius: 8px;
+  border: 1px solid #007bff;
+  background: white;
+  padding: 10px 12px;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.undo,
+.redo {
+  border: 1px solid #007bff !important;
+  background-color: transparent;
+  border: none;
+  min-height: 32px;
+  min-width: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  fill: white;
+}
+
+.undo svg,
+.redo svg {
+  fill: #007bff;
+  width: 14px;
+  height: 14px;
+}
+
+.ttDownload {
+  margin-left: auto;
+}
+
+.ttClear {
+  background-color: #007bff !important;
+  color: white !important;
+}

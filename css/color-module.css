@@ -1,0 +1,345 @@
+/* .colorPickerTabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  } */
+
+/* .colorTabs {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 13px;
+    color: white;
+    background-color: #007bff;
+  } */
+
+.gradient-border {
+  padding: 10px; /* Adjusts the distance between the SVG and its border */
+  background: linear-gradient(
+    60deg,
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #7fff00,
+    #00ff00,
+    #00ff7f,
+    #00ffff,
+    #007fff,
+    #0000ff,
+    #7f00ff,
+    #ff00ff,
+    #ff007f
+  );
+  -webkit-background-clip: padding-box; /* For WebKit browsers */
+  background-clip: padding-box; /* For Firefox 4+, IE 9+, and Opera */
+  border: solid 5px transparent; /* Makes the gradient visible as a border */
+  border-radius: 100px; /* Optional: Rounds the corners of the border */
+  display: inline-block; /* Adjusts the div's size to that of the SVG */
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#colorCanvas {
+  width: 100%;
+  height: 140px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
+}
+
+.colorCanvas404 {
+  display: none;
+  margin: 0;
+  color: red;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.colorTabRecent,
+.colorTabFavorite {
+  display: block;
+  width: 33px;
+  height: 33px;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+}
+
+.colorTabRecent:hover,
+.colorTabFavorite:hover {
+  border: none;
+  border: 1px solid lightgray;
+  /* box-shadow: 0px 0px 1px black; */
+  transform: scale(1.13);
+}
+
+.selected-for-deletion {
+  outline: 2px solid red;
+}
+
+#hueRange {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  margin: 6px 0px;
+  background-image: linear-gradient(
+    to right,
+    red,
+    #ff0,
+    lime,
+    cyan,
+    blue,
+    magenta,
+    red
+  );
+  outline: none;
+}
+
+#hueRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 4px solid white;
+  border-radius: 50%;
+  box-shadow: 1;
+  background: transparent;
+  cursor: pointer;
+  box-shadow: 0px 0px 2px 1px black;
+}
+
+#hueRange::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  background: #fff;
+  cursor: pointer;
+}
+
+#alphaRange {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  margin: 6px 0px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)),
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMjHxIGmVAAAAIklEQVQYV2NkIBIwEqmOgYGBYjBmBmObAwMD6QcGBgYGhv8AAJ0mCCFkRbJhAAAAAElFTkSuQmCC);
+  background-repeat: repeat;
+  outline: none;
+}
+
+#alphaRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 4px solid white;
+  border-radius: 50%;
+  box-shadow: 1;
+  background: transparent;
+  cursor: pointer;
+  box-shadow: 0px 0px 2px 1px black;
+}
+
+#alphaRange::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  background: #fff;
+  cursor: pointer;
+}
+
+.colorType {
+  padding: 4px 14px;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.body.dark-mode .colorType {
+  color: white;
+}
+
+.activeType {
+  background-color: #007bff;
+  padding: 4px 14px;
+  border-radius: 8px;
+  color: white;
+}
+.colorTopSection {
+  display: flex;
+  margin-top: 8px;
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 12px;
+  align-items: flex-end;
+}
+.body.dark-mode .colorTopSection {
+  border-bottom: 1px solid #738496;
+}
+
+#pickColor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  width: 48px;
+  height: 40px;
+  border: 1px solid lightgray;
+  min-width: 80px;
+  max-width: 36px;
+  cursor: pointer;
+}
+
+.body.dark-mode #pickColor img {
+  filter: invert(1);
+}
+
+#selectedColor {
+  display: block;
+  width: 62px;
+  height: 40px;
+  border-radius: 8px;
+  margin-right: 8px;
+  background-color: rgb(0, 0, 0);
+  min-width: 80px;
+  max-width: 36px;
+  border: 1px solid lightgray;
+  margin-left: 8px;
+}
+
+.colorRangeInputsContainer {
+  width: 100%;
+  margin-left: 12px;
+  max-width: 208px;
+}
+
+.sectionColorType {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  margin-top: 14px;
+  padding-top: 8px;
+  font-weight: 600;
+  border-top: 1px solid #f1f1f1;
+}
+
+.body.dark-mode .sectionColorType {
+  border-top: 1px solid #738496;
+}
+
+.deleteRecentContainer,
+.deleteContainer {
+  /* display: flex; */
+  display: none;
+  border-left: 1px solid lightgrey;
+}
+
+.deleteRecentContainer div,
+.deleteContainer div {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: gray;
+  padding: 0 6px;
+}
+
+.selectRecentColor,
+.selectFavColor {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #007bff;
+  margin-left: auto;
+  padding-right: 6px;
+  cursor: pointer;
+}
+
+#resetRecent,
+#resetFav {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: gray;
+}
+
+.colorMidSecton {
+  margin-top: 12px;
+}
+
+.colorTypeTabs {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: rgb(17, 24, 39);
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-right: 6px;
+  margin-bottom: 16px;
+}
+
+#colorValue {
+  width: 100%;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  box-sizing: border-box;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.body.dark-mode #colorValue {
+  background-color: #22272b;
+  color: white;
+}
+
+#copyColorInput {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  width: 45px;
+  height: 35px;
+  border: 1px solid lightgray;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+  cursor: pointer;
+}
+
+.body.dark-mode #copyColorInput img {
+  filter: invert(1);
+}
+
+#star {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  width: 45px;
+  min-width: 100px;
+  height: 35px;
+  border-bottom: 1px solid #007bff;
+  border-top: 1px solid lightgray;
+  border-right: 1px solid #007bff;
+  border-left: 1px solid lightgray;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.body.dark-mode #star img {
+  filter: invert(1);
+}
+
+.colorsContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}

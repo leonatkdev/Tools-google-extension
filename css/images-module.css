@@ -199,6 +199,11 @@
   border-bottom: 1px solid lightgray;
 }
 
+body.dark-mode .fileName {
+  background-color: #282e33;
+  color: white !important;
+}
+
 .cancelButton {
   padding: 6px 14px;
   background-color: #ff4d4d;
@@ -265,6 +270,22 @@ body.dark-mode .inputContainerFormat button {
 }
 
 .body.dark-mode .linkContainerStyle {
+  background: #22272b !important;
+  color: white;
+}
+
+
+
+.diffFormatContainer {
+  width: 100%; 
+  padding: 9px 14px;
+  font-size: 13.5px;
+  box-sizing: border-box;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+}
+
+.body.dark-mode .diffFormatContainer {
   background: #22272b !important;
   color: white;
 }

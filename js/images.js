@@ -2,11 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const addImage = document.getElementById('addImage');
   const upload = document.getElementById('upload');
   const downloadButton = document.getElementById('download-button');
+  const formatSelect = document.getElementById('diffFormatContainer');
   const autoDownloadCheckbox = document.getElementById('autoDownload');
   const canvasImgUploaded = document.getElementById('ImgUploaded');
   const ctxImgUploaded = canvasImgUploaded.getContext('2d');
   const statusContainer = document.getElementById('statusContainer');
   const fileNameDisplay = document.getElementById('fileName');
+  const format =  document.getElementById('fileFormat');
   const cancelButton = document.getElementById('cancelButton');
   const imageInfoContainer = document.getElementById('imageInfoContainer');
   const widthInput = document.getElementById('width');
@@ -186,13 +188,14 @@ document.addEventListener('DOMContentLoaded', function() {
     alert("Format no supported")
     }
 
-    if (file.size > MAX_FILE_SIZE) {
-      alert('The file size exceeds the maximum limit of 100MB.');
-      return;
-    }
+    // if (file.size > MAX_FILE_SIZE) {
+    //   alert('The file size exceeds the maximum limit of 100MB.');
+    //   return;
+    // }
 
     fileReader = new FileReader();
     fileNameDisplay.value = file.name;
+    format.textContent =fileType;  
     statusContainer.style.display = 'flex';
     imageInfoContainer.style.display = 'flex';
     originalFileType = fileType;
@@ -235,10 +238,11 @@ document.addEventListener('DOMContentLoaded', function() {
     resetState();
   });
 
-  document.getElementById('originalFormat').addEventListener('click', () => setFormat('original'));
-  document.getElementById('pngFormat').addEventListener('click', () => setFormat('png'));
-  document.getElementById('jpegFormat').addEventListener('click', () => setFormat('jpeg'));
-  document.getElementById('webpFormat').addEventListener('click', () => setFormat('webp'));
+  // Add event listener for the change event
+  formatSelect.addEventListener('change', (event) => {
+    const selectedFormat = event.target.value.toLowerCase(); // Get selected value and convert to lowercase
+    setFormat(selectedFormat); // Call setFormat with the selected format
+  });
 
   function setFormat(format) {
     selectedFormat = format;

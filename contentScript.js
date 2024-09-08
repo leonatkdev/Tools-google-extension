@@ -19,7 +19,7 @@
     if (message.action === "capture") {
       try {
         activateZoom(message.screenshotUrl);
-        isColorPicked = false
+        isColorPicked = false;
       } catch (e) {
         console.error("Failed to activate zoom:", e);
       }
@@ -108,6 +108,8 @@
     return { canvas, lens, gridSquares, overlay, colorHex };
   }
 
+  let isClickInProgress = false; // Flag to prevent multiple clicks
+
   function activateZoom(dataUrl) {
     const { canvas, lens, gridSquares, overlay, colorHex } = injectUI();
     if (!canvas || !lens || !gridSquares || !overlay || !colorHex) {
@@ -123,14 +125,31 @@
       const handleMouseMove = (event) => {
         !isColorPicked ? onDocumentMouseMove(event, ctx, canvas, lens) : {};
       };
+
       const handleClick = (event) => {
-        !isColorPicked
-          ? onDocumentClick(event, ctx, canvas, handleMouseMove)
-          : {};
+        if (!isColorPicked && !isClickInProgress) {
+          // Prevent default action (like navigation)
+          event.preventDefault();
+    
+          // Prevent multiple clicks from being processed
+          isClickInProgress = true;
+    
+          console.log('Click detected, picking color');
+    
+          // Get the color and process it
+          onDocumentClick(event, ctx, canvas, handleMouseMove);
+    
+          // Mark color as picked
+          isColorPicked = true;
+    
+          // Cleanup the event listener after picking the color
+          document.removeEventListener("click", handleClick, true);  // Remove capture listener
+          isClickInProgress = false;  // Reset the flag after handling the click
+        }
       };
 
       document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("click", handleClick);
+      document.addEventListener("click", handleClick, { capture: true }); // capture to catch click early
     };
 
     img.onerror = () => console.error("Failed to load image for zoom.");
@@ -154,6 +173,7 @@
       .toString(16)
       .slice(1)}`;
 
+    console.log("Picked color:", hex);
     chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
 
     // Clean up event listeners and UI elements

@@ -1,5 +1,5 @@
 body.dark-mode {
-  background-color:#1D2125;
+  background-color: #1d2125;
   color: white;
 }
 
@@ -58,7 +58,7 @@ body.dark-mode {
   font-weight: 600;
 }
 
-.body.dark-mode .tabLanding{
+.body.dark-mode .tabLanding {
   border-bottom: 1px solid #738496;
 }
 
@@ -76,18 +76,17 @@ body.dark-mode {
   border-bottom: 1px solid lightgray;
 }
 
-.body.dark-mode .sectionType{
+.body.dark-mode .sectionType {
   border-bottom: 1px solid #738496;
 }
 
-.sectionType:hover{
-  background-color:  #e9f2ff;
+.sectionType:hover {
+  background-color: #e9f2ff;
 }
 
-body.dark-mode .sectionType:hover{
-  background-color:  #1f2c42;
+body.dark-mode .sectionType:hover {
+  background-color: #1f2c42;
 }
-
 
 .sectionType:nth-child(n + 2) {
   border-right: 1px solid lightgray;
@@ -106,7 +105,7 @@ body.dark-mode .sectionType:hover{
 .header {
   display: flex;
   align-items: center;
-  position: relative;
+  /* position: relative; */
   /* cursor: pointer; */
   background: #f5f5f5;
   border: 1px solid #ececec;
@@ -118,7 +117,7 @@ body.dark-mode .sectionType:hover{
 }
 
 .body.dark-mode .header {
-  background-color:#1D2125;
+  background-color: #1d2125;
   border: 1px solid #738496;
 }
 
@@ -145,15 +144,13 @@ body.dark-mode .sectionType:hover{
 }
 
 .headerMenu {
-  padding: 0;  
+  padding: 0;
   width: 45px;
   height: 40px;
   padding: 0px 12px;
   cursor: pointer;
   stroke-width: 0.3px;
 }
-
-
 
 .ref {
   display: none;
@@ -164,11 +161,15 @@ body.dark-mode .sectionType:hover{
   z-index: 100;
   background: #f5f5f5;
   width: 50%;
-  height: calc(100vh - 22px);
+  height: calc(100% - 22px);
   top: 43px;
   text-align: start;
   border-left: 1px solid lightgray;
   padding: 8px;
+}
+
+.body.dark-mode .ref {
+  background-color: #738496;
 }
 
 .ref div {
@@ -178,6 +179,10 @@ body.dark-mode .sectionType:hover{
   cursor: pointer;
   /* border-left: 1px solid lightgrey; */
   color: gray;
+}
+
+.body.dark-mode .ref div {
+  color: white;
 }
 
 .ref div:hover {
@@ -194,7 +199,6 @@ body.dark-mode .sectionType:hover{
   border-top: none;
   border-radius: 0 0 5px 5px;
 }
-
 
 .modal {
   display: none;
@@ -217,7 +221,7 @@ body.dark-mode .sectionType:hover{
 }
 
 .body.dark-mode .modal-content {
-    color: black;
+  color: black;
 }
 
 .modal-content button {
@@ -233,4 +237,3 @@ body.dark-mode .sectionType:hover{
 .modal-content button:hover {
   background-color: #0056b3;
 }
-

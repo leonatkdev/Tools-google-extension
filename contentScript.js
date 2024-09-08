@@ -154,7 +154,6 @@
       .toString(16)
       .slice(1)}`;
 
-    console.log("Picked color:", hex);
     chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
 
     // Clean up event listeners and UI elements

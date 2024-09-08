@@ -24,7 +24,6 @@ let recentColors = [];
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "colorPicked") {
-    console.log("colorPicked", message.color);
     lastPickedColor = message.color;
 
     // Remove duplicates and ensure new color is first
@@ -44,7 +43,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "getColor") {
-    // console.log('getColor', recentColors);
     sendResponse({ color: recentColors[0] || "#000000" });
   }
 });
@@ -63,7 +61,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "saveFontData") {
     chrome.storage.local.set({ fontData: message.fontData }, function () {
-      console.log("Font data saved in background:", message.fontData);
     });
   }
 });

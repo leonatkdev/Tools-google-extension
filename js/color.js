@@ -399,7 +399,6 @@ function setupColorCanvas() {
   let isDragging = false;
 
   function drawOffscreenColorSpectrum(hue, alpha) {
-    console.log("drawOffscreenColorSpectrum hue", hue);
     offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
     const colorGradient = offscreenCtx.createLinearGradient(
@@ -426,7 +425,6 @@ function setupColorCanvas() {
   }
 
   function drawColorSpectrum(hue, alpha) {
-    console.log("drawColorSpectrum hue", hue);
     ctx.clearRect(0, 0, colorCanvas.width, colorCanvas.height);
 
     const colorGradient = ctx.createLinearGradient(0, 0, colorCanvas.width, 0);
@@ -483,7 +481,6 @@ function setupColorCanvas() {
   }
 
   function pickColor() {
-    console.log("currentAlpha", currentAlpha);
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
     const imageData = offscreenCtx.getImageData(

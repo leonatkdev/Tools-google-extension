@@ -14,9 +14,19 @@
   border: 1px solid lightgrey;
 }
 
+.body.dark-mode .imageTab{
+  background-color: #1d2125;
+  border: 1px solid #4083F1;
+}
+
 .imageTabActive {
   color: white;
   background-color: #007bff;
+}
+
+.body.dark-mode .imageTabActive{
+  background-color: #007bff;
+  border: 1px solid #738496;
 }
 
 .imageInput {

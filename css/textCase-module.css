@@ -89,9 +89,9 @@ body.dark-mode .textTransformerActions {
   cursor: pointer;
 }
 
-body.dark-mode .textTransformerActions button {
+/* body.dark-mode .textTransformerActions button {
   color: white;
-}
+} */
 
 .textTransformerBottom {
   display: flex;
@@ -116,6 +116,10 @@ body.dark-mode .textTransformerActions button {
   cursor: pointer;
 }
 
+body.dark-mode .textTransformerBottom button  {
+  background: #1d2125;
+}
+
 .undo,
 .redo {
   border: 1px solid #007bff !important;
@@ -128,6 +132,14 @@ body.dark-mode .textTransformerActions button {
   align-items: center;
   border-radius: 4px;
   fill: white;
+}
+
+body.dark-mode .undo {
+  background-color: #1d2125;
+}
+
+body.dark-mode .redo {
+  background-color: #1d2125;
 }
 
 .undo svg,

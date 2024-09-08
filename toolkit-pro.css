@@ -110,7 +110,8 @@ body.dark-mode .sectionType:hover{
   /* cursor: pointer; */
   background: #f5f5f5;
   border: 1px solid #ececec;
-  border-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
   font-weight: 500;
   font-size: 14px;
   letter-spacing: 0.3px;
@@ -189,7 +190,7 @@ body.dark-mode .sectionType:hover{
   display: none;
   position: relative;
   padding: 12px 16px;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
   border-top: none;
   border-radius: 0 0 5px 5px;
 }
@@ -213,6 +214,10 @@ body.dark-mode .sectionType:hover{
   padding: 20px;
   border-radius: 5px;
   text-align: center;
+}
+
+.body.dark-mode .modal-content {
+    color: black;
 }
 
 .modal-content button {

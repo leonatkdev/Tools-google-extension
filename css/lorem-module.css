@@ -33,6 +33,14 @@
   border-bottom: 1px solid #738496;
 }
 
+.fontFamilyContainer{
+  padding-bottom: 12px; border-bottom: 1px solid lightgrey;
+}
+
+.body.dark-mode .fontFamilyContainer {
+  border-bottom: 1px solid #738496;
+}
+
 #fontFamily {
   color: rgb(33, 39, 42);
   font-size: 15px;
@@ -208,13 +216,25 @@ body.dark-mode .loremTypeContainer {
   cursor: pointer;
 }
 
-body.dark-mode .paragraphs,
-.words,
-.bytes,
-.lists,
-.start {
+/* body.dark-mode .paragraphs{
   color: white;
 }
+
+body.dark-mode .words{
+  color: white;
+}
+
+body.dark-mode .bytes{
+  color: white;
+}
+
+body.dark-mode .lists{
+  color: white;
+}
+
+body.dark-mode .start{
+  color: white;
+} */
 
 .loremTypeSelected {
   color: white;

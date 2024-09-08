@@ -49,6 +49,10 @@
   border: 1px solid lightgray;
 }
 
+.body.dark-mode #colorCanvas {
+  border: 1px solid #738496;
+}
+
 .colorCanvas404 {
   display: none;
   margin: 0;
@@ -162,6 +166,7 @@
 }
 
 .body.dark-mode .colorType {
+  border: 1px solid #738496;
   color: white;
 }
 
@@ -196,6 +201,10 @@
   cursor: pointer;
 }
 
+.body.dark-mode #pickColor{
+  border: 1px solid #738496;
+}
+
 .body.dark-mode #pickColor img {
   filter: invert(1);
 }
@@ -213,6 +222,10 @@
   margin-left: 8px;
 }
 
+.body.dark-mode #selectedColor{
+  border: 1px solid #738496;
+}
+
 .colorRangeInputsContainer {
   width: 100%;
   margin-left: 12px;
@@ -227,6 +240,11 @@
   padding-top: 8px;
   font-weight: 600;
   border-top: 1px solid #f1f1f1;
+}
+
+
+.body.dark-mode .sectionColorType{
+  border-top: 1px solid #738496;
 }
 
 .body.dark-mode .sectionColorType {

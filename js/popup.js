@@ -77,14 +77,57 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // console.log('document.getElementById', document.getElementById('toggleDarkMode'))
-  // document.getElementById('toggleDarkMode').addEventListener('click', function () {
-  //   document.body.classList.toggle('dark-mode');
-  // });
 
-  document.querySelectorAll("#toggleDarkMode").forEach((elm) =>
-    elm.addEventListener("click", function () {
-      document.body.classList.toggle("dark-mode");
-    })
-  );
+  // document.querySelectorAll("#toggleDarkMode").forEach((elm) =>
+  //   elm.addEventListener("click", function () {
+  //     document.body.classList.toggle("dark-mode");
+  //   })
+  // );
+
+  // Select elements
+const moonIcon = document.querySelectorAll("#moon");
+const sunIcon = document.querySelectorAll("#sun");
+const toggleDarkModeButtons = document.querySelectorAll("#toggleDarkMode");
+
+// Function to apply dark mode
+function enableDarkMode() {
+  document.body.classList.add("dark-mode");
+  localStorage.setItem("theme", "dark");
+
+  // Show/hide icons in all sections
+  moonIcon.forEach((icon) => (icon.style.display = "none"));
+  sunIcon.forEach((icon) => (icon.style.display = "block"));
+}
+
+// Function to disable dark mode
+function disableDarkMode() {
+  document.body.classList.remove("dark-mode");
+  localStorage.setItem("theme", "light");
+
+  // Show/hide icons in all sections
+  moonIcon.forEach((icon) => (icon.style.display = "block"));
+  sunIcon.forEach((icon) => (icon.style.display = "none"));
+}
+
+// Event listener for toggling dark mode in all sections
+toggleDarkModeButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (document.body.classList.contains("dark-mode")) {
+      disableDarkMode();
+    } else {
+      enableDarkMode();
+    }
+  });
+});
+
+// Check user preference on page load
+window.addEventListener("load", () => {
+  const theme = localStorage.getItem("theme");
+  if (theme === "dark") {
+    enableDarkMode();
+  } else {
+    disableDarkMode();
+  }
+});
+
 });

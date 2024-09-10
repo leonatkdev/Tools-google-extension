@@ -87,6 +87,7 @@ function updateFontInputs(fontData) {
   document.getElementById("input-1-weight").value = fontData.fontWeight || "";
   document.getElementById("input-1-line").value = fontData.lineHeight || "";
   document.getElementById("input-1-color").value = fontData.color || "";
+ document.getElementById("colorPreview").style.background = fontData.color || "";
 }
 
 function setupResetButton() {

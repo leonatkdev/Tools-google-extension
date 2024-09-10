@@ -291,15 +291,15 @@ function convertColorInput(value, type) {
           rgba.a
         ).toFixed(2)})`;
         break;
-      // case "hsl":
-      //   const {
-      //     r: hr,
-      //     g: hg,
-      //     b: hb,
-      //   } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
-      //   const [h, s, l] = rgbToHsl(hr, hg, hb);
-      //   colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
-      //   break;
+      case "hsl":
+        const {
+          r: hr,
+          g: hg,
+          b: hb,
+        } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
+        const [h, s, l] = rgbToHsl(hr, hg, hb);
+        colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+        break;
       default:
         console.error("Unsupported type for conversion.");
     }

@@ -161,9 +161,26 @@
 .colorType {
   padding: 4px 14px;
   border: 1px solid lightgray;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   font-size: 13px;
   cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.colorType:first-child{
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.colorType:nth-child(2){
+  border-left: none;
+}
+
+.colorType:nth-child(3){
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-left: none;
 }
 
 .body.dark-mode .colorType {
@@ -174,18 +191,18 @@
 .activeType {
   background-color: #007bff;
   padding: 4px 14px;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   color: white;
 }
 .colorTopSection {
   display: flex;
   margin-top: 8px;
-  border-bottom: 1px solid #f1f1f1;
+  /* border-bottom: 1px solid #f1f1f1; */
   padding-bottom: 12px;
   align-items: flex-end;
 }
 .body.dark-mode .colorTopSection {
-  border-bottom: 1px solid #738496;
+  /* border-bottom: 1px solid #738496; */
 }
 
 #pickColor {
@@ -285,20 +302,20 @@
 }
 
 .colorMidSecton {
-  margin-top: 12px;
+  /* margin-top: 12px; */
 }
 
 .colorTypeTabs {
   display: flex;
   align-items: center;
-  gap: 16px;
+  /* gap: 16px; */
   color: rgb(17, 24, 39);
   font-size: 14px;
   line-height: 24px;
   font-weight: 600;
   letter-spacing: 0.5px;
   margin-right: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 #colorValue {

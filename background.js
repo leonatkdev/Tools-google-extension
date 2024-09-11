@@ -26,6 +26,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "colorPicked") {
     lastPickedColor = message.color;
 
+    chrome.action.setBadgeBackgroundColor({ color:  message.color });
+    chrome.action.setBadgeText({ text: ' ' });
+
     // Remove duplicates and ensure new color is first
     recentColors = [message.color, ...recentColors.filter(color => color !== message.color)];
 

@@ -398,31 +398,77 @@ function setupColorCanvas() {
   let ballPosition = { x: colorCanvas.width / 2, y: colorCanvas.height / 2 };
   let isDragging = false;
 
-  function drawOffscreenColorSpectrum(hue, alpha) {
-    offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+  // function drawOffscreenColorSpectrum(hue, alpha) {
+  //   offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-    const colorGradient = offscreenCtx.createLinearGradient(
-      0,
-      0,
-      offscreenCanvas.width,
-      0
-    );
-    colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
-    colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
-    offscreenCtx.fillStyle = colorGradient;
-    offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+  //   const colorGradient = offscreenCtx.createLinearGradient(
+  //     0,
+  //     0,
+  //     offscreenCanvas.width,
+  //     0
+  //   );
+  //   colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+  //   colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
+  //   offscreenCtx.fillStyle = colorGradient;
+  //   offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-    const alphaGradient = offscreenCtx.createLinearGradient(
-      0,
-      0,
-      0,
-      offscreenCanvas.height
-    );
-    alphaGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
-    alphaGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
-    offscreenCtx.fillStyle = alphaGradient;
-    offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+  //   const alphaGradient = offscreenCtx.createLinearGradient(
+  //     0,
+  //     0,
+  //     0,
+  //     offscreenCanvas.height
+  //   );
+  //   alphaGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
+  //   alphaGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
+  //   offscreenCtx.fillStyle = alphaGradient;
+  //   offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+  // }
+
+  let colorPositionMap = {};
+
+function drawOffscreenColorSpectrum(hue, alpha) {
+  offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+  const colorGradient = offscreenCtx.createLinearGradient(
+    0,
+    0,
+    offscreenCanvas.width,
+    0
+  );
+  colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+  colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
+  offscreenCtx.fillStyle = colorGradient;
+  offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+  const alphaGradient = offscreenCtx.createLinearGradient(
+    0,
+    0,
+    0,
+    offscreenCanvas.height
+  );
+  alphaGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
+  alphaGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
+  offscreenCtx.fillStyle = alphaGradient;
+  offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+  // Create the color lookup map
+  createColorPositionMap();
+}
+
+function createColorPositionMap() {
+  colorPositionMap = {}; // Reset the map each time
+
+  for (let y = 0; y < offscreenCanvas.height; y++) {
+    for (let x = 0; x < offscreenCanvas.width; x++) {
+      const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+      const hexColor = rgbaToHex(imageData[0], imageData[1], imageData[2], 1);
+
+      if (!colorPositionMap[hexColor]) {
+        colorPositionMap[hexColor] = { x: x, y: y };
+      }
+    }
   }
+}
 
   function drawColorSpectrum(hue, alpha) {
     ctx.clearRect(0, 0, colorCanvas.width, colorCanvas.height);
@@ -609,31 +655,48 @@ function setupColorCanvas() {
     //   }
     //   if (found) break;
     // }
-    function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
-      return (
-        Math.abs(r1 - r2) <= tolerance &&
-        Math.abs(g1 - g2) <= tolerance &&
-        Math.abs(b1 - b2) <= tolerance
-      );
-    }
 
-    let found = false;
-    for (let y = 0; y < offscreenCanvas.height; y++) {
-      for (let x = 0; x < offscreenCanvas.width; x++) {
-        const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
 
-        // Replace the direct comparison with the colorMatches function
-        if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
-          ballPosition.x = x;
-          ballPosition.y = y;
-          found = true;
-          break;
-        }
-      }
-      if (found) break;
-    }
 
-    drawColorSpectrum(currentHue, currentAlpha);
+    // function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
+    //   return (
+    //     Math.abs(r1 - r2) <= tolerance &&
+    //     Math.abs(g1 - g2) <= tolerance &&
+    //     Math.abs(b1 - b2) <= tolerance
+    //   );
+    // }
+
+    // let found = false;
+    // for (let y = 0; y < offscreenCanvas.height; y++) {
+    //   for (let x = 0; x < offscreenCanvas.width; x++) {
+    //     const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+
+    //     // Replace the direct comparison with the colorMatches function
+    //     if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
+    //       ballPosition.x = x;
+    //       ballPosition.y = y;
+    //       found = true;
+    //       break;
+    //     }
+    //   }
+    //   if (found) break;
+    // }
+
+    // drawColorSpectrum(currentHue, currentAlpha);
+
+    const position = colorPositionMap[hexColor];
+
+  if (position) {
+    ballPosition.x = position.x;
+    ballPosition.y = position.y;
+  } else {
+    // Fallback if the color is not found
+    ballPosition.x = colorCanvas.width / 2;
+    ballPosition.y = colorCanvas.height / 2;
+  }
+
+  drawColorSpectrum(currentHue, currentAlpha);
+
     pickColor();
   }
 

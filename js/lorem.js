@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const copyBtn = document.getElementById("loremCopyBtn");
   const amountInput = document.getElementById("loremAmount");
   const maxLimitTypography = document.getElementById("max_limit_typography");
+  const includeLinkCheckbox = document.getElementById("includeLink");
 
   const updateText = () => {
     let amount = parseInt(amountInput.value);
@@ -116,11 +117,30 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       maxLimitTypography.style.display = "none";
     }
+
+    let generatedText = generateLoremIpsum(selectedType, amount);
+
+    // Check if the link checkbox is checked, and insert a link after the 3rd word
+    if (includeLinkCheckbox.checked) {
+      generatedText = insertLinkAfterThirdWord(generatedText);
+    }
+
     const loremArea = document.getElementById("loremArea");
-    loremArea.value = generateLoremIpsum(selectedType, amount);
-    // updateWordCount();
+    loremArea.value = generatedText;
+
     updateTextMetrics();
     resetCopyButton(); // Reset the copy button on text update
+  };
+
+  includeLinkCheckbox.addEventListener("change", updateText);
+
+
+  const insertLinkAfterThirdWord = (text) => {
+    const words = text.split(" ");
+    if (words.length > 3) {
+      words.splice(3, 0, `<a href="https://www.google.com/" target="_blank">LINK</a>`);
+    }
+    return words.join(" ");
   };
 
   const validateInput = () => {

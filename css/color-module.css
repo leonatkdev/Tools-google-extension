@@ -159,7 +159,7 @@
 }
 
 .colorType {
-  padding: 4px 14px;
+  padding: 5.5px 14px;
   border: 1px solid lightgray;
   /* border-radius: 8px; */
   font-size: 13px;
@@ -190,7 +190,7 @@
 
 .activeType {
   background-color: #007bff;
-  padding: 4px 14px;
+  padding: 5.5px 14px;
   /* border-radius: 8px; */
   color: white;
 }
@@ -327,6 +327,7 @@
   border-radius: 8px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  height: 38px;
 }
 
 .body.dark-mode #colorValue {
@@ -340,7 +341,7 @@
   align-items: center;
   border-radius: 8px;
   width: 45px;
-  height: 35px;
+  height: 38px;
   border: 1px solid lightgray;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -360,7 +361,7 @@
   border-radius: 8px;
   width: 45px;
   min-width: 100px;
-  height: 35px;
+  height: 38px;
   border-bottom: 1px solid #007bff;
   border-top: 1px solid lightgray;
   border-right: 1px solid #007bff;

@@ -251,8 +251,10 @@ document.addEventListener('DOMContentLoaded', function() {
       button.style.color = '';
     });
     const selectedButton = document.getElementById(format + 'Format');
+    if(selectedButton){
     selectedButton.style.background = '#4083F1';
     selectedButton.style.color = 'white';
+    }
   }
 
   // Handle download

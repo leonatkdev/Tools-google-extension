@@ -289,3 +289,17 @@ body.dark-mode .inputContainerFormat button {
   background: #22272b !important;
   color: white;
 }
+
+.fileFormat{
+  width: 100%; 
+  padding: 9px 14px;
+  font-size: 13.5px;
+  box-sizing: border-box;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+}
+
+.body.dark-mode .fileFormat{
+  background-color: #22272b;
+  color: white;
+}

@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     ];
 
     // Ensure we only keep up to 20 recent colors
-    recentColors = recentColors.slice(0, 20);
+    recentColors = recentColors.slice(0, 22);
 
     // Save the recent colors in chrome.storage.local
     chrome.storage.local.set({ recentColors: recentColors }, function () {

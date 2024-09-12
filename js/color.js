@@ -29,7 +29,7 @@ function initializeUI() {
 
 function updateRecentColorsUI(colors) {
   const recentColorElements = document.querySelectorAll(".colorTabRecent");
-  colors.slice(0, 20).forEach((color, index) => {
+  colors.slice(0, 22).forEach((color, index) => {
     if (recentColorElements[index]) {
       recentColorElements[index].style.backgroundColor = color.startsWith("#")
         ? color
@@ -37,7 +37,7 @@ function updateRecentColorsUI(colors) {
     }
   });
 
-  // Clear any remaining tabs if the number of recent colors is less than 20
+  // Clear any remaining tabs if the number of recent colors is less than 22
   for (let i = colors.length; i < recentColorElements.length; i++) {
     recentColorElements[i].style.backgroundColor = "#f1f1f1"; // Default background color
   }
@@ -189,7 +189,7 @@ function setupStarClicks() {
 
     chrome.storage.local.get({ favoriteColors: [] }, function (result) {
       let favorites = result.favoriteColors;
-      const maxFavorites = 20;
+      const maxFavorites = 22;
       if (favorites.length < maxFavorites) {
         const rgba = parseRgba(colorValue);
         const hexColor = colorValue.startsWith("#")
@@ -208,13 +208,13 @@ function setupStarClicks() {
 
 function updateFavoriteColorUI(favorites) {
   const colorTabs = document.querySelectorAll(".colorTabFavorite");
-  favorites.slice(0, 20).forEach((color, index) => {
+  favorites.slice(0, 22).forEach((color, index) => {
     if (colorTabs[index]) {
       colorTabs[index].style.backgroundColor = color;
     }
   });
 
-  // Clear any remaining tabs if the number of favorites is less than 20
+  // Clear any remaining tabs if the number of favorites is less than 22
   for (let i = favorites.length; i < colorTabs.length; i++) {
     colorTabs[i].style.backgroundColor = "#f1f1f1"; // Default background color
   }

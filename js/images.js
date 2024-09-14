@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const originalHeight = document.getElementById('originalHeight');
   const sameAspectCheckbox = document.getElementById('aspectCheckbox');
   const sameAspectCheckboxSVGConatiner = document.querySelector('.linkContainerStyle');
-  const zoomInButton = document.querySelector('.imageTab:nth-child(3)');
-  const zoomOutButton = document.querySelector('.imageTab:nth-child(4)');
+  const zoomInButton = document.getElementById('zoomIn');
+  const zoomOutButton = document.getElementById('zoomOut');
   let originalImage = null;
   let zoomFactor = 1;
   let dragStartX = 0, dragStartY = 0;
@@ -168,42 +168,66 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  
+  function saveImageData(dataURL) {
+    try {
+      localStorage.setItem('savedImageData', dataURL);
+      localStorage.setItem('savedImageFileName', fileNameDisplay.value);
+      localStorage.setItem('savedImageFileType', originalFileType);
+      localStorage.setItem('savedImageWidth', widthInput.value);
+      localStorage.setItem('savedImageHeight', heightInput.value);
+      // Save any other necessary state, like selectedFormat
+      localStorage.setItem('savedSelectedFormat', selectedFormat);
+    } catch (e) {
+      console.error('Failed to save image data to localStorage:', e);
+    }
+  }
+
+  const savedImageData = localStorage.getItem('savedImageData');
+  if (savedImageData) {
+    const img = new Image();
+    img.onload = function() {
+      originalImage = img;
+      widthInput.value = localStorage.getItem('savedImageWidth') || img.width;
+      heightInput.value = localStorage.getItem('savedImageHeight') || img.height;
+      originalWidth.textContent = img.width + ' PX';
+      originalHeight.textContent = img.height + ' PX';
+      fileNameDisplay.value = localStorage.getItem('savedImageFileName') || 'Saved Image';
+      format.textContent = localStorage.getItem('savedImageFileType') || '';
+      selectedFormat = localStorage.getItem('savedSelectedFormat') || 'original';
+      setFormat(selectedFormat);
+      drawImageWithObjectFit(ctxImgUploaded, img, 350, 175, 'contain');
+
+      statusContainer.style.display = 'flex';
+      imageInfoContainer.style.display = 'flex';
+      addImage.style.display = 'none';
+    };
+    img.onerror = function() {
+      console.error('Failed to load saved image.');
+      resetState();
+    };
+    img.src = savedImageData;
+  }
+  
+
   function handleFileUpload(file) {
     const fileType = file.type.split('/')[1];
     if (!supportedFormats.includes(fileType)) {
-    //   addImage.innerHTML = `
-    //     <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
-    //         stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
-    //         <polyline points="16 16 12 12 8 16"></polyline>
-    //         <line x1="12" y1="12" x2="12" y2="21"></line>
-    //         <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 1 0 0 3 16.3"></path>
-    //         <polyline points="16 16 12 12 8 16"></polyline>
-    //     </svg>
-    //     File format not supported
-    //     <button class="fileSelectImage">Select File</button>
-    //     <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">`;
-    //   addImage.style.backgroundColor = '#fdf3f3';
-    //   addImage.style.border = '2px dashed red';
-    //   return;
-    alert("Format no supported")
+      alert("Format not supported");
+      return;
     }
-
-    // if (file.size > MAX_FILE_SIZE) {
-    //   alert('The file size exceeds the maximum limit of 100MB.');
-    //   return;
-    // }
-
+  
     fileReader = new FileReader();
     fileNameDisplay.value = file.name;
-    format.textContent =fileType;  
+    format.textContent = fileType;
     statusContainer.style.display = 'flex';
     imageInfoContainer.style.display = 'flex';
     originalFileType = fileType;
-
+  
     fileReader.onloadstart = function() {
       showStatusMessage(`Uploading ${file.name}...`);
     };
-
+  
     fileReader.onload = function(event) {
       const img = new Image();
       img.onload = function() {
@@ -214,22 +238,26 @@ document.addEventListener('DOMContentLoaded', function() {
         originalHeight.textContent = img.height + ' PX';
         drawImageWithObjectFit(ctxImgUploaded, img, 350, 175, 'contain');
         hideStatusMessage();
+  
+        // Save image data to localStorage
+        saveImageData(event.target.result);
       };
       img.onerror = function() {
         showStatusMessage(`Error loading ${file.name}.`, true);
       };
-
+  
       img.src = event.target.result;
       showStatusMessage(`${file.name}`);
       addImage.style.display = 'none';
     };
-
+  
     fileReader.onerror = function() {
       showStatusMessage(`Error reading ${file.name}.`, true);
     };
-
+  
     fileReader.readAsDataURL(file);
   }
+  
 
   cancelButton.addEventListener('click', function() {
     if (fileReader) {
@@ -351,30 +379,38 @@ document.addEventListener('DOMContentLoaded', function() {
     ctx.drawImage(img, x, y, width, height);
   }
 
-  function resetState() {
-    // Reset variables
-    originalImage = null;
-    resizedImage = null;
-    fileReader = null;
-    selectedFormat = 'original';
-    originalFileType = '';
+function resetState() {
+  // Reset variables
+  originalImage = null;
+  resizedImage = null;
+  fileReader = null;
+  selectedFormat = 'original';
+  originalFileType = '';
 
-    // Reset UI elements
-    fileNameDisplay.value = '';
-    // progressBar.value = 0;
-    widthInput.value = '';
-    heightInput.value = '';
-    originalWidth.textContent = '';
-    originalHeight.textContent = '';
-    addImage.style.display = 'flex';
-    addImage.style.backgroundColor = ''; // Reset background color
-    statusContainer.style.display = 'none';
-    imageInfoContainer.style.display = 'none';
-    ctxImgUploaded.clearRect(0, 0, canvasImgUploaded.width, canvasImgUploaded.height);
+  // Reset UI elements
+  fileNameDisplay.value = '';
+  widthInput.value = '';
+  heightInput.value = '';
+  originalWidth.textContent = '';
+  originalHeight.textContent = '';
+  addImage.style.display = 'flex';
+  addImage.style.backgroundColor = ''; // Reset background color
+  statusContainer.style.display = 'none';
+  imageInfoContainer.style.display = 'none';
+  ctxImgUploaded.clearRect(0, 0, canvasImgUploaded.width, canvasImgUploaded.height);
 
-    // Reset format buttons
-    setFormat('original');
-  }
+  // Reset format buttons
+  setFormat('original');
+
+  // Clear saved image data
+  localStorage.removeItem('savedImageData');
+  localStorage.removeItem('savedImageFileName');
+  localStorage.removeItem('savedImageFileType');
+  localStorage.removeItem('savedImageWidth');
+  localStorage.removeItem('savedImageHeight');
+  localStorage.removeItem('savedSelectedFormat');
+}
+
 
   // Validate input values
   widthInput.addEventListener('input', validateInput);

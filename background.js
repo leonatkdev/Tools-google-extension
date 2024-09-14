@@ -1,24 +1,47 @@
+// background.js
+// background.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "capturePage") {
-    // Step 1: Send a cleanup request to the content script
-    chrome.tabs.sendMessage(message.tabId, { action: "cleanup" }, () => {
-      // Step 2: After cleanup, capture the screenshot
-      chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
-        if (chrome.runtime.lastError) {
-          console.error(
-            `Error capturing page: ${chrome.runtime.lastError.message}`
-          );
-          return;
-        }
+    // Send a cleanup request to the content script
+    chrome.tabs.sendMessage(message.tabId, { action: "cleanup" }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Error sending cleanup message:', chrome.runtime.lastError.message);
+        // Optionally notify the user or handle the error
+        return;
+      }
 
-        chrome.tabs.sendMessage(message.tabId, {
-          action: "capture",
-          screenshotUrl: dataUrl,
-        });
-      });
+      if (response && response.status === "cleanup complete") {
+        // Wait a short delay before capturing the screenshot
+        setTimeout(() => {
+          // Capture the screenshot
+          chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
+            if (chrome.runtime.lastError) {
+              console.error(`Error capturing page: ${chrome.runtime.lastError.message}`);
+              return;
+            }
+
+            // Send the capture message to the content script
+            chrome.tabs.sendMessage(message.tabId, {
+              action: "capture",
+              screenshotUrl: dataUrl,
+            }, (response) => {
+              if (chrome.runtime.lastError) {
+                console.error('Error sending capture message:', chrome.runtime.lastError.message);
+              }
+              // Optionally handle the response from the content script
+            });
+          });
+        }, 100); // Adjust delay if necessary
+      } else {
+        console.error('Cleanup not completed properly or no response received.');
+      }
     });
+    // Return true to indicate sendResponse will be called asynchronously
+    return true;
   }
 });
+
+
 
 let lastPickedColor = "#000000";
 let recentColors = [];
@@ -96,14 +119,14 @@ const staticParagraphs = {
 };
 
 chrome.runtime.onInstalled.addListener(() => {
-  // Create the main "Toolkit Pro" menu
+  // Create the main "DesignSuite" menu
   chrome.contextMenus.create({
     id: "toolkitPro",
-    title: "Toolkit Pro - Generate Lorem Ipsum",
+    title: "DesignSuite - Generate Lorem Ipsum",
     contexts: ["editable"],
   });
 
-  // Add options for words under "Toolkit Pro"
+  // Add options for words under "DesignSuite"
   chrome.contextMenus.create({
     id: "5Words",
     parentId: "toolkitPro",
@@ -132,7 +155,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["editable"],
   });
 
-  // Add options for words with Link under "Toolkit Pro"
+  // Add options for words with Link under "DesignSuite"
   chrome.contextMenus.create({
     id: "5WordsLink",
     parentId: "toolkitPro",
@@ -161,7 +184,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["editable"],
   });
 
-  // Add options for paragraphs under "Toolkit Pro"
+  // Add options for paragraphs under "DesignSuite"
   chrome.contextMenus.create({
     id: "1Paragraph",
     parentId: "toolkitPro",

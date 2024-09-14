@@ -1,3 +1,5 @@
+("use strict");
+
 document.addEventListener("DOMContentLoaded", function () {
   const activateButton = document.getElementById("activateButton");
 
@@ -61,14 +63,22 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-("use strict");
-
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
   loadFontDataFromStorage();
   setupResetButton();
+  setupCopyButton();
 }
+
+const NodeHTMLElement = document.getElementById("htmlTag");
+const FontFamilyInput = document.getElementById("fontFamily");
+const SizeInput = document.getElementById("input-1-size");
+const FontWeightInput = document.getElementById("input-1-weight");
+const LineHeightinput = document.getElementById("input-1-line");
+const ColorInput = document.getElementById("input-1-color");
+
+const CopyBTN = document.getElementById("CopyCSSInput");
 
 function loadFontDataFromStorage() {
   chrome.storage.local.get(["fontData"], function (result) {
@@ -79,15 +89,14 @@ function loadFontDataFromStorage() {
 }
 
 function updateFontInputs(fontData) {
-  document.getElementById("htmlTag").textContent =
-    fontData.elementSelectedTag || "-";
-  document.getElementById("fontFamily").textContent =
-    fontData.fontFamily || "-";
-  document.getElementById("input-1-size").value = fontData.fontSize || "";
-  document.getElementById("input-1-weight").value = fontData.fontWeight || "";
-  document.getElementById("input-1-line").value = fontData.lineHeight || "";
-  document.getElementById("input-1-color").value = fontData.color || "";
- document.getElementById("colorPreview").style.background = fontData.color || "";
+  NodeHTMLElement.textContent = fontData.elementSelectedTag || "-";
+  FontFamilyInput.textContent = fontData.fontFamily || "-";
+  SizeInput.value = fontData.fontSize || "";
+  FontWeightInput.value = fontData.fontWeight || "";
+  LineHeightinput.value = fontData.lineHeight || "";
+  ColorInput.value = fontData.color || "";
+  document.getElementById("colorPreview").style.background =
+    fontData.color || "";
 }
 
 function setupResetButton() {
@@ -98,5 +107,35 @@ function setupResetButton() {
     document.getElementById("htmlTag").textContent = "-";
     document.getElementById("fontFamily").textContent = "-";
     chrome.storage.local.set({ fontData: {} });
+  });
+}
+
+function copyAllToClipboard(fontFamily, fontSize, fontWeight, lineHeight, color) {
+  const text = `font-family: ${fontFamily};
+font-size: ${fontSize};
+font-weight: ${fontWeight};
+line-height: ${lineHeight};
+color: ${color};`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    // Optionally, provide user feedback here
+    console.log("CSS copied to clipboard!");
+    CopyBTN.style.background = "#007bff"
+      CopyBTN.style.color = "#fff"
+        CopyBTN.style.border = "1px solid #fff "
+  }).catch(err => {
+    alert("Couldn't copy something went wrong")
+  });
+}
+
+function setupCopyButton() {
+  CopyBTN.addEventListener("click", () => {
+    copyAllToClipboard(
+      FontFamilyInput.textContent,
+      SizeInput.value,
+      FontWeightInput.value,
+      LineHeightinput.value,
+      ColorInput.value
+    );
   });
 }

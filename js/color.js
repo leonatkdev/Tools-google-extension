@@ -424,8 +424,6 @@ function setupColorCanvas() {
   //   offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
   // }
 
-  let colorPositionMap = {};
-
 function drawOffscreenColorSpectrum(hue, alpha) {
   offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
@@ -451,42 +449,32 @@ function drawOffscreenColorSpectrum(hue, alpha) {
   offscreenCtx.fillStyle = alphaGradient;
   offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-  // Create the color lookup map
-  createColorPositionMap();
+
 }
 
-function createColorPositionMap() {
-  colorPositionMap = {}; // Reset the map each time
+function drawColorSpectrum(hue, alpha) {
+  ctx.clearRect(0, 0, colorCanvas.width, colorCanvas.height);
 
-  for (let y = 0; y < offscreenCanvas.height; y++) {
-    for (let x = 0; x < offscreenCanvas.width; x++) {
-      const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-      const hexColor = rgbaToHex(imageData[0], imageData[1], imageData[2], 1);
+  // Fill with the hue color at full saturation and brightness
+  ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${alpha})`;
+  ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
 
-      if (!colorPositionMap[hexColor]) {
-        colorPositionMap[hexColor] = { x: x, y: y };
-      }
-    }
-  }
+  // Apply a horizontal gradient to reduce saturation (white to transparent)
+  const whiteGradient = ctx.createLinearGradient(0, 0, colorCanvas.width, 0);
+  whiteGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+  whiteGradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+  ctx.fillStyle = whiteGradient;
+  ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
+
+  // Apply a vertical gradient to reduce value (transparent to black)
+  const blackGradient = ctx.createLinearGradient(0, 0, 0, colorCanvas.height);
+  blackGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
+  blackGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
+  ctx.fillStyle = blackGradient;
+  ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
+
+  drawBall();
 }
-
-  function drawColorSpectrum(hue, alpha) {
-    ctx.clearRect(0, 0, colorCanvas.width, colorCanvas.height);
-
-    const colorGradient = ctx.createLinearGradient(0, 0, colorCanvas.width, 0);
-    colorGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
-    colorGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, ${alpha})`);
-    ctx.fillStyle = colorGradient;
-    ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
-
-    const alphaGradient = ctx.createLinearGradient(0, 0, 0, colorCanvas.height);
-    alphaGradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
-    alphaGradient.addColorStop(1, `rgba(0, 0, 0, ${alpha})`);
-    ctx.fillStyle = alphaGradient;
-    ctx.fillRect(0, 0, colorCanvas.width, colorCanvas.height);
-
-    drawBall();
-  }
 
   function drawBall() {
     // Save the current state
@@ -527,37 +515,30 @@ function createColorPositionMap() {
   }
 
   function pickColor() {
-    drawOffscreenColorSpectrum(currentHue, currentAlpha);
-
-    const imageData = offscreenCtx.getImageData(
+    const imageData = ctx.getImageData(
       ballPosition.x,
       ballPosition.y,
       1,
       1
     ).data;
-
+  
     const hex = rgbaToHex(
       imageData[0],
       imageData[1],
       imageData[2],
       currentAlpha
     );
-    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${
-      imageData[2]
-    }, ${parseFloat(currentAlpha).toFixed(2)})`;
-
-
+  
+    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${parseFloat(currentAlpha).toFixed(2)})`;
+  
     const [h, s, l] = rgbToHsl(
       imageData[0],
       imageData[1],
-      imageData[2],
-      currentAlpha
+      imageData[2]
     );
-
-    const activeTypeSpan = document.querySelector("span.activeType").id;
-
+  
     if (!manualHexInput) {
-      switch (activeTypeSpan) {
+      switch (document.querySelector("span.activeType").id) {
         case "hex":
           colorInput.value = hex;
           break;
@@ -571,18 +552,22 @@ function createColorPositionMap() {
           colorInput.value = hex;
       }
     }
-
-    selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+  
+    selectedColorDiv.style.backgroundColor = rgba;
   }
+  
 
   colorCanvas.addEventListener("mousedown", function (e) {
+
+
     manualHexInput = false;
     const rect = colorCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    ballPosition.x = x;
-    ballPosition.y = y;
+    ballPosition.x = Math.max(0, Math.min(colorCanvas.width, x));
+    ballPosition.y = Math.max(0, Math.min(colorCanvas.height, y));
+
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
 
@@ -630,75 +615,65 @@ function createColorPositionMap() {
     setColorFromHex(e.target.value);
   });
 
+  function colorMatchesHSL(h1, s1, l1, h2, s2, l2, tolerance = 0.01) {
+    return (
+      Math.abs(h1 - h2) <= tolerance &&
+      Math.abs(s1 - s2) <= tolerance &&
+      Math.abs(l1 - l2) <= tolerance
+    );
+  }
+
+  function rgbToHsv(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+  
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+  
+    let h, s, v = max;
+  
+    s = max === 0 ? 0 : delta / max;
+  
+    if (delta === 0) {
+      h = 0;
+    } else {
+      switch (max) {
+        case r:
+          h = ((g - b) / delta + (g < b ? 6 : 0)) % 6;
+          break;
+        case g:
+          h = (b - r) / delta + 2;
+          break;
+        case b:
+          h = (r - g) / delta + 4;
+          break;
+      }
+      h *= 60;
+    }
+  
+    return [h, s, v];
+  }
+  
+
+  
   function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
-
-    const [h, s, l] = rgbToHsl(r, g, b);
-
+    const [h, s, v] = rgbToHsv(r, g, b);
+  
     currentHue = h;
-    currentAlpha = a;
+    currentAlpha = a !== undefined ? a : 1;
     hueRange.value = h;
-    alphaRange.value = a;
-
-    drawOffscreenColorSpectrum(currentHue, currentAlpha);
-
-    // let found = false;
-    // for (let y = 0; y < offscreenCanvas.height; y++) {
-    //   for (let x = 0; x < offscreenCanvas.width; x++) {
-    //     const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-    //     if (imageData[0] === r && imageData[1] === g && imageData[2] === b) {
-    //       ballPosition.x = x;
-    //       ballPosition.y = y;
-    //       found = true;
-    //       break;
-    //     }
-    //   }
-    //   if (found) break;
-    // }
-
-
-
-    // function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
-    //   return (
-    //     Math.abs(r1 - r2) <= tolerance &&
-    //     Math.abs(g1 - g2) <= tolerance &&
-    //     Math.abs(b1 - b2) <= tolerance
-    //   );
-    // }
-
-    // let found = false;
-    // for (let y = 0; y < offscreenCanvas.height; y++) {
-    //   for (let x = 0; x < offscreenCanvas.width; x++) {
-    //     const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-
-    //     // Replace the direct comparison with the colorMatches function
-    //     if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
-    //       ballPosition.x = x;
-    //       ballPosition.y = y;
-    //       found = true;
-    //       break;
-    //     }
-    //   }
-    //   if (found) break;
-    // }
-
-    // drawColorSpectrum(currentHue, currentAlpha);
-
-    const position = colorPositionMap[hexColor];
-
-  if (position) {
-    ballPosition.x = position.x;
-    ballPosition.y = position.y;
-  } else {
-    // Fallback if the color is not found
-    ballPosition.x = colorCanvas.width / 2;
-    ballPosition.y = colorCanvas.height / 2;
-  }
-
-  drawColorSpectrum(currentHue, currentAlpha);
-
+    alphaRange.value = currentAlpha;
+  
+    ballPosition.x = s * colorCanvas.width;
+    ballPosition.y = (1 - v) * colorCanvas.height;
+  
+    drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   }
+  
 
   chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
     if (response.color) {
@@ -779,16 +754,24 @@ function hslToRgba({ h, s, l, a = 1 }) {
   return { r, g, b, a };
 }
 
+// function rgbaToHex(r, g, b, a = 1) {
+//   return (
+//     "#" +
+//     [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("") +
+//     (a < 1
+//       ? Math.round(a * 255)
+//           .toString(16)
+//           .padStart(2, "0")
+//       : "")
+//   );
+// }
+
 function rgbaToHex(r, g, b, a = 1) {
-  return (
-    "#" +
-    [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("") +
-    (a < 1
-      ? Math.round(a * 255)
-          .toString(16)
-          .padStart(2, "0")
-      : "")
-  );
+  const alpha = Math.round(a * 255).toString(16).padStart(2, '0'); // Convert alpha to hex
+  const red = r.toString(16).padStart(2, '0');
+  const green = g.toString(16).padStart(2, '0');
+  const blue = b.toString(16).padStart(2, '0');
+  return `#${red}${green}${blue}${alpha}`; // Include alpha in the hex string
 }
 
 // function rgbToHsl(r, g, b, a = 1) {

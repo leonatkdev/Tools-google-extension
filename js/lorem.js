@@ -99,14 +99,47 @@ function generateList(amount) {
   return list.join("\n");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  let selectedType = "paragraphs";
-  document.getElementById(selectedType).classList.add("loremTypeSelected");
 
-  const copyBtn = document.getElementById("loremCopyBtn");
-  const amountInput = document.getElementById("loremAmount");
-  const maxLimitTypography = document.getElementById("max_limit_typography");
-  const includeLinkCheckbox = document.getElementById("includeLink");
+
+document.addEventListener("DOMContentLoaded", () => {
+ // Retrieve saved values from localStorage
+ const savedAmount = localStorage.getItem("loremAmount");
+ const savedIncludeLink = localStorage.getItem("includeLink");
+ const savedLoremText = localStorage.getItem("loremText");
+ const savedSelectedType = localStorage.getItem("selectedType");
+
+ // Initialize variables
+ let selectedType = savedSelectedType || "paragraphs";
+ document.getElementById(selectedType).classList.add("loremTypeSelected");
+
+ const copyBtn = document.getElementById("loremCopyBtn");
+ const amountInput = document.getElementById("loremAmount");
+ const maxLimitTypography = document.getElementById("max_limit_typography");
+ const includeLinkCheckbox = document.getElementById("includeLink");
+
+
+   // Set input fields with saved values
+   if (savedAmount !== null) {
+    amountInput.value = savedAmount;
+  } else {
+    amountInput.value = 1; // Default value if nothing is saved
+  }
+
+  if (savedIncludeLink !== null) {
+    includeLinkCheckbox.checked = savedIncludeLink === "true";
+  } else {
+    includeLinkCheckbox.checked = false; // Default value
+  }
+
+  // Update the text area and metrics
+  const loremArea = document.getElementById("loremArea");
+  if (savedLoremText !== null) {
+    loremArea.value = savedLoremText;
+  } else {
+    updateText(); // Generate new text if no saved text
+  }
+
+  updateTextMetrics();
 
   const updateText = () => {
     let amount = parseInt(amountInput.value);
@@ -132,8 +165,18 @@ document.addEventListener("DOMContentLoaded", () => {
     resetCopyButton(); // Reset the copy button on text update
   };
 
-  includeLinkCheckbox.addEventListener("change", updateText);
+  const saveInputsToLocalStorage = () => {
+    localStorage.setItem("loremAmount", amountInput.value);
+    localStorage.setItem("includeLink", includeLinkCheckbox.checked);
+    localStorage.setItem("loremText", document.getElementById("loremArea").value);
+    localStorage.setItem("selectedType", selectedType);
+  };
 
+  // Update the save function in existing event listeners
+  includeLinkCheckbox.addEventListener("change", () => {
+    updateText();
+    saveInputsToLocalStorage();
+  });
 
   const insertLinkAfterThirdWord = (text) => {
     const words = text.split(" ");
@@ -146,16 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const validateInput = () => {
     amountInput.value = amountInput.value.replace(/[^0-9]/g, "");
   };
-
-//   const updateWordCount = () => {
-//     const loremArea = document.getElementById("loremArea");
-//     const text = loremArea.value;
-//     const words = text
-//       .trim()
-//       .split(/\s+/)
-//       .filter((word) => word.length > 0).length;
-//     document.getElementById("wordCount").textContent = `${words} Words`;
-//   };
 
   function updateTextMetrics() {
     const text = document.getElementById("loremArea").value;
@@ -180,37 +213,21 @@ document.addEventListener("DOMContentLoaded", () => {
     copyBtn.innerHTML = 'Copy <img src="images/copy.svg" alt="Copy Icon" />';
   };
 
-  document.getElementById("paragraphs").addEventListener("click", () => {
-    document.getElementById(selectedType).classList.remove("loremTypeSelected");
-    selectedType = "paragraphs";
-    document.getElementById(selectedType).classList.add("loremTypeSelected");
-    updateText();
-  });
-
-  document.getElementById("words").addEventListener("click", () => {
-    document.getElementById(selectedType).classList.remove("loremTypeSelected");
-    selectedType = "words";
-    document.getElementById(selectedType).classList.add("loremTypeSelected");
-    updateText();
-  });
-
-  document.getElementById("bytes").addEventListener("click", () => {
-    document.getElementById(selectedType).classList.remove("loremTypeSelected");
-    selectedType = "bytes";
-    document.getElementById(selectedType).classList.add("loremTypeSelected");
-    updateText();
-  });
-
-  document.getElementById("lists").addEventListener("click", () => {
-    document.getElementById(selectedType).classList.remove("loremTypeSelected");
-    selectedType = "lists";
-    document.getElementById(selectedType).classList.add("loremTypeSelected");
-    updateText();
+  const types = ["paragraphs", "words", "bytes", "lists"];
+  types.forEach((type) => {
+    document.getElementById(type).addEventListener("click", () => {
+      document.getElementById(selectedType).classList.remove("loremTypeSelected");
+      selectedType = type;
+      document.getElementById(selectedType).classList.add("loremTypeSelected");
+      updateText();
+      saveInputsToLocalStorage();
+    });
   });
 
   amountInput.addEventListener("input", () => {
     validateInput();
     updateText();
+    saveInputsToLocalStorage();
   });
 
   copyBtn.addEventListener("click", () => {
@@ -230,9 +247,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("loremArea").scrollTop = 0;
   });
 
-  document
-    .getElementById("loremArea")
-    .addEventListener("input", updateTextMetrics);
+  document.getElementById("loremArea").addEventListener("input", () => {
+    updateTextMetrics();
+    saveInputsToLocalStorage();
+  });
+
+  
 
   updateText(); // Initial text generation
 });

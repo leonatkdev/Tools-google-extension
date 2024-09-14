@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolKit Pro</title>
+    <title>DesignSuite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
     <!-- LandingContainer -->
     <div class="landingContainer">
         <div class="tabLanding">
-            ToolKit Pro
+            DesignSuite
             <div id="toggleDarkMode" style="position: absolute; right: 16px;">
                 <img src="images/moon.svg" id="moon" alt="moon Icon" width="30" height="30" />
                 <img src="images/sun.svg" id="sun" alt="Sun Icon" width="30" height="30" />
@@ -108,7 +108,7 @@
             </div> -->
 
             <div id="colorPicker">
-                <canvas id="colorCanvas" height="140" width="415px"></canvas>
+                <canvas id="colorCanvas" height="125" width="415px"></canvas>
                 <p class="colorCanvas404" id="colorCanvas404">Sorry color not found, Dev are looking into it to fix the
                     issue :)
                 </p>
@@ -116,13 +116,16 @@
                     <span id="pickColor">
                         <span style="margin-top: -16px;     font-size: 12px;
     font-weight: 400;">Click me</span>
-                        <img src="images/ColorPicker.svg" alt="Copy Icon" />
+                        <img src="images/ColorPicker.svg" alt="Color Picker Icon" />
                     </span>
                     <div id="selectedColor">
                     </div>
                     <div class="colorRangeInputsContainer">
                         <input type="range" id="hueRange" min="0" max="360" value="0">
-                        <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
+                        <div class="alphaRangeContainer">
+                            <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
+                            <span class="alphaRangeBackground"></span>
+                        </div>
                     </div>
 
                 </div>
@@ -406,13 +409,17 @@
             </div>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
-            <!-- <div id="errorMessage">
-                <p></p>
-            </div> -->
+
 
             <div id="font-container" class="fontBox">
-                <div id="htmlTag">
+                <!-- <div id="htmlTag">
                     -
+                </div> -->
+                <div class="fontFamilyContainer">
+                    <label class="typolabel">HTML Element Clicked</label>
+                    <div id="htmlTag" style="border: none;">
+                        -
+                    </div> 
                 </div>
                 <div class="fontFamilyContainer">
                     <label class="typolabel">Font family</label>
@@ -462,6 +469,9 @@
                             d="M20,8 C18.5974037,5.04031171 15.536972,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 L12,21 C16.9705627,21 21,16.9705627 21,12 M21,3 L21,9 L15,9">
                         </path>
                     </svg>
+                </span>
+                <span id="CopyCSSInput" class="copyCSSInput">
+                    Copy CSS 
                 </span>
                 <span id="activateButton">
                     Activate on the tab

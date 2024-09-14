@@ -162,6 +162,7 @@
   font-size: 16px;
   color: white;
   background-color: #4083f1;
+  width: 100%;
 }
 
 .Imagecanvas {
@@ -223,7 +224,7 @@ body.dark-mode .fileName {
 }
 
 .imageFormatContainer {
-  margin-top: 18px;
+  margin-top: 16px;
 }
 
 .inputContainerFormat {
@@ -267,6 +268,7 @@ body.dark-mode .inputContainerFormat button {
   justify-content: center;
   align-items: center;
   margin-top: auto;
+  cursor: pointer;
 }
 
 .body.dark-mode .linkContainerStyle {
@@ -287,5 +289,19 @@ body.dark-mode .inputContainerFormat button {
 
 .body.dark-mode .diffFormatContainer {
   background: #22272b !important;
+  color: white;
+}
+
+.fileFormat{
+  width: 100%; 
+  padding: 9px 14px;
+  font-size: 13.5px;
+  box-sizing: border-box;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+}
+
+.body.dark-mode .fileFormat{
+  background-color: #22272b;
   color: white;
 }

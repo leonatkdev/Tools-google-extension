@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolKit Pro</title>
+    <title>DesignSuite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
     <!-- LandingContainer -->
     <div class="landingContainer">
         <div class="tabLanding">
-            ToolKit Pro
+            DesignSuite
             <div id="toggleDarkMode" style="position: absolute; right: 16px;">
                 <img src="images/moon.svg" id="moon" alt="moon Icon" width="30" height="30" />
                 <img src="images/sun.svg" id="sun" alt="Sun Icon" width="30" height="30" />
@@ -108,7 +108,7 @@
             </div> -->
 
             <div id="colorPicker">
-                <canvas id="colorCanvas" height="140" width="415px"></canvas>
+                <canvas id="colorCanvas" height="125" width="415px"></canvas>
                 <p class="colorCanvas404" id="colorCanvas404">Sorry color not found, Dev are looking into it to fix the
                     issue :)
                 </p>
@@ -116,20 +116,23 @@
                     <span id="pickColor">
                         <span style="margin-top: -16px;     font-size: 12px;
     font-weight: 400;">Click me</span>
-                        <img src="images/ColorPicker.svg" alt="Copy Icon" />
+                        <img src="images/ColorPicker.svg" alt="Color Picker Icon" />
                     </span>
                     <div id="selectedColor">
                     </div>
                     <div class="colorRangeInputsContainer">
                         <input type="range" id="hueRange" min="0" max="360" value="0">
-                        <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
+                        <div class="alphaRangeContainer">
+                            <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
+                            <span class="alphaRangeBackground"></span>
+                        </div>
                     </div>
 
                 </div>
 
             </div>
             <!-- //Color Inputs -->
-            <div class="colorMidSecton" style="margin-top: 12px">
+            <div class="colorMidSecton">
                 <div class="colorTypeTabs">
                     <span class="colorType activeType" id="hex">
                         HEX
@@ -137,16 +140,17 @@
                     <span id="rgba" class="colorType">
                         RGBA
                     </span>
-                    <!-- <span id="hsl" class="colorType">
-                            HSL
-                        </span> -->
+                    <span id="hsl" class="colorType">
+                        HSL
+                    </span>
 
                 </div>
-                <div style="display: flex;  align-items: center;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;  align-items: center;">
 
                     <input type="text" value="#000000" id="colorValue">
                     <span id="copyColorInput">
                         <img src="images/copy.svg" alt="Copy Icon" width="16" height="16" />
+                        Copy
                     </span>
                     <span id="star">
                         <img src="images/star.svg" alt="Copy Icon" width="16" height="16" />
@@ -233,7 +237,7 @@
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
-                    <span class="colorTabFavorite"></span>  
+                    <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
                 </div>
 
@@ -304,18 +308,38 @@
             </div>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
+
             <div class="loremTypeContainer">
                 <button id="paragraphs" class="paragraphs">Paragraphs</button>
                 <button id="words" class="words">Words</button>
                 <button id="bytes" class="bytes">Bytes</button>
                 <button id="lists" class="lists">Lists</button>
             </div>
+
             <div class="loremTopContainer">
                 <input placeholder="" value="1" class="loremInput" id="loremAmount" />
                 <span id="loremCopyBtn">
                     Copy <img src="images/copy.svg" alt="Copy Icon" />
                 </span>
             </div>
+
+
+            <div style="display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            margin-top: 2px;">
+                <input type="checkbox" id="includeLink" style="    width: 22px;
+    height: 20px;" />
+                <label for="includeLink" style="    font-size: 13px;
+    font-weight: 500;">
+                    Include link in the lorem
+                </label>
+            </div>
+
+            <!-- <button class="glow-on-hover" type="button">AI - Custom Lorem </button> -->
+
+
             <div id="max_limit_typography">Max Limit 250</div>
             <div class="loremMidmSection">
                 <textarea id="loremArea" style="width: 100%; height: 200px;"></textarea>
@@ -335,6 +359,8 @@
                     <span id="linelorem">0 Line</span>
                 </div>
             </div>
+
+
         </div>
 
     </div>
@@ -383,13 +409,17 @@
             </div>
         </div>
         <div class="content" style="display: flex; flex-direction: column;">
-            <!-- <div id="errorMessage">
-                <p></p>
-            </div> -->
+
 
             <div id="font-container" class="fontBox">
-                <div id="htmlTag">
+                <!-- <div id="htmlTag">
                     -
+                </div> -->
+                <div class="fontFamilyContainer">
+                    <label class="typolabel">HTML Element Clicked</label>
+                    <div id="htmlTag" style="border: none;">
+                        -
+                    </div> 
                 </div>
                 <div class="fontFamilyContainer">
                     <label class="typolabel">Font family</label>
@@ -411,8 +441,9 @@
                         </div>
                     </div>
                     <div>
-                        <label class="typolabel">Color</label>
-                        <div class="fontInputBox">
+                        <label class="typolabel">Color </label>
+                        <div class="fontInputBox" style="gap: 8px;">
+                            <div class="colorBox" id="colorPreview"></div>
                             <input type="text" id="input-1-color" placeholder="Color"
                                 class="inputContainer inputRounded">
                         </div>
@@ -438,6 +469,9 @@
                             d="M20,8 C18.5974037,5.04031171 15.536972,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 L12,21 C16.9705627,21 21,16.9705627 21,12 M21,3 L21,9 L15,9">
                         </path>
                     </svg>
+                </span>
+                <span id="CopyCSSInput" class="copyCSSInput">
+                    Copy CSS 
                 </span>
                 <span id="activateButton">
                     Activate on the tab
@@ -498,146 +532,156 @@
                 <div class="imageTab imageTabActive">
                     Resize
                 </div>
-                <div class="imageTab" style="display: none;">
+                <!-- <div class="imageTab">
                     Crop
-                </div>
-                <div class="imageTab" style="margin-left: auto;">
+                </div> -->
+                <div class="imageTab" id="zoomIn" style="margin-left: auto;">
                     +
                 </div>
-                <div class="imageTab">
+                <div class="imageTab" id="zoomOut">
                     -
                 </div>
             </div>
 
-            <div class="addImage" id="addImage">
-                <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
-                    stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
-                    <polyline points="16 16 12 12 8 16"></polyline>
-                    <line x1="12" y1="12" x2="12" y2="21"></line>
-                    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 1 0 0 3 16.3"></path>
-                    <polyline points="16 16 12 12 8 16"></polyline>
-                </svg>
-                Drag and drop file to upload
+            <div id="resize">
 
-                <button class="fileSelectImage">Select File</button>
-                <span style="font-size: 10px; margin-top: 8px;">
-                    Supported: PNG, JPEG, WepP, SVG
-                </span>
-                <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">
-            </div>
-            <div id="statusContainer" class="statusContainer" style="display: none;">
-                <canvas id="ImgUploaded" class="ImgUploaded" width="350" height="175"></canvas>
-            </div>
-            <div id="imageInfoContainer" class="imageInfoContainer">
-                <input id="fileName" class="fileName" placeholder="fileName"></input>
-                <button id="cancelButton" class="cancelButton">Cancel</button>
-            </div>
-            <div class="imageWidthHeightContainer">
-                <div>
-                    <div class="imageInputLabel">
-                        <label for="width" class="label">Width</label>
-                        <span id="originalWidth"></span>
-                    </div>
-                    <div class="fontInputBox">
-                        <input type="number" id="width" placeholder="Width" class="inputContainerWidth">
-                        <div class="versionBtn" id="versionBtn">PX</div>
-                    </div>
-                </div>
-
-                <span class="linkContainerStyle">
-                    <svg stroke="currentColor" id="linkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24"
-                        stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 15l6 -6"></path>
-                        <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-                        <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
-                        </path>
+                <div class="addImage" id="addImage">
+                    <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+                        stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="16 16 12 12 8 16"></polyline>
+                        <line x1="12" y1="12" x2="12" y2="21"></line>
+                        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 1 0 0 3 16.3"></path>
+                        <polyline points="16 16 12 12 8 16"></polyline>
                     </svg>
-                    <svg stroke="currentColor" id="unlinkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24"
-                        stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17 22v-2"></path>
-                        <path d="M9 15l6 -6"></path>
-                        <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-                        <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
-                        </path>
-                        <path d="M20 17h2"></path>
-                        <path d="M2 7h2"></path>
-                        <path d="M7 2v2"></path>
+                    Drag and drop file to upload
+
+                    <button class="fileSelectImage">Select File</button>
+                    <span style="font-size: 10px; margin-top: 8px;">
+                        Supported: PNG, JPEG, WepP, SVG
+                    </span>
+                    <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">
+                </div>
+                <div id="statusContainer" class="statusContainer" style="display: none;">
+                    <canvas id="ImgUploaded" class="ImgUploaded" width="350" height="175"></canvas>
+                </div>
+                <div id="imageInfoContainer" class="imageInfoContainer">
+                    <input id="fileName" class="fileName" placeholder="fileName"></input>
+                    <button id="cancelButton" class="cancelButton">Cancel</button>
+                </div>
+                <div class="imageWidthHeightContainer">
+                    <div>
+                        <div class="imageInputLabel">
+                            <label for="width" class="label">Width</label>
+                            <span id="originalWidth"></span>
+                        </div>
+                        <div class="fontInputBox">
+                            <input type="number" id="width" placeholder="Width" class="inputContainerWidth">
+                            <div class="versionBtn" id="versionBtn">PX</div>
+                        </div>
+                    </div>
+
+                    <span class="linkContainerStyle">
+                        <svg stroke="currentColor" id="linkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                            stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 15l6 -6"></path>
+                            <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                            <path
+                                d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
+                            </path>
+                        </svg>
+                        <svg stroke="currentColor" id="unlinkIcon" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                            stroke-linecap="round" stroke-linejoin="round" height="24px" width="24px"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 22v-2"></path>
+                            <path d="M9 15l6 -6"></path>
+                            <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                            <path
+                                d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
+                            </path>
+                            <path d="M20 17h2"></path>
+                            <path d="M2 7h2"></path>
+                            <path d="M7 2v2"></path>
+                        </svg>
+                    </span>
+
+                    <div>
+                        <div class="imageInputLabel">
+                            <label for="height" class="label">Height</label>
+                            <span id="originalHeight"></span>
+                        </div>
+                        <div class="fontInputBox">
+                            <input type="number" id="height" placeholder="Height" class="inputContainerHeight">
+                            <div class="versionBtn" id="versionBtn">PX</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; margin-top: 8px;">
+                    <input type="checkbox" checked id="aspectCheckbox">
+                    <label for="aspectCheckbox">Use the same aspect</label>
+                </div>
+
+
+                <div class="imageFormatContainer">
+                    <label for="format" class="label">
+                        Convert Format
+                    </label>
+
+                    <div style="display: flex; flex-direction: row; align-items: center; gap: 12px; margin-top: 6px;">
+
+                        <div id="fileFormat" class="fileFormat">
+                            File Format
+                        </div>
+                        <span style="font-weight: 600;">To</span>
+
+
+                        <select id="diffFormatContainer" class="diffFormatContainer">
+                            <option value="PNG">PNG</option>
+                            <option value="JPEG">JPEG</option>
+                            <option value="WebP">WebP</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div style="display: flex; align-items: center; margin-top: 8px;">
+                    <input type="checkbox" checked id="autoDownload">
+                    <label for="autoDownload">Auto download no need to ask for name</label>
+                </div>
+
+                <button id="download-button" class="button">Download Resized Image</button>
+            </div>
+
+
+            <!-- Crop Container -->
+            <!-- <div id="crop">
+
+
+                <div class="addImage" id="addImage">
+                    <svg stroke="gray" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+                        stroke-linejoin="round" height="45px" width="45px" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="16 16 12 12 8 16"></polyline>
+                        <line x1="12" y1="12" x2="12" y2="21"></line>
+                        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 1 0 0 3 16.3"></path>
+                        <polyline points="16 16 12 12 8 16"></polyline>
                     </svg>
-                </span>
-
-                <div>
-                    <div class="imageInputLabel">
-                        <label for="height" class="label">Height</label>
-                        <span id="originalHeight"></span>
-                    </div>
-                    <div class="fontInputBox">
-                        <input type="number" id="height" placeholder="Height" class="inputContainerHeight">
-                        <div class="versionBtn" id="versionBtn">PX</div>
-                    </div>
+                    Drag and drop file to upload
+    
+                    <button class="fileSelectImage">Select File</button>
+                    <span style="font-size: 10px; margin-top: 8px;">
+                        Supported: PNG, JPEG, WepP, SVG
+                    </span>
+                    <input type="file" id="upload" accept="image/*" class="imageInput" style="display: none;">
                 </div>
-            </div>
 
-            <div style="display: flex; align-items: center; margin-top: 8px;">
-                <input type="checkbox" checked id="aspectCheckbox">
-                <label>Use the same aspect</label>
-            </div>
-
-
-            <div class="imageFormatContainer">
-                <label for="format" class="label">Convert Format</label>
-
-                <div style="display: flex; flex-direction: row; align-items: center; gap: 12px; margin-top: 6px;">
-
-                    <div id="fileFormat" style="   
-                    width: 100%; 
-                    padding: 9px 14px;
-                    font-size: 13.5px;
-                    box-sizing: border-box;
-                    border: 1px solid lightgray;
-                    border-radius: 8px;">
-                        File Format</div>
-                    <span style="font-weight: 600;">To</span>
-
-
-                    <select id="diffFormatContainer" class="diffFormatContainer">
-                        <option value="PNG">PNG</option>
-                        <option value="JPEG">JPEG</option>
-                        <option value="WebP">WebP</option>
-                    </select>
-
-
-                    <!-- <div class="diffFormatContainer">
-                        <input type="text" id="diffFormat" placeholder="Other Format" class="inputContainerWidth" style="   
-                        padding: 9px 14px;
-                        font-size: 13.5px;
-                        box-sizing: border-box;
-                        border: 1px solid lightgray;
-                        border-radius: 8px;">
-                        <div class="versionBtn" id="versionBtn"><svg stroke="currentColor" fill="currentColor"
-                                stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill="none" d="M0 0h24v24H0V0z"></path>
-                                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
-                            </svg></div>
-                    </div> -->
+                <div id="statusContainer" class="statusContainer" style="display: none;">
+                    <canvas id="ImgUploaded" class="ImgUploaded" width="350" height="175"></canvas>
                 </div>
-                <!-- <div id="format" class="inputContainerFormat">
-                    <button id="originalFormat" style="color: white; background: #4083F1; font-size: 15px;">File
-                        Format</button>
-                    <button id="pngFormat">PNG</button>
-                    <button id="jpegFormat">JPEG</button>
-                    <button id="webpFormat">WebP</button>
-                </div> -->
-            </div>
 
-            <div style="display: flex; align-items: center; margin-top: 8px;">
-                <input type="checkbox" checked id="autoDownload">
-                <label>Auto download no need to ask for name</label>
-            </div>
+            </div> -->
 
-            <button id="download-button" class="button">Download Resized Image</button>
         </div>
     </div>
 
@@ -684,6 +728,7 @@
 
             </div>
         </div>
+
         <div class="content" style="display: flex; flex-direction: column;">
             <div class="textTransformerActions">
                 <button id="sentence-case" class="textActionActive">Sentence</button>
@@ -694,6 +739,11 @@
                 <button id="title-case">Title</button>
                 <button id="inverse-case">InVeRsE</button>
             </div>
+
+            <!-- <button class="glow-on-hover" type="button">Generate Text - AI</button> -->
+
+
+
             <div class="loremMidmSection">
                 <textarea id="texttArea" style="width: 100%; height: 200px;"></textarea>
                 <div class="textTransformerArea">

@@ -354,6 +354,7 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
 }
 
 .body.dark-mode #colorValue {
+  border: 1px solid #738496;
   background-color: #22272b;
   color: white;
 }
@@ -373,8 +374,13 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
   cursor: pointer;
 }
 
+.body.dark-mode #copyColorInput {
+  border: 1px solid #738496;
+}
+
 .body.dark-mode #copyColorInput img {
   filter: invert(1);
+  
 }
 
 #star {

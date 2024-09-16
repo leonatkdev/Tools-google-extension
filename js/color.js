@@ -153,7 +153,6 @@ function deleteSelectedColors(colorClass, storageKey) {
   });
 }
 
-
 function showModal(modalId, onConfirm) {
   const modal = document.getElementById(modalId);
   modal.style.display = "flex";
@@ -192,9 +191,26 @@ function setupStarClicks() {
       const maxFavorites = 22;
       if (favorites.length < maxFavorites) {
         const rgba = parseRgba(colorValue);
-        const hexColor = colorValue.startsWith("#")
-          ? colorValue
-          : rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+
+        let hexColor;
+
+        if (colorValue.startsWith("#")) {
+          hexColor = colorValue;
+        } else if (colorValue.startsWith("hsl")) {
+          let rgbConverted = hslToRgba(parseHsl(colorValue));
+          hexColor = rgbaToHex(
+            rgbConverted.r,
+            rgbConverted.g,
+            rgbConverted.b,
+            rgbConverted.a
+          );
+        } else {
+          hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        }
+        // const hexColor = colorValue.startsWith("#")
+        //   ? colorValue
+        //   : colorValue.startsWith("hsl") ?
+        //   :rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
         favorites.unshift(hexColor); // Add to the start of the array
         chrome.storage.local.set({ favoriteColors: favorites }, function () {
           updateFavoriteColorUI(favorites);
@@ -398,7 +414,6 @@ function setupColorCanvas() {
   let ballPosition = { x: colorCanvas.width / 2, y: colorCanvas.height / 2 };
   let isDragging = false;
 
-
   function drawOffscreenColorSpectrum(hue, alpha) {
     offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
@@ -501,7 +516,6 @@ function setupColorCanvas() {
       imageData[2]
     }, ${parseFloat(currentAlpha).toFixed(2)})`;
 
-
     const [h, s, l] = rgbToHsl(
       imageData[0],
       imageData[1],
@@ -516,18 +530,19 @@ function setupColorCanvas() {
         case "hex":
           colorInput.value = hex;
           break;
-
-          colorInput.value = hex;
+        case "rgba":
+          colorInput.value = rgba;
+          break;
+        case "hsl":
+          colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+          break;
       }
     }
 
     selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
   }
-  
 
   colorCanvas.addEventListener("mousedown", function (e) {
-
-
     manualHexInput = false;
     const rect = colorCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -580,52 +595,28 @@ function setupColorCanvas() {
 
   colorInput.addEventListener("input", (e) => {
     manualHexInput = true;
-    setColorFromHex(e.target.value);
+
+    inputValue = e.target.value;
+    let hexColor;
+
+    const rgba = parseRgba(inputValue);
+    if (inputValue.startsWith("#")) {
+      hexColor = inputValue;
+    } else if (inputValue.startsWith("hsl")) {
+      let rgbConverted = hslToRgba(parseHsl(inputValue));
+      hexColor = rgbaToHex(
+        rgbConverted.r,
+        rgbConverted.g,
+        rgbConverted.b,
+        rgbConverted.a
+      );
+    } else {
+      hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+    }
+
+    setColorFromHex(hexColor);
   });
 
-  function colorMatchesHSL(h1, s1, l1, h2, s2, l2, tolerance = 0.01) {
-    return (
-      Math.abs(h1 - h2) <= tolerance &&
-      Math.abs(s1 - s2) <= tolerance &&
-      Math.abs(l1 - l2) <= tolerance
-    );
-  }
-
-  function rgbToHsv(r, g, b) {
-    r /= 255;
-    g /= 255;
-    b /= 255;
-  
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const delta = max - min;
-  
-    let h, s, v = max;
-  
-    s = max === 0 ? 0 : delta / max;
-  
-    if (delta === 0) {
-      h = 0;
-    } else {
-      switch (max) {
-        case r:
-          h = ((g - b) / delta + (g < b ? 6 : 0)) % 6;
-          break;
-        case g:
-          h = (b - r) / delta + 2;
-          break;
-        case b:
-          h = (r - g) / delta + 4;
-          break;
-      }
-      h *= 60;
-    }
-  
-    return [h, s, v];
-  }
-  
-
-  
   function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
 
@@ -678,7 +669,6 @@ function setupColorCanvas() {
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   }
-  
 
   chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
     if (response.color) {
@@ -770,7 +760,6 @@ function rgbaToHex(r, g, b, a = 1) {
       : "")
   );
 }
-
 
 // function rgbToHsl(r, g, b, a = 1) {
 //   r /= 255;

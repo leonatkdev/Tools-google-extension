@@ -131,15 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     includeLinkCheckbox.checked = false; // Default value
   }
 
-  // Update the text area and metrics
-  const loremArea = document.getElementById("loremArea");
-  if (savedLoremText !== null) {
-    loremArea.value = savedLoremText;
-  } else {
-    updateText(); // Generate new text if no saved text
-  }
 
-  updateTextMetrics();
 
   const updateText = () => {
     let amount = parseInt(amountInput.value);
@@ -163,8 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateTextMetrics();
     resetCopyButton(); // Reset the copy button on text update
-  };
+  }; 
+  
 
+  
   const saveInputsToLocalStorage = () => {
     localStorage.setItem("loremAmount", amountInput.value);
     localStorage.setItem("includeLink", includeLinkCheckbox.checked);
@@ -212,6 +206,16 @@ document.addEventListener("DOMContentLoaded", () => {
     copyBtn.classList.remove("copyButtonAnimation");
     copyBtn.innerHTML = 'Copy <img src="images/copy.svg" alt="Copy Icon" />';
   };
+
+    // Update the text area and metrics
+    const loremArea = document.getElementById("loremArea");
+    if (savedLoremText !== null) {
+      loremArea.value = savedLoremText;
+    } else {
+      updateText(); // Generate new text if no saved text
+    }
+  
+    updateTextMetrics();
 
   const types = ["paragraphs", "words", "bytes", "lists"];
   types.forEach((type) => {

@@ -164,6 +164,7 @@
       borderRadius: "8px",
       border: "1px solid lightgray",
       pointerEvents: "none",
+      fontFamily: "sans-serif"
     });
 
     return { canvas, lens, gridSquares, overlay, colorHex };

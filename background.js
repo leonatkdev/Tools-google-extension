@@ -249,7 +249,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
   if (loremText) {
     chrome.scripting.executeScript({
-      target: { tabId: tab.id },
+      target: { tabId: tab.id, frameIds: [info.frameId] },
       function: insertLoremIpsum,
       args: [loremText],
     });
@@ -258,6 +258,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 // Function to insert Lorem Ipsum into the active element
 function insertLoremIpsum(text) {
+  console.log('document.activeElement', document.activeElement.tagName)
   if (
     document.activeElement.tagName === "TEXTAREA" ||
     document.activeElement.tagName === "INPUT"

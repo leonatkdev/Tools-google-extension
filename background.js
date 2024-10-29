@@ -256,12 +256,63 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-// Function to insert Lorem Ipsum into the active element
+
+// Updated insertLoremIpsum function
 function insertLoremIpsum(text) {
-  if (
-    document.activeElement.tagName === "TEXTAREA" ||
-    document.activeElement.tagName === "INPUT"
-  ) {
-    document.activeElement.value += text;
+  const activeElement = document.activeElement;
+  const tagName = activeElement.tagName.toUpperCase();
+  const isContentEditable = activeElement.getAttribute('contenteditable') === 'true';
+
+  console.log('isContentEditable', isContentEditable)
+  console.log('tagName', tagName)
+
+  if (tagName === 'TEXTAREA' || (tagName === 'INPUT' && activeElement.type === 'text')) {
+    // For traditional input elements
+    activeElement.value += text;
+    activeElement.dispatchEvent(new Event('input', { bubbles: true }));
+  } else if (isContentEditable) {
+    console.log('here')
+    // For any contenteditable element
+    insertTextIntoContentEditable(activeElement, text);
+  } else {
+    // Optionally, handle other editable elements or notify the user
+    console.warn('Active element is not editable via this extension.');
+  }
+}
+
+// Helper function to insert text into a contenteditable element
+function insertTextIntoContentEditable(element, text) {
+  // Focus the element to ensure the cursor is active
+  element.focus();
+
+  // Use the Selection and Range APIs to insert text at the cursor position
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    console.warn('No active selection found.');
+    return;
+  }
+
+  const range = selection.getRangeAt(0);
+  range.deleteContents();
+
+  // Create a text node with the lorem ipsum text
+  const textNode = document.createTextNode(text);
+
+  // Insert the text node at the current cursor position
+  range.insertNode(textNode);
+
+  // Move the cursor after the inserted text
+  range.setStartAfter(textNode);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  // Dispatch an input event to notify any listeners
+  const event = new Event('input', { bubbles: true });
+  element.dispatchEvent(event);
+
+  // Attempt to handle ProseMirror-specific insertion
+  if (window.ProseMirror && window.ProseMirror.commands && window.ProseMirror.commands.insertText) {
+    window.ProseMirror.commands.insertText(text);
   }
 }

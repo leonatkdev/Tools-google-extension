@@ -1,5 +1,4 @@
 // background.js
-// background.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "capturePage") {
     // Send a cleanup request to the content script
@@ -315,4 +314,56 @@ function insertTextIntoContentEditable(element, text) {
   if (window.ProseMirror && window.ProseMirror.commands && window.ProseMirror.commands.insertText) {
     window.ProseMirror.commands.insertText(text);
   }
+}
+
+
+chrome.runtime.onInstalled.addListener(() => {
+  // Create main menu for image conversion
+  chrome.contextMenus.create({
+    id: "imageConverter",
+    title: "DesignSuite - Image Save Converter",
+    contexts: ["image"],
+  });
+
+  // Add format options under "Image Save Converter"
+  ["png", "jpeg", "webp"].forEach((format) => {
+    chrome.contextMenus.create({
+      id: `saveAs${format.toUpperCase()}`,
+      parentId: "imageConverter",
+      title: `Save as ${format.toUpperCase()}`,
+      contexts: ["image"],
+    });
+  });
+});
+
+// Handle clicks for "Image Save Converter"
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId.startsWith("saveAs")) {
+    const format = info.menuItemId.replace("saveAs", "").toLowerCase();
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: saveImage,
+      args: [info.srcUrl, format]
+    });
+  }
+});
+
+// Function to convert and download the image
+function saveImage(srcUrl, format) {
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = srcUrl;
+  img.onload = function() {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    canvas.toBlob((blob) => {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `image.${format}`;
+      link.click();
+    }, `image/${format}`);
+  };
 }

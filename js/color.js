@@ -265,22 +265,18 @@ function setupFavResetButton() {
   });
 }
 
+
 function setupColorConversionListeners() {
-  const colorTypeSpans = document.querySelectorAll("#hex, #rgba, #hsl");
+  const colorTypeSelect = document.querySelector(".colorTypeTabs");
   const colorInput = document.getElementById("colorValue");
 
-  colorTypeSpans.forEach((span) => {
-    span.addEventListener("click", function () {
-      const activeTypeSpan = document.querySelector("span.activeType");
+  // Add a change event listener to the <select> element
+  colorTypeSelect.addEventListener("change", function () {
+    const selectedOption = colorTypeSelect.options[colorTypeSelect.selectedIndex];
+    const newInputId = selectedOption.value; // Get the value of the selected option
 
-      if (activeTypeSpan.textContent === span.textContent) return;
-
-      activeTypeSpan.classList.remove("activeType");
-      span.classList.add("activeType");
-
-      const newInputId = span.textContent.trim().toLowerCase();
-      convertColorInput(colorInput.value, newInputId);
-    });
+    // Call the convertColorInput function with the current color input and the new format
+    convertColorInput(colorInput.value, newInputId);
   });
 }
 
@@ -523,7 +519,7 @@ function setupColorCanvas() {
       currentAlpha
     );
 
-    const activeTypeSpan = document.querySelector("span.activeType").id;
+    const activeTypeSpan = document.querySelector(".colorTypeTabs").value;
 
     if (!manualHexInput) {
       switch (activeTypeSpan) {

@@ -47,6 +47,11 @@
             <img src="images/converCase.jpg" alt="typografy Icon" width="30" height="30" />
             Text Transformer
         </div>
+
+        <div class="sectionType">
+            <p style="margin: 0; margin-bottom: 10px;">We'd love your feedback! 😊</p>
+            <a href="https://forms.gle/vtfqWYJEKTVphxPU8" target="_blank" id="feedbackLink" style="color: #007bff; font-size: 14px;">Share Feedback</a>
+        </div>
     </div>
 
     <!-- ///Colors -->
@@ -133,20 +138,20 @@
             </div>
             <!-- //Color Inputs -->
             <div class="colorMidSecton">
-                <div class="colorTypeTabs">
-                    <span class="colorType activeType" id="hex">
-                        HEX
-                    </span>
-                    <span id="rgba" class="colorType">
-                        RGBA
-                    </span>
-                    <span id="hsl" class="colorType">
-                        HSL
-                    </span>
 
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;  align-items: center;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px;  align-items: center;">
+                    <select class="colorTypeTabs">
+                        <option value="hex" id="hex" class="colorType activeType" >
+                            HEX
+                        </option>
+                        <option value="rgba" id="rgba"  class="colorType">
+                            RGBA
+                        </option>
+                        <option value="hsl" id="hsl" class="colorType">
+                            HSL
+                        </option>
 
+                    </select>
                     <input type="text" value="#000000" id="colorValue">
                     <span id="copyColorInput">
                         <img src="images/copy.svg" alt="Copy Icon" width="16" height="16" />
@@ -419,7 +424,7 @@
                     <label class="typolabel">HTML Element Clicked</label>
                     <div id="htmlTag" style="border: none;">
                         -
-                    </div> 
+                    </div>
                 </div>
                 <div class="fontFamilyContainer">
                     <label class="typolabel">Font family</label>
@@ -471,7 +476,7 @@
                     </svg>
                 </span>
                 <span id="CopyCSSInput" class="copyCSSInput">
-                    Copy CSS 
+                    Copy CSS
                 </span>
                 <span id="activateButton">
                     Activate on the tab

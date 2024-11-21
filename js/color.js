@@ -492,39 +492,40 @@ function setupColorCanvas() {
     ctx.restore();
   }
 
-  function pickColor() {
+  function pickColor(hexColor) {
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
-
+  
     const imageData = offscreenCtx.getImageData(
       ballPosition.x,
       ballPosition.y,
       1,
       1
     ).data;
-
-    const hex = rgbaToHex(
+  
+    const hex = hexColor ? hexColor :rgbaToHex(
       imageData[0],
       imageData[1],
       imageData[2],
       currentAlpha
     );
+  
     const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${
       imageData[2]
     }, ${parseFloat(currentAlpha).toFixed(2)})`;
-
+  
     const [h, s, l] = rgbToHsl(
       imageData[0],
       imageData[1],
       imageData[2],
       currentAlpha
     );
-
+  
     const activeTypeSpan = document.querySelector(".colorTypeTabs").value;
-
+  
     if (!manualHexInput) {
       switch (activeTypeSpan) {
         case "hex":
-          colorInput.value = hex;
+          colorInput.value = hex; // Sync input directly
           break;
         case "rgba":
           colorInput.value = rgba;
@@ -534,9 +535,11 @@ function setupColorCanvas() {
           break;
       }
     }
-
+  
     selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
   }
+  
+  
 
   colorCanvas.addEventListener("mousedown", function (e) {
     manualHexInput = false;
@@ -613,66 +616,66 @@ function setupColorCanvas() {
     setColorFromHex(hexColor);
   });
 
-  function setColorFromHex(hexColor) {
+  function setColorFromHex(hexColor, isExactColor = false) {
     const { r, g, b, a } = hexToRgba(hexColor);
-
     const [h, s, l] = rgbToHsl(r, g, b);
-
+  
     currentHue = h;
     currentAlpha = a;
     hueRange.value = h;
     alphaRange.value = a;
-
+  
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
-    // let found = false;
-    // for (let y = 0; y < offscreenCanvas.height; y++) {
-    //   for (let x = 0; x < offscreenCanvas.width; x++) {
-    //     const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-    //     if (imageData[0] === r && imageData[1] === g && imageData[2] === b) {
-    //       ballPosition.x = x;
-    //       ballPosition.y = y;
-    //       found = true;
-    //       break;
-    //     }
-    //   }
-    //   if (found) break;
-    // }
-    function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
-      return (
-        Math.abs(r1 - r2) <= tolerance &&
-        Math.abs(g1 - g2) <= tolerance &&
-        Math.abs(b1 - b2) <= tolerance
-      );
-    }
-
-    let found = false;
-    for (let y = 0; y < offscreenCanvas.height; y++) {
-      for (let x = 0; x < offscreenCanvas.width; x++) {
-        const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-
-        // Replace the direct comparison with the colorMatches function
-        if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
-          ballPosition.x = x;
-          ballPosition.y = y;
-          found = true;
-          break;
-        }
+    console.log('isExactColor', isExactColor)
+  
+    // If it's not an exact color, find the closest match using colorMatches
+    // if (!isExactColor) {
+      function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
+        return (
+          Math.abs(r1 - r2) <= tolerance &&
+          Math.abs(g1 - g2) <= tolerance &&
+          Math.abs(b1 - b2) <= tolerance
+        );
       }
-      if (found) break;
-    }
+  
+      let found = false;
+      for (let y = 0; y < offscreenCanvas.height; y++) {
+        for (let x = 0; x < offscreenCanvas.width; x++) {
+          const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+  
+          if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
+            ballPosition.x = x;
+            ballPosition.y = y;
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+    // }
 
+    const hexInput =  isExactColor ? hexColor: null
+  
     drawColorSpectrum(currentHue, currentAlpha);
-    pickColor();
+    pickColor(hexInput); // Ensures consistent rendering
   }
-
+  
+  
+  
   chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
     if (response.color) {
-      setColorFromHex(response.color);
+      const exactColor = response.color; // Exact color from getColor
+      colorInput.value = exactColor; // Update the input directly
+      setColorFromHex(exactColor, true); // Exact color for canvas rendering
     } else {
-      setColorFromHex("#000000");
+      const defaultColor = "#000000";
+      colorInput.value = defaultColor;
+      setColorFromHex(defaultColor, true);
     }
   });
+  
+  
 
   setColorFromHex("#000000");
 
@@ -689,7 +692,7 @@ function setupColorCanvas() {
           rgbaColor.b,
           rgbaColor.a
         );
-        setColorFromHex(hexColor);
+        setColorFromHex(hexColor, true);
       });
     });
 }

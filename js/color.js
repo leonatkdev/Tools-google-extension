@@ -492,9 +492,9 @@ function setupColorCanvas() {
     ctx.restore();
   }
 
-  function pickColor(hexColor) {
+  function pickColor(hexColor, rgba, hsl) {
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
-  
+
     const imageData = offscreenCtx.getImageData(
       ballPosition.x,
       ballPosition.y,
@@ -502,42 +502,53 @@ function setupColorCanvas() {
       1
     ).data;
   
-    const hex = hexColor ? hexColor :rgbaToHex(
-      imageData[0],
-      imageData[1],
-      imageData[2],
-      currentAlpha
-    );
+    // Use the provided props or calculate from the canvas if not provided
+    const hex = hexColor
+      ? hexColor
+      : rgbaToHex(
+        imageData[0],
+        imageData[1],
+        imageData[2],
+        currentAlpha
+      );
   
-    const rgba = `rgba(${imageData[0]}, ${imageData[1]}, ${
-      imageData[2]
-    }, ${parseFloat(currentAlpha).toFixed(2)})`;
+    const rgbaString = rgba
+      ? `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(2)})`
+      : `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
   
-    const [h, s, l] = rgbToHsl(
-      imageData[0],
-      imageData[1],
-      imageData[2],
-      currentAlpha
-    );
+    const hslString = hsl
+      ? `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`
+      : (() => {
+        const [h, s, l] = rgbToHsl(
+          imageData[0],
+          imageData[1],
+          imageData[2],
+          currentAlpha
+        );
+          return `hsl(${h}, ${s}%, ${l}%)`;
+        })();
   
     const activeTypeSpan = document.querySelector(".colorTypeTabs").value;
   
     if (!manualHexInput) {
+      // Update input based on the active color type
       switch (activeTypeSpan) {
         case "hex":
-          colorInput.value = hex; // Sync input directly
+          colorInput.value = hex;
           break;
         case "rgba":
-          colorInput.value = rgba;
+          colorInput.value = rgbaString;
           break;
         case "hsl":
-          colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
+          colorInput.value = hslString;
           break;
       }
     }
   
-    selectedColorDiv.style.backgroundColor = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+    // Update the selected color preview
+    selectedColorDiv.style.backgroundColor = rgbaString;
   }
+  
   
   
 
@@ -616,7 +627,7 @@ function setupColorCanvas() {
     setColorFromHex(hexColor);
   });
 
-  function setColorFromHex(hexColor, isExactColor = false) {
+  function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
     const [h, s, l] = rgbToHsl(r, g, b);
   
@@ -626,11 +637,9 @@ function setupColorCanvas() {
     alphaRange.value = a;
   
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
-
-    console.log('isExactColor', isExactColor)
   
-    // If it's not an exact color, find the closest match using colorMatches
-    // if (!isExactColor) {
+    // If it's not an exact color, find the closest match using colorMatches for the canvas 
+    // { This part of the code
       function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
         return (
           Math.abs(r1 - r2) <= tolerance &&
@@ -653,12 +662,10 @@ function setupColorCanvas() {
         }
         if (found) break;
       }
-    // }
-
-    const hexInput =  isExactColor ? hexColor: null
+      // }
   
     drawColorSpectrum(currentHue, currentAlpha);
-    pickColor(hexInput); // Ensures consistent rendering
+    pickColor(hexColor, { r, g, b, a }, [h, s, l]); // Ensures consistent rendering
   }
   
   

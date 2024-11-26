@@ -1,5 +1,8 @@
 # This is DesignSuite Google Extension 💻
 
+## Google Extension Link: 
+### https://chromewebstore.google.com/detail/designsuite/jcadgngfdgcjoebncmimnhhgofocpeeh
+
 ## Features:
 
 ### - Color picker

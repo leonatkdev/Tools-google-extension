@@ -50,7 +50,8 @@
 
         <div class="sectionType">
             <p style="margin: 0; margin-bottom: 10px;">We'd love your feedback! 😊</p>
-            <a href="https://forms.gle/vtfqWYJEKTVphxPU8" target="_blank" id="feedbackLink" style="color: #007bff; font-size: 14px;">Share Feedback</a>
+            <a href="https://forms.gle/vtfqWYJEKTVphxPU8" target="_blank" id="feedbackLink"
+                style="color: #007bff; font-size: 14px;">Share Feedback</a>
         </div>
     </div>
 
@@ -120,7 +121,7 @@
                 <div class="colorTopSection">
                     <span id="pickColor">
                         <span style="margin-top: -16px;     font-size: 12px;
-    font-weight: 400;">Click me</span>
+    font-weight: 500;">Color picker</span>
                         <img src="images/ColorPicker.svg" alt="Color Picker Icon" />
                     </span>
                     <div id="selectedColor">
@@ -141,10 +142,10 @@
 
                 <div style="display: flex; gap: 12px;  align-items: center;">
                     <select class="colorTypeTabs">
-                        <option value="hex" id="hex" class="colorType activeType" >
+                        <option value="hex" id="hex" class="colorType activeType">
                             HEX
                         </option>
-                        <option value="rgba" id="rgba"  class="colorType">
+                        <option value="rgba" id="rgba" class="colorType">
                             RGBA
                         </option>
                         <option value="hsl" id="hsl" class="colorType">
@@ -156,24 +157,17 @@
                     <span id="copyColorInput">
                         <img src="images/copy.svg" alt="Copy Icon" width="16" height="16" />
                     </span>
-                    <span id="star">                        
+                    <span id="star">
                         <img src="images/star.svg" alt="Copy Icon" width="16" height="16" />
                     </span>
                 </div>
 
                 <div class="sectionColorType">
                     Recent Colors
-                    <span class="selectRecentColor">
-                        Select
-                    </span>
-                    <div class="deleteRecentContainer">
-                        <div>
-                            Delete
-                        </div>
-                        <div id="resetRecent">
-                            Delete All
-                        </div>
+                    <div id="resetRecent">
+                        Clear All
                     </div>
+
                 </div>
 
                 <div class="colorsContainer">
@@ -232,6 +226,8 @@
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
                     <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
+                    <span class="colorTabFavorite"></span>
                 </div>
 
             </div>
@@ -248,7 +244,7 @@
             <!-- Favorite Full Warning Modal -->
             <div id="favoriteFullModal" class="modal">
                 <div class="modal-content">
-                    <p>You have reached the maximum number of favorite colors (20).</p>
+                    <p>You have reached the maximum number of favorite colors (24).</p>
                     <button id="closeFullModalBtn">OK</button>
                 </div>
             </div>
@@ -738,8 +734,9 @@
 
 
             <div class="loremMidmSection">
-                <textarea id="texttArea" placeholder="Type or paste your text in the box below and select a transformation ( Buttons above )."
-                style="width: 100%; height: 200px;"></textarea>
+                <textarea id="texttArea"
+                    placeholder="Type or paste your text in the box below and select a transformation ( Buttons above )."
+                    style="width: 100%; height: 200px;"></textarea>
                 <div class="textTransformerArea">
                     <span class="scrollTopTextt" id="scrollTopBtnTextt">
                         <svg stroke="currentColor" class="scrollTopSvgTextt" fill="white" stroke-width="0"

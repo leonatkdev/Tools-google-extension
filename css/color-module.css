@@ -314,7 +314,17 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
   cursor: pointer;
 }
 
-#resetRecent,
+#resetRecent{
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #007bff;
+  margin-left: auto;
+  padding-right: 6px;
+  cursor: pointer;
+}
+
+
+
 #resetFav {
   font-size: 12.5px;
   font-weight: 500;

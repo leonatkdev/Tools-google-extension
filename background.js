@@ -59,7 +59,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     ];
 
     // Ensure we only keep up to 20 recent colors
-    recentColors = recentColors.slice(0, 22);
+    recentColors = recentColors.slice(0, 12);
 
     // Save the recent colors in chrome.storage.local
     chrome.storage.local.set({ recentColors: recentColors }, function () {
@@ -85,6 +85,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ recentColors: data.recentColors || [] });
     });
     return true; // Needed to indicate that sendResponse will be called asynchronously
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "recentColorsCleared") {
+    recentColors = [];
   }
 });
 

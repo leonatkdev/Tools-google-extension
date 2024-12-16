@@ -127,11 +127,25 @@
                     <div id="selectedColor">
                     </div>
                     <div class="colorRangeInputsContainer">
-                        <input type="range" id="hueRange" min="0" max="360" value="0">
-                        <div class="alphaRangeContainer">
-                            <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
-                            <span class="alphaRangeBackground"></span>
+                            <input type="range" id="hueRange" min="0" max="360" value="0">
+                        <div style="display: flex; flex-direction: row;  align-items: center;">
+                            <div class="alphaRangeContainer" style="width: 100%; margin-right: 8px;">
+                                <input type="range" id="alphaRange" min="0" max="1" step="0.01" value="1">
+                                <span class="alphaRangeBackground"></span>
+                            </div>
+                            <input
+                            style="width: 50px; text-align: center; border: hidden; border-bottom: 1px solid gray;"
+                            type="number"
+                            id="alphaRangeNumber"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value="100"
+                          />
+                          <span style="margin-left: 5px;">%</span>
+
                         </div>
+
                     </div>
 
                 </div>

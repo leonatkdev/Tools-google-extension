@@ -27,6 +27,14 @@ function initializeUI() {
   setupCopyColorInputButton();
 }
 
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
 function updateRecentColorsUI(colors) {
   const recentColorElements = document.querySelectorAll(".colorTabRecent");
   colors.slice(0, 12).forEach((color, index) => {
@@ -250,7 +258,7 @@ function setupFavResetButton() {
       document.querySelectorAll(".colorTabRecent").forEach((box) => {
         box.style.backgroundColor = "#f1f1f1";
       });
-  
+
       // Clear recent colors in storage and notify the background script
       chrome.storage.local.set({ recentColors: [] }, function () {
         chrome.runtime.sendMessage({ type: "recentColorsCleared" });
@@ -269,14 +277,14 @@ function setupFavResetButton() {
   });
 }
 
-
 function setupColorConversionListeners() {
   const colorTypeSelect = document.querySelector(".colorTypeTabs");
   const colorInput = document.getElementById("colorValue");
 
   // Add a change event listener to the <select> element
   colorTypeSelect.addEventListener("change", function () {
-    const selectedOption = colorTypeSelect.options[colorTypeSelect.selectedIndex];
+    const selectedOption =
+      colorTypeSelect.options[colorTypeSelect.selectedIndex];
     const newInputId = selectedOption.value; // Get the value of the selected option
 
     // Call the convertColorInput function with the current color input and the new format
@@ -396,6 +404,7 @@ function setupColorCanvas() {
   const ctx = colorCanvas.getContext("2d", { willReadFrequently: true });
   const hueRange = document.getElementById("hueRange");
   const alphaRange = document.getElementById("alphaRange");
+  const alphaRangeNumber = document.getElementById("alphaRangeNumber");
   const selectedColorDiv = document.getElementById("selectedColor");
   const colorInput = document.getElementById("colorValue");
 
@@ -497,6 +506,8 @@ function setupColorCanvas() {
   }
 
   function pickColor(hexColor, rgba, hsl) {
+    console.log('hexColor', hexColor)
+    console.log('rgba', rgba)
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
     const imageData = offscreenCtx.getImageData(
@@ -505,35 +516,32 @@ function setupColorCanvas() {
       1,
       1
     ).data;
-  
+
     // Use the provided props or calculate from the canvas if not provided
     const hex = hexColor
       ? hexColor
-      : rgbaToHex(
-        imageData[0],
-        imageData[1],
-        imageData[2],
-        currentAlpha
-      );
-  
+      : rgbaToHex(imageData[0], imageData[1], imageData[2], currentAlpha);
+
     const rgbaString = rgba
-      ? `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(2)})`
+      ? `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(
+          2
+        )})`
       : `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
-  
+
     const hslString = hsl
       ? `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`
       : (() => {
-        const [h, s, l] = rgbToHsl(
-          imageData[0],
-          imageData[1],
-          imageData[2],
-          currentAlpha
-        );
+          const [h, s, l] = rgbToHsl(
+            imageData[0],
+            imageData[1],
+            imageData[2],
+            currentAlpha
+          );
           return `hsl(${h}, ${s}%, ${l}%)`;
         })();
-  
+
     const activeTypeSpan = document.querySelector(".colorTypeTabs").value;
-  
+
     if (!manualHexInput) {
       // Update input based on the active color type
       switch (activeTypeSpan) {
@@ -548,13 +556,10 @@ function setupColorCanvas() {
           break;
       }
     }
-  
+
     // Update the selected color preview
     selectedColorDiv.style.backgroundColor = rgbaString;
   }
-  
-  
-  
 
   colorCanvas.addEventListener("mousedown", function (e) {
     manualHexInput = false;
@@ -593,6 +598,28 @@ function setupColorCanvas() {
     isDragging = false;
   });
 
+  // Function to update and sync values
+  function updateAlphaRange(value, source) {
+    // if (source !== "range") {
+    //   alphaRange.value = value.toFixed(2); // Set alphaRange (0-1)
+    // }
+    // if (source !== "number") {
+    //   alphaRangeNumber.value = Math.round(value * 100); // Set alphaRangeNumber (0-100)
+    // }
+   
+
+    // Update alpha and redraw
+    manualHexInput = false;
+    currentAlpha = value; 
+    
+    console.log("source", source);
+    console.log("currentHue", currentHue);
+    console.log("currentAlpha", currentAlpha);
+
+    drawColorSpectrum(currentHue, currentAlpha);
+    pickColor();
+  }
+
   hueRange.addEventListener("input", function () {
     manualHexInput = false;
     currentHue = this.value;
@@ -601,11 +628,38 @@ function setupColorCanvas() {
   });
 
   alphaRange.addEventListener("input", function () {
-    manualHexInput = false;
-    currentAlpha = parseFloat(this.value);
-    drawColorSpectrum(currentHue, currentAlpha);
-    pickColor();
+    // console.log("this.value", this.value);
+    // const value = parseFloat(this.value); // Convert string to number
+    // console.log("value", value);
+
+    //test
+    const value = this.value; 
+
+    updateAlphaRange(value, "range"); 
+
+    alphaRangeNumber.value = value * 100; 
   });
+
+  // Add event listener to alphaRangeNumber
+  alphaRangeNumber.addEventListener(
+    "input",
+    debounce(function () {
+      const value = this.value;
+
+      console.log('alphaRangeNumber value', value)
+
+      if (value === "") {
+        value = 100;
+      }
+
+      const finalValue = parseInt(value, 10) / 100; // Convert percentage to range (0-1)
+      console.log('finalValue', finalValue)
+      updateAlphaRange(finalValue, "number");
+
+      hueRange.value =  finalValue
+    }),
+    300
+  );
 
   colorInput.addEventListener("input", (e) => {
     manualHexInput = true;
@@ -634,46 +688,44 @@ function setupColorCanvas() {
   function setColorFromHex(hexColor) {
     const { r, g, b, a } = hexToRgba(hexColor);
     const [h, s, l] = rgbToHsl(r, g, b);
-  
+
     currentHue = h;
     currentAlpha = a;
     hueRange.value = h;
     alphaRange.value = a;
-  
+
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
-  
-    // If it's not an exact color, find the closest match using colorMatches for the canvas 
+
+    // If it's not an exact color, find the closest match using colorMatches for the canvas
     // { This part of the code
-      function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
-        return (
-          Math.abs(r1 - r2) <= tolerance &&
-          Math.abs(g1 - g2) <= tolerance &&
-          Math.abs(b1 - b2) <= tolerance
-        );
-      }
-  
-      let found = false;
-      for (let y = 0; y < offscreenCanvas.height; y++) {
-        for (let x = 0; x < offscreenCanvas.width; x++) {
-          const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-  
-          if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
-            ballPosition.x = x;
-            ballPosition.y = y;
-            found = true;
-            break;
-          }
+    function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
+      return (
+        Math.abs(r1 - r2) <= tolerance &&
+        Math.abs(g1 - g2) <= tolerance &&
+        Math.abs(b1 - b2) <= tolerance
+      );
+    }
+
+    let found = false;
+    for (let y = 0; y < offscreenCanvas.height; y++) {
+      for (let x = 0; x < offscreenCanvas.width; x++) {
+        const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+
+        if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
+          ballPosition.x = x;
+          ballPosition.y = y;
+          found = true;
+          break;
         }
-        if (found) break;
       }
-      // }
-  
+      if (found) break;
+    }
+    // }
+
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor(hexColor, { r, g, b, a }, [h, s, l]); // Ensures consistent rendering
   }
-  
-  
-  
+
   chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
     if (response.color) {
       const exactColor = response.color; // Exact color from getColor
@@ -685,8 +737,6 @@ function setupColorCanvas() {
       setColorFromHex(defaultColor, true);
     }
   });
-  
-  
 
   setColorFromHex("#000000");
 

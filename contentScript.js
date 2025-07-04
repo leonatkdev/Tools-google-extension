@@ -1,23 +1,32 @@
 (function () {
-  let isColorPicked = false;
-  let isClickInProgress = false;
-  let handleMouseMove;
-  let handleClick;
-  let overlay; // Moved overlay to top-level scope
+  // --- Fix: Ensure state is always reset and UI is always ready for first use ---
+
+  // Use window-scoped variables to persist state across reloads and ensure only one instance
+  if (!window.__colorPickerState) {
+    window.__colorPickerState = {
+      isColorPicked: false,
+      isClickInProgress: false,
+      handleMouseMove: null,
+      handleClick: null,
+      overlay: null,
+      initialized: false
+    };
+  }
+  const state = window.__colorPickerState;
+
+  // Always clean up on script load to avoid stale UI or listeners
+  cleanUp();
 
   document.addEventListener("keydown", function (event) {
     if (event?.key === "Escape") {
       cleanUp();
-      isColorPicked = true;
+      state.isColorPicked = true;
     }
   });
-
-
 
   function cleanUpDOMPromise() {
     return new Promise((resolve, reject) => {
       try {
-        // Remove UI elements
         [
           "colorPickerCanvas",
           "zoomLens",
@@ -28,63 +37,57 @@
           const element = document.getElementById(id);
           if (element) element.remove();
         });
-  
-        // Remove event listeners and reset variables
-        if (handleMouseMove && overlay) {
-          overlay.removeEventListener("mousemove", handleMouseMove);
-          handleMouseMove = null;
+
+        if (state.handleMouseMove && state.overlay) {
+          state.overlay.removeEventListener("mousemove", state.handleMouseMove);
+          state.handleMouseMove = null;
         }
-        if (handleClick && overlay) {
-          overlay.removeEventListener("click", handleClick);
-          handleClick = null;
+        if (state.handleClick && state.overlay) {
+          state.overlay.removeEventListener("click", state.handleClick);
+          state.handleClick = null;
         }
-  
-        // Reset variables
-        isColorPicked = false;
-        isClickInProgress = false;
-        overlay = null;
-  
-        // Wait for DOM updates
+
+        state.isColorPicked = false;
+        state.isClickInProgress = false;
+        state.overlay = null;
+
         requestAnimationFrame(() => {
           setTimeout(() => {
             resolve();
-          }, 100); // Adjust delay if necessary
+          }, 100);
         });
       } catch (error) {
         console.error('Error during cleanup:', error);
-        reject(error); // Reject the promise on error
+        reject(error);
       }
     });
   }
-  
-  
+
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "cleanup") {
-      // Perform cleanup and ensure sendResponse is called
       cleanUpDOMPromise().then(() => {
         sendResponse({ status: "cleanup complete" });
       }).catch((error) => {
         console.error('Error during cleanup:', error);
         sendResponse({ status: "cleanup failed", error: error.message });
       });
-      // Return true to indicate sendResponse will be called asynchronously
       return true;
     }
-  
+
     if (message.action === "capture") {
       try {
+        // Always clean up before activating to ensure a fresh state
+        cleanUp();
         activateZoom(message.screenshotUrl);
-        isColorPicked = false;
+        state.isColorPicked = false;
         sendResponse({ status: "capture started" });
       } catch (e) {
         console.error("Failed to activate zoom:", e);
         sendResponse({ status: "capture failed", error: e.message });
       }
-      // Return true to indicate sendResponse will be called asynchronously
       return true;
     }
-  });  
-
+  });
 
   function createAndAppendElement(tag, id, styles) {
     const element = document.createElement(tag);
@@ -94,11 +97,10 @@
     return element;
   }
 
-
   function injectUI() {
-    cleanUp(); // Ensure all elements and listeners are cleaned up before injecting new ones
+    cleanUp(); // Always clean up before injecting
 
-    overlay = createAndAppendElement("div", "colorPickerOverlay", {
+    state.overlay = createAndAppendElement("div", "colorPickerOverlay", {
       position: "fixed",
       top: "0",
       left: "0",
@@ -106,7 +108,7 @@
       height: "100%",
       zIndex: "999998",
       background: "rgba(0, 0, 0, 0.5)",
-      pointerEvents: "auto", // Set to auto to receive events
+      pointerEvents: "auto",
     });
 
     const canvas = createAndAppendElement("canvas", "colorPickerCanvas", {
@@ -167,7 +169,7 @@
       fontFamily: "sans-serif"
     });
 
-    return { canvas, lens, gridSquares, overlay, colorHex };
+    return { canvas, lens, gridSquares, overlay: state.overlay, colorHex };
   }
 
   function activateZoom(dataUrl) {
@@ -182,43 +184,29 @@
     img.onload = () => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      handleMouseMove = (event) => {
-        if (!isColorPicked) {
+      state.handleMouseMove = (event) => {
+        if (!state.isColorPicked) {
           onDocumentMouseMove(event, ctx, canvas, lens);
         }
       };
 
-      handleClick = (event) => {
-        if (!isColorPicked && !isClickInProgress) {
-          // No need to prevent default; overlay captures the click
-
-          // Prevent multiple clicks from being processed
-          isClickInProgress = true;
-
-          console.log("Click detected, picking color");
-
-          // Get the color and process it
+      state.handleClick = (event) => {
+        if (!state.isColorPicked && !state.isClickInProgress) {
+          state.isClickInProgress = true;
           onDocumentClick(event, ctx, canvas);
-
-          // Mark color as picked
-          isColorPicked = true;
-
-          // Cleanup the event listener after picking the color
+          state.isColorPicked = true;
           cleanUp();
-
-          isClickInProgress = false; // Reset the flag after handling the click
+          state.isClickInProgress = false;
         }
       };
 
-      // Attach event listeners to the overlay
-      overlay.addEventListener("mousemove", handleMouseMove);
-      overlay.addEventListener("click", handleClick);
+      overlay.addEventListener("mousemove", state.handleMouseMove);
+      overlay.addEventListener("click", state.handleClick);
     };
 
     img.onerror = () => console.error("Failed to load image for zoom.");
     img.src = dataUrl;
   }
-
 
   function onDocumentMouseMove(event, ctx, canvas, lens) {
     const x = event.clientX;
@@ -239,12 +227,9 @@
     console.log("Picked color:", hex);
     chrome.runtime.sendMessage({ type: "colorPicked", color: hex });
 
-    // Clean up event listeners and UI elements
     cleanUp();
-
-    isColorPicked = true;
+    state.isColorPicked = true;
   }
-  
 
   function updateZoomLensPosition(event, ctx) {
     const x = event.clientX;
@@ -253,7 +238,6 @@
     const gridSquares = document.getElementById("zoomGridSquares");
     const colorHexDisplay = document.getElementById("colorHexDisplay");
 
-    // Adjust the sampling point slightly to align with the red square
     const pixel = ctx.getImageData(x - 1, y - 1, 1, 1).data;
     const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2])
       .toString(16)
@@ -270,7 +254,6 @@
     gridSquares.style.left = `${x - gridSquares.offsetWidth / 2 + offsetX}px`;
     gridSquares.style.top = `${y - gridSquares.offsetHeight / 2 + offsetY}px`;
 
-    // Optionally, apply the correct border color to gridSquares
     gridSquares.style.border = `12px solid ${hex}`;
 
     if (colorHexDisplay) {
@@ -354,21 +337,18 @@
       if (element) element.remove();
     });
 
-    if (handleMouseMove && overlay) {
-      overlay.removeEventListener("mousemove", handleMouseMove);
-      handleMouseMove = null;
+    if (state.handleMouseMove && state.overlay) {
+      state.overlay.removeEventListener("mousemove", state.handleMouseMove);
+      state.handleMouseMove = null;
     }
-    if (handleClick && overlay) {
-      overlay.removeEventListener("click", handleClick);
-      handleClick = null;
+    if (state.handleClick && state.overlay) {
+      state.overlay.removeEventListener("click", state.handleClick);
+      state.handleClick = null;
     }
 
-    // Reset overlay
-    overlay = null;
-
-    // Reset flags
-    isColorPicked = false;
-    isClickInProgress = false;
+    state.overlay = null;
+    state.isColorPicked = false;
+    state.isClickInProgress = false;
   }
 
 })();

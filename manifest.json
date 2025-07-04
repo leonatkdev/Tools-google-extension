@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "DesignSuite",
-  "version": "1.0.0",
+  "name": "DevKit",
+  "version": "1.0.1",
   "description": "Tool with color picker, lorem ipsum generator, typography checker, image resizer/converter, and text transformation.",
   "action": {
     "default_popup": "toolkit-pro.html",

@@ -1,20 +1,27 @@
-document.addEventListener("DOMContentLoaded", () => {
-  initializeUI();
-  setupColorConversionListeners();
+// Improved/refactored color.js main logic with better edge case handling and more robust code
 
-  // Initialize selection and deletion for both Recent and Favorite colors
-  // initializeColorSelection(
-  //   ".selectRecentColor",
-  //   ".colorTabRecent",
-  //   "recentColors",
-  //   ".deleteRecentContainer"
-  // );
-  initializeColorSelection(
-    ".selectFavColor",
-    ".colorTabFavorite",
-    "favoriteColors",
-    ".deleteContainer"
-  );
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    initializeUI();
+    setupColorConversionListeners();
+
+    // Enable selection and deletion for both Recent and Favorite colors
+    initializeColorSelection(
+      ".selectFavColor",
+      ".colorTabFavorite",
+      "favoriteColors",
+      ".deleteContainer"
+    );
+    // Uncomment below if you want to enable for recent colors as well
+    // initializeColorSelection(
+    //   ".selectRecentColor",
+    //   ".colorTabRecent",
+    //   "recentColors",
+    //   ".deleteRecentContainer"
+    // );
+  } catch (e) {
+    console.error("Error initializing color tool:", e);
+  }
 });
 
 function initializeUI() {
@@ -29,24 +36,37 @@ function initializeUI() {
 
 function updateRecentColorsUI(colors) {
   const recentColorElements = document.querySelectorAll(".colorTabRecent");
-  colors.slice(0, 12).forEach((color, index) => {
-    if (recentColorElements[index]) {
-      recentColorElements[index].style.backgroundColor = color.startsWith("#")
-        ? color
-        : rgbaToHex(parseRgba(color));
+  for (let i = 0; i < recentColorElements.length; i++) {
+    if (colors[i]) {
+      let color = colors[i];
+      try {
+        if (typeof color !== "string") throw new Error("Color is not a string");
+        if (color.startsWith("#")) {
+          recentColorElements[i].style.backgroundColor = color;
+        } else if (color.startsWith("rgba")) {
+          recentColorElements[i].style.backgroundColor = rgbaToHex(...Object.values(parseRgba(color)));
+        } else if (color.startsWith("hsl")) {
+          const rgba = hslToRgba(parseHsl(color));
+          recentColorElements[i].style.backgroundColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        } else {
+          // fallback: try to parse as rgb
+          recentColorElements[i].style.backgroundColor = color;
+        }
+      } catch (e) {
+        recentColorElements[i].style.backgroundColor = "#f1f1f1";
+      }
+    } else {
+      recentColorElements[i].style.backgroundColor = "#f1f1f1";
     }
-  });
-
-  // Clear any remaining tabs if the number of recent colors is less than 12
-  for (let i = colors.length; i < recentColorElements.length; i++) {
-    recentColorElements[i].style.backgroundColor = "#f1f1f1"; // Default background color
   }
 }
 
 function setRecentColors() {
   chrome.runtime.sendMessage({ type: "getRecentColors" }, (response) => {
-    if (response.recentColors && response.recentColors.length > 0) {
+    if (response && Array.isArray(response.recentColors)) {
       updateRecentColorsUI(response.recentColors);
+    } else {
+      updateRecentColorsUI([]);
     }
   });
 }
@@ -66,25 +86,30 @@ function initializeColorSelection(
   deleteContainerClass
 ) {
   const selectElement = document.querySelector(selectClass);
+  const deleteBtn = document.querySelector(`${deleteContainerClass} div:first-child`);
+  if (!selectElement || !deleteBtn) return;
+
   selectElement.addEventListener("click", () => {
     toggleSelectionMode(selectElement, colorClass, deleteContainerClass);
   });
 
-  document
-    .querySelector(`${deleteContainerClass} div:first-child`)
-    .addEventListener("click", () => {
-      deleteSelectedColors(colorClass, storageKey);
-    });
+  deleteBtn.addEventListener("click", () => {
+    deleteSelectedColors(colorClass, storageKey);
+  });
 }
 
 function toggleSelectionMode(selectElement, colorClass, deleteContainerClass) {
-  if (selectElement.textContent.trim() === "Select") {
+  if (!selectElement) return;
+  const deleteContainer = document.querySelector(deleteContainerClass);
+  if (!deleteContainer) return;
+
+  if (selectElement.textContent.trim().toLowerCase() === "select") {
     selectElement.textContent = "Cancel";
-    document.querySelector(deleteContainerClass).style.display = "flex";
+    deleteContainer.style.display = "flex";
     enableColorSelection(colorClass);
   } else {
     selectElement.textContent = "Select";
-    document.querySelector(deleteContainerClass).style.display = "none";
+    deleteContainer.style.display = "none";
     disableColorSelection(colorClass);
   }
 }
@@ -92,7 +117,10 @@ function toggleSelectionMode(selectElement, colorClass, deleteContainerClass) {
 function enableColorSelection(colorClass) {
   const colorTabs = document.querySelectorAll(colorClass);
   colorTabs.forEach((tab) => {
-    tab.addEventListener("click", toggleColorSelection);
+    if (!tab.classList.contains("selection-enabled")) {
+      tab.addEventListener("click", toggleColorSelection);
+      tab.classList.add("selection-enabled");
+    }
     tab.style.cursor = "pointer";
   });
 }
@@ -101,12 +129,13 @@ function disableColorSelection(colorClass) {
   const colorTabs = document.querySelectorAll(colorClass);
   colorTabs.forEach((tab) => {
     tab.removeEventListener("click", toggleColorSelection);
-    tab.classList.remove("selected-for-deletion");
+    tab.classList.remove("selected-for-deletion", "selection-enabled");
     tab.style.cursor = "default";
   });
 }
 
 function toggleColorSelection(event) {
+  if (!event.currentTarget) return;
   event.currentTarget.classList.toggle("selected-for-deletion");
 }
 
@@ -114,38 +143,42 @@ function deleteSelectedColors(colorClass, storageKey) {
   const selectedTabs = document.querySelectorAll(
     `${colorClass}.selected-for-deletion`
   );
+  if (!selectedTabs.length) return;
 
   chrome.storage.local.get({ [storageKey]: [] }, function (result) {
-    let colors = result[storageKey];
-
-    // Iterate over each selected tab and remove its corresponding color from the array
+    let colors = Array.isArray(result[storageKey]) ? result[storageKey] : [];
+    // Remove selected colors (by hex) from the array
     selectedTabs.forEach((tab) => {
       const color = window.getComputedStyle(tab).backgroundColor;
-      const rgbaColor = parseRgba(color);
-      const hexColor = rgbaToHex(
-        rgbaColor.r,
-        rgbaColor.g,
-        rgbaColor.b,
-        rgbaColor.a
-      );
-
-      // Remove the first occurrence of this color in the array
-      const colorIndex = colors.indexOf(hexColor);
-      if (colorIndex > -1) {
-        colors.splice(colorIndex, 1);
+      let hexColor;
+      try {
+        if (color.startsWith("#")) {
+          hexColor = color;
+        } else if (color.startsWith("rgba")) {
+          const rgba = parseRgba(color);
+          hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        } else if (color.startsWith("rgb")) {
+          const rgba = parseRgba(color);
+          hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        } else if (color.startsWith("hsl")) {
+          const rgba = hslToRgba(parseHsl(color));
+          hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        } else {
+          hexColor = color;
+        }
+      } catch (e) {
+        hexColor = color;
       }
+      // Remove all occurrences (in case of duplicates)
+      colors = colors.filter(c => c !== hexColor);
     });
 
-    // Update storage with the new array
     chrome.storage.local.set({ [storageKey]: colors }, function () {
-      // Refresh the UI using the existing update functions
       if (storageKey === "favoriteColors") {
         updateFavoriteColorUI(colors);
       } else if (storageKey === "recentColors") {
         updateRecentColorsUI(colors);
       }
-
-      // Deselect all selected tabs after deletion
       selectedTabs.forEach((tab) => {
         tab.classList.remove("selected-for-deletion");
       });
@@ -155,18 +188,22 @@ function deleteSelectedColors(colorClass, storageKey) {
 
 function showModal(modalId, onConfirm) {
   const modal = document.getElementById(modalId);
+  if (!modal) return;
   modal.style.display = "flex";
 
   if (onConfirm) {
     const confirmBtn = modal.querySelector("#confirmDeleteBtn");
-    confirmBtn.addEventListener(
-      "click",
-      function () {
-        onConfirm();
-        closeModal(modal);
-      },
-      { once: true }
-    );
+    if (confirmBtn) {
+      confirmBtn.addEventListener(
+        "click",
+        function handler() {
+          onConfirm();
+          closeModal(modal);
+          confirmBtn.removeEventListener("click", handler);
+        },
+        { once: true }
+      );
+    }
   }
 
   const closeButtons = modal.querySelectorAll("button:not(#confirmDeleteBtn)");
@@ -178,108 +215,114 @@ function showModal(modalId, onConfirm) {
 }
 
 function closeModal(modal) {
-  modal.style.display = "none";
+  if (modal) modal.style.display = "none";
 }
 
 function setupStarClicks() {
-  document.getElementById("star").addEventListener("click", function () {
+  const starBtn = document.getElementById("star");
+  if (!starBtn) return;
+  starBtn.addEventListener("click", function () {
     const input = document.querySelector("#colorValue");
-    const colorValue = input.value;
+    if (!input) return;
+    const colorValue = input.value.trim();
+    if (!colorValue) return;
 
     chrome.storage.local.get({ favoriteColors: [] }, function (result) {
-      let favorites = result.favoriteColors;
+      let favorites = Array.isArray(result.favoriteColors) ? result.favoriteColors : [];
       const maxFavorites = 24;
-      if (favorites.length < maxFavorites) {
-        const rgba = parseRgba(colorValue);
+      if (favorites.length >= maxFavorites) {
+        showModal("favoriteFullModal");
+        return;
+      }
 
-        let hexColor;
-
+      let hexColor;
+      try {
         if (colorValue.startsWith("#")) {
           hexColor = colorValue;
         } else if (colorValue.startsWith("hsl")) {
           let rgbConverted = hslToRgba(parseHsl(colorValue));
-          hexColor = rgbaToHex(
-            rgbConverted.r,
-            rgbConverted.g,
-            rgbConverted.b,
-            rgbConverted.a
-          );
-        } else {
+          hexColor = rgbaToHex(rgbConverted.r, rgbConverted.g, rgbConverted.b, rgbConverted.a);
+        } else if (colorValue.startsWith("rgba") || colorValue.startsWith("rgb")) {
+          const rgba = parseRgba(colorValue);
           hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        } else {
+          // fallback: try to parse as hex
+          hexColor = colorValue;
         }
-        // const hexColor = colorValue.startsWith("#")
-        //   ? colorValue
-        //   : colorValue.startsWith("hsl") ?
-        //   :rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
-        favorites.unshift(hexColor); // Add to the start of the array
-        chrome.storage.local.set({ favoriteColors: favorites }, function () {
-          updateFavoriteColorUI(favorites);
-        });
-      } else {
-        showModal("favoriteFullModal");
+      } catch (e) {
+        hexColor = "#000000";
       }
+
+      // Prevent duplicates
+      favorites = favorites.filter(c => c !== hexColor);
+      favorites.unshift(hexColor);
+      if (favorites.length > maxFavorites) favorites = favorites.slice(0, maxFavorites);
+
+      chrome.storage.local.set({ favoriteColors: favorites }, function () {
+        updateFavoriteColorUI(favorites);
+      });
     });
   });
 }
 
 function updateFavoriteColorUI(favorites) {
   const colorTabs = document.querySelectorAll(".colorTabFavorite");
-  favorites.slice(0, 24).forEach((color, index) => {
-    if (colorTabs[index]) {
-      colorTabs[index].style.backgroundColor = color;
+  for (let i = 0; i < colorTabs.length; i++) {
+    if (favorites[i]) {
+      try {
+        colorTabs[i].style.backgroundColor = favorites[i];
+      } catch (e) {
+        colorTabs[i].style.backgroundColor = "#f1f1f1";
+      }
+    } else {
+      colorTabs[i].style.backgroundColor = "#f1f1f1";
     }
-  });
-
-  // Clear any remaining tabs if the number of favorites is less than 24
-  for (let i = favorites.length; i < colorTabs.length; i++) {
-    colorTabs[i].style.backgroundColor = "#f1f1f1"; // Default background color
   }
 }
 
 function loadFavoriteColors() {
   chrome.storage.local.get({ favoriteColors: [] }, function (result) {
-    const favorites = result.favoriteColors;
+    const favorites = Array.isArray(result.favoriteColors) ? result.favoriteColors : [];
     updateFavoriteColorUI(favorites);
   });
 }
 
 function setupFavResetButton() {
-  document.getElementById("resetRecent").addEventListener("click", function () {
-    showModal("confirmDeleteModal", function () {
-      // Proceed with deletion after confirmation
-      document.querySelectorAll(".colorTabRecent").forEach((box) => {
-        box.style.backgroundColor = "#f1f1f1";
-      });
-  
-      // Clear recent colors in storage and notify the background script
-      chrome.storage.local.set({ recentColors: [] }, function () {
-        chrome.runtime.sendMessage({ type: "recentColorsCleared" });
+  const resetRecentBtn = document.getElementById("resetRecent");
+  const resetFavBtn = document.getElementById("resetFav");
+  if (resetRecentBtn) {
+    resetRecentBtn.addEventListener("click", function () {
+      showModal("confirmDeleteModal", function () {
+        document.querySelectorAll(".colorTabRecent").forEach((box) => {
+          box.style.backgroundColor = "#f1f1f1";
+        });
+        chrome.storage.local.set({ recentColors: [] }, function () {
+          chrome.runtime.sendMessage({ type: "recentColorsCleared" });
+        });
       });
     });
-  });
-
-  document.getElementById("resetFav").addEventListener("click", function () {
-    showModal("confirmDeleteModal", function () {
-      // Proceed with deletion after confirmation
-      document.querySelectorAll(".colorTabFavorite").forEach((box) => {
-        box.style.backgroundColor = "#f1f1f1";
+  }
+  if (resetFavBtn) {
+    resetFavBtn.addEventListener("click", function () {
+      showModal("confirmDeleteModal", function () {
+        document.querySelectorAll(".colorTabFavorite").forEach((box) => {
+          box.style.backgroundColor = "#f1f1f1";
+        });
+        chrome.storage.local.set({ favoriteColors: [] });
       });
-      chrome.storage.local.set({ favoriteColors: [] });
     });
-  });
+  }
 }
-
 
 function setupColorConversionListeners() {
   const colorTypeSelect = document.querySelector(".colorTypeTabs");
   const colorInput = document.getElementById("colorValue");
+  if (!colorTypeSelect || !colorInput) return;
 
-  // Add a change event listener to the <select> element
   colorTypeSelect.addEventListener("change", function () {
     const selectedOption = colorTypeSelect.options[colorTypeSelect.selectedIndex];
-    const newInputId = selectedOption.value; // Get the value of the selected option
-
-    // Call the convertColorInput function with the current color input and the new format
+    if (!selectedOption) return;
+    const newInputId = selectedOption.value;
     convertColorInput(colorInput.value, newInputId);
   });
 }
@@ -291,29 +334,38 @@ function convertColorInput(value, type) {
       console.error("colorValue input not found.");
       return;
     }
-
+    let r, g, b, a, rgba, h, s, l;
     switch (type) {
       case "hex":
-        const { r, g, b, a } = value.startsWith("rgba")
-          ? parseRgba(value)
-          : hslToRgba(parseHsl(value));
-        colorInput.value = rgbaToHex(r, g, b, a);
+        if (value.startsWith("#")) {
+          colorInput.value = value;
+        } else if (value.startsWith("rgba") || value.startsWith("rgb")) {
+          ({ r, g, b, a } = parseRgba(value));
+          colorInput.value = rgbaToHex(r, g, b, a);
+        } else if (value.startsWith("hsl")) {
+          rgba = hslToRgba(parseHsl(value));
+          colorInput.value = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+        }
         break;
       case "rgba":
-        const rgba = value.startsWith("#")
-          ? hexToRgba(value)
-          : hslToRgba(parseHsl(value));
-        colorInput.value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(
-          rgba.a
-        ).toFixed(2)})`;
+        if (value.startsWith("#")) {
+          rgba = hexToRgba(value);
+        } else if (value.startsWith("hsl")) {
+          rgba = hslToRgba(parseHsl(value));
+        } else {
+          rgba = parseRgba(value);
+        }
+        colorInput.value = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(2)})`;
         break;
       case "hsl":
-        const {
-          r: hr,
-          g: hg,
-          b: hb,
-        } = value.startsWith("#") ? hexToRgba(value) : parseRgba(value);
-        const [h, s, l] = rgbToHsl(hr, hg, hb);
+        if (value.startsWith("#")) {
+          ({ r, g, b, a } = hexToRgba(value));
+        } else if (value.startsWith("rgba") || value.startsWith("rgb")) {
+          ({ r, g, b, a } = parseRgba(value));
+        } else {
+          ({ r, g, b, a } = hslToRgba(parseHsl(value)));
+        }
+        [h, s, l] = rgbToHsl(r, g, b);
         colorInput.value = `hsl(${h}, ${s}%, ${l}%)`;
         break;
       default:
@@ -325,49 +377,58 @@ function convertColorInput(value, type) {
 }
 
 function parseRgba(rgbaString) {
-  const match = rgbaString.match(/\d+\.?\d*/g);
+  // Accepts rgb(), rgba(), or fallback to black
+  if (typeof rgbaString !== "string") return { r: 0, g: 0, b: 0, a: 1 };
+  const match = rgbaString.match(/(\d+\.?\d*)/g);
   if (!match) {
     console.error("Invalid RGBA string:", rgbaString);
-    return { r: 0, g: 0, b: 0, a: 1 }; // Default to black with full opacity if invalid
+    return { r: 0, g: 0, b: 0, a: 1 };
   }
-  const rgbaArray = match.map(Number);
-  const [r, g, b, a = 1] = rgbaArray; // Default alpha to 1 if not present
-  return { r, g, b, a: parseFloat(a.toFixed(2)) }; // Ensure alpha is limited to two decimal places
+  const [r = 0, g = 0, b = 0, a = 1] = match.map(Number);
+  return { r: +r, g: +g, b: +b, a: parseFloat(a !== undefined ? a : 1) };
 }
 
 function parseHsl(hslString) {
-  const [h, s, l] = hslString.match(/\d+\.?\d*/g).map(Number);
-  return { h, s, l };
+  // Accepts hsl() or hsla()
+  if (typeof hslString !== "string") return { h: 0, s: 0, l: 0, a: 1 };
+  const match = hslString.match(/(\d+\.?\d*)/g);
+  if (!match) {
+    console.error("Invalid HSL string:", hslString);
+    return { h: 0, s: 0, l: 0, a: 1 };
+  }
+  const [h = 0, s = 0, l = 0, a = 1] = match.map(Number);
+  return { h: +h, s: +s, l: +l, a: parseFloat(a !== undefined ? a : 1) };
 }
 
 function setupPickColorButton() {
-  document.getElementById("pickColor").addEventListener("click", () => {
+  const pickColorBtn = document.getElementById("pickColor");
+  if (!pickColorBtn) return;
+  pickColorBtn.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       const tab = tabs[0];
-      if (!tab.url.startsWith("chrome://")) {
-        chrome.scripting.executeScript(
-          {
-            target: { tabId: tab.id },
-            files: ["contentScript.js"],
-          },
-          () => {
-            if (chrome.runtime.lastError) {
-              console.error(
-                `Error injecting script: ${chrome.runtime.lastError.message}`
-              );
-            } else {
-              chrome.runtime.sendMessage({
-                action: "capturePage",
-                tabId: tabs[0].id,
-              });
-              // Close the extension popup
-              window.close();
-            }
-          }
-        );
-      } else {
+      if (!tab || !tab.url || tab.url.startsWith("chrome://")) {
         alert("This functionality is not available on chrome:// pages.");
+        return;
       }
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tab.id },
+          files: ["contentScript.js"],
+        },
+        () => {
+          if (chrome.runtime.lastError) {
+            console.error(
+              `Error injecting script: ${chrome.runtime.lastError.message}`
+            );
+          } else {
+            chrome.runtime.sendMessage({
+              action: "capturePage",
+              tabId: tab.id,
+            });
+            window.close();
+          }
+        }
+      );
     });
     chrome.runtime.sendMessage({ action: "activatePicker" });
   });
@@ -375,16 +436,18 @@ function setupPickColorButton() {
 
 function setupCopyColorInputButton() {
   const copyColorBtn = document.getElementById("copyColorInput");
+  if (!copyColorBtn) return;
   copyColorBtn.addEventListener("click", function () {
     const colorInput = document.getElementById("colorValue");
+    if (!colorInput) return;
     colorInput.select();
-    colorInput.setSelectionRange(0, 99999); // For mobile devices
+    colorInput.setSelectionRange(0, 99999);
     copyColorBtn.style.backgroundColor = "#007bff";
-    copyColorBtn.querySelector("img").style.filter = "invert(1)";
-
+    const img = copyColorBtn.querySelector("img");
+    if (img) img.style.filter = "invert(1)";
     try {
       document.execCommand("copy");
-      console.log("Color copied to clipboard:", colorInput.value);
+      // Optionally, show a tooltip or feedback
     } catch (err) {
       console.error("Failed to copy color:", err);
     }
@@ -393,11 +456,13 @@ function setupCopyColorInputButton() {
 
 function setupColorCanvas() {
   const colorCanvas = document.getElementById("colorCanvas");
+  if (!colorCanvas) return;
   const ctx = colorCanvas.getContext("2d", { willReadFrequently: true });
   const hueRange = document.getElementById("hueRange");
   const alphaRange = document.getElementById("alphaRange");
   const selectedColorDiv = document.getElementById("selectedColor");
   const colorInput = document.getElementById("colorValue");
+  if (!ctx || !hueRange || !alphaRange || !selectedColorDiv || !colorInput) return;
 
   let manualHexInput = false;
 
@@ -459,40 +524,26 @@ function setupColorCanvas() {
   }
 
   function drawBall() {
-    // Save the current state
     ctx.save();
-
-    // Draw box shadow
     ctx.shadowColor = "black";
     ctx.shadowBlur = 2;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
-
-    // Draw border
     ctx.lineWidth = 4;
     ctx.strokeStyle = "white";
-
-    // Draw transparent middle
-    ctx.fillStyle = "rgba(255, 255, 255, 0)"; // Transparent fill
-
+    ctx.fillStyle = "rgba(255, 255, 255, 0)";
     ctx.beginPath();
     ctx.arc(ballPosition.x, ballPosition.y, 10, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
-
-    // Draw plus sign
     ctx.lineWidth = 1;
     ctx.strokeStyle = "white";
     ctx.beginPath();
-    // Vertical line
     ctx.moveTo(ballPosition.x, ballPosition.y - 5);
     ctx.lineTo(ballPosition.x, ballPosition.y + 5);
-    // Horizontal line
     ctx.moveTo(ballPosition.x - 5, ballPosition.y);
     ctx.lineTo(ballPosition.x + 5, ballPosition.y);
     ctx.stroke();
-
-    // Restore the previous state
     ctx.restore();
   }
 
@@ -500,42 +551,34 @@ function setupColorCanvas() {
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
 
     const imageData = offscreenCtx.getImageData(
-      ballPosition.x,
-      ballPosition.y,
+      Math.round(ballPosition.x),
+      Math.round(ballPosition.y),
       1,
       1
     ).data;
-  
+
     // Use the provided props or calculate from the canvas if not provided
-    const hex = hexColor
-      ? hexColor
-      : rgbaToHex(
-        imageData[0],
-        imageData[1],
-        imageData[2],
-        currentAlpha
-      );
-  
-    const rgbaString = rgba
-      ? `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(2)})`
-      : `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
-  
-    const hslString = hsl
-      ? `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`
-      : (() => {
-        const [h, s, l] = rgbToHsl(
-          imageData[0],
-          imageData[1],
-          imageData[2],
-          currentAlpha
-        );
-          return `hsl(${h}, ${s}%, ${l}%)`;
-        })();
-  
-    const activeTypeSpan = document.querySelector(".colorTypeTabs").value;
-  
+    let hex, rgbaString, hslString;
+    if (hexColor) {
+      hex = hexColor;
+    } else {
+      hex = rgbaToHex(imageData[0], imageData[1], imageData[2], currentAlpha);
+    }
+    if (rgba) {
+      rgbaString = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${parseFloat(rgba.a).toFixed(2)})`;
+    } else {
+      rgbaString = `rgba(${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${currentAlpha})`;
+    }
+    if (hsl) {
+      hslString = `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
+    } else {
+      const [h, s, l] = rgbToHsl(imageData[0], imageData[1], imageData[2]);
+      hslString = `hsl(${h}, ${s}%, ${l}%)`;
+    }
+
+    const activeTypeSpan = document.querySelector(".colorTypeTabs")?.value || "hex";
+
     if (!manualHexInput) {
-      // Update input based on the active color type
       switch (activeTypeSpan) {
         case "hex":
           colorInput.value = hex;
@@ -548,42 +591,26 @@ function setupColorCanvas() {
           break;
       }
     }
-  
-    // Update the selected color preview
     selectedColorDiv.style.backgroundColor = rgbaString;
   }
-  
-  
-  
 
   colorCanvas.addEventListener("mousedown", function (e) {
     manualHexInput = false;
     const rect = colorCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
-    ballPosition.x = x;
-    ballPosition.y = y;
-
+    ballPosition.x = Math.max(0, Math.min(colorCanvas.width, x));
+    ballPosition.y = Math.max(0, Math.min(colorCanvas.height, y));
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
-
-    if (Math.sqrt((x - ballPosition.x) ** 2 + (y - ballPosition.y) ** 2) < 10) {
-      isDragging = true;
-    }
+    isDragging = true;
   });
 
   window.addEventListener("mousemove", function (e) {
     if (isDragging) {
       const rect = colorCanvas.getBoundingClientRect();
-      ballPosition.x = Math.max(
-        0,
-        Math.min(colorCanvas.width, e.clientX - rect.left)
-      );
-      ballPosition.y = Math.max(
-        0,
-        Math.min(colorCanvas.height, e.clientY - rect.top)
-      );
+      ballPosition.x = Math.max(0, Math.min(colorCanvas.width, e.clientX - rect.left));
+      ballPosition.y = Math.max(0, Math.min(colorCanvas.height, e.clientY - rect.top));
       drawColorSpectrum(currentHue, currentAlpha);
       pickColor();
     }
@@ -595,125 +622,116 @@ function setupColorCanvas() {
 
   hueRange.addEventListener("input", function () {
     manualHexInput = false;
-    currentHue = this.value;
+    currentHue = Number(this.value) || 0;
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   });
 
   alphaRange.addEventListener("input", function () {
     manualHexInput = false;
-    currentAlpha = parseFloat(this.value);
+    currentAlpha = parseFloat(this.value) || 1;
     drawColorSpectrum(currentHue, currentAlpha);
     pickColor();
   });
 
   colorInput.addEventListener("input", (e) => {
     manualHexInput = true;
-
-    inputValue = e.target.value;
+    const inputValue = e.target.value.trim();
     let hexColor;
-
-    const rgba = parseRgba(inputValue);
-    if (inputValue.startsWith("#")) {
-      hexColor = inputValue;
-    } else if (inputValue.startsWith("hsl")) {
-      let rgbConverted = hslToRgba(parseHsl(inputValue));
-      hexColor = rgbaToHex(
-        rgbConverted.r,
-        rgbConverted.g,
-        rgbConverted.b,
-        rgbConverted.a
-      );
-    } else {
-      hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+    try {
+      if (inputValue.startsWith("#")) {
+        hexColor = inputValue;
+      } else if (inputValue.startsWith("hsl")) {
+        let rgbConverted = hslToRgba(parseHsl(inputValue));
+        hexColor = rgbaToHex(rgbConverted.r, rgbConverted.g, rgbConverted.b, rgbConverted.a);
+      } else if (inputValue.startsWith("rgba") || inputValue.startsWith("rgb")) {
+        const rgba = parseRgba(inputValue);
+        hexColor = rgbaToHex(rgba.r, rgba.g, rgba.b, rgba.a);
+      } else {
+        hexColor = inputValue;
+      }
+    } catch (e) {
+      hexColor = "#000000";
     }
-
     setColorFromHex(hexColor);
   });
 
   function setColorFromHex(hexColor) {
-    const { r, g, b, a } = hexToRgba(hexColor);
-    const [h, s, l] = rgbToHsl(r, g, b);
-  
-    currentHue = h;
-    currentAlpha = a;
+    let { r, g, b, a } = hexToRgba(hexColor);
+    let [h, s, l] = rgbToHsl(r, g, b);
+    currentHue = Number(h);
+    currentAlpha = Number(a);
     hueRange.value = h;
     alphaRange.value = a;
-  
     drawOffscreenColorSpectrum(currentHue, currentAlpha);
-  
-    // If it's not an exact color, find the closest match using colorMatches for the canvas 
-    // { This part of the code
-      function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
-        return (
-          Math.abs(r1 - r2) <= tolerance &&
-          Math.abs(g1 - g2) <= tolerance &&
-          Math.abs(b1 - b2) <= tolerance
-        );
-      }
-  
-      let found = false;
-      for (let y = 0; y < offscreenCanvas.height; y++) {
-        for (let x = 0; x < offscreenCanvas.width; x++) {
-          const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
-  
-          if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
-            ballPosition.x = x;
-            ballPosition.y = y;
-            found = true;
-            break;
-          }
-        }
-        if (found) break;
-      }
-      // }
-  
-    drawColorSpectrum(currentHue, currentAlpha);
-    pickColor(hexColor, { r, g, b, a }, [h, s, l]); // Ensures consistent rendering
-  }
-  
-  
-  
-  chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
-    if (response.color) {
-      const exactColor = response.color; // Exact color from getColor
-      colorInput.value = exactColor; // Update the input directly
-      setColorFromHex(exactColor, true); // Exact color for canvas rendering
-    } else {
-      const defaultColor = "#000000";
-      colorInput.value = defaultColor;
-      setColorFromHex(defaultColor, true);
+
+    // Find closest match for the canvas
+    function colorMatches(r1, g1, b1, r2, g2, b2, tolerance = 2) {
+      return (
+        Math.abs(r1 - r2) <= tolerance &&
+        Math.abs(g1 - g2) <= tolerance &&
+        Math.abs(b1 - b2) <= tolerance
+      );
     }
+    let found = false;
+    for (let y = 0; y < offscreenCanvas.height && !found; y++) {
+      for (let x = 0; x < offscreenCanvas.width; x++) {
+        const imageData = offscreenCtx.getImageData(x, y, 1, 1).data;
+        if (colorMatches(imageData[0], imageData[1], imageData[2], r, g, b)) {
+          ballPosition.x = x;
+          ballPosition.y = y;
+          found = true;
+          break;
+        }
+      }
+    }
+    drawColorSpectrum(currentHue, currentAlpha);
+    pickColor(hexColor, { r, g, b, a }, [h, s, l]);
+  }
+
+  // Load initial color from background or default
+  chrome.runtime.sendMessage({ type: "getColor" }, (response) => {
+    let color = "#000000";
+    if (response && typeof response.color === "string" && response.color) {
+      color = response.color;
+    }
+    colorInput.value = color;
+    setColorFromHex(color);
   });
-  
-  
 
   setColorFromHex("#000000");
 
-  //recent and favorite color clicks
+  // recent and favorite color clicks
   document
     .querySelectorAll(".colorTabRecent, .colorTabFavorite")
     .forEach((tab) => {
       tab.addEventListener("click", function () {
         const color = window.getComputedStyle(tab).backgroundColor;
-        const rgbaColor = parseRgba(color);
-        const hexColor = rgbaToHex(
-          rgbaColor.r,
-          rgbaColor.g,
-          rgbaColor.b,
-          rgbaColor.a
-        );
-        setColorFromHex(hexColor, true);
+        let hexColor;
+        try {
+          if (color.startsWith("#")) {
+            hexColor = color;
+          } else if (color.startsWith("rgba") || color.startsWith("rgb")) {
+            const rgbaColor = parseRgba(color);
+            hexColor = rgbaToHex(rgbaColor.r, rgbaColor.g, rgbaColor.b, rgbaColor.a);
+          } else if (color.startsWith("hsl")) {
+            const rgbaColor = hslToRgba(parseHsl(color));
+            hexColor = rgbaToHex(rgbaColor.r, rgbaColor.g, rgbaColor.b, rgbaColor.a);
+          } else {
+            hexColor = color;
+          }
+        } catch (e) {
+          hexColor = "#000000";
+        }
+        setColorFromHex(hexColor);
       });
     });
 }
 
 // Utility functions
 function hexToRgba(hex) {
-  let r = 0,
-    g = 0,
-    b = 0,
-    a = 1;
+  if (typeof hex !== "string" || !hex.startsWith("#")) return { r: 0, g: 0, b: 0, a: 1 };
+  let r = 0, g = 0, b = 0, a = 1;
   if (hex.length === 7) {
     r = parseInt(hex.slice(1, 3), 16);
     g = parseInt(hex.slice(3, 5), 16);
@@ -724,12 +742,14 @@ function hexToRgba(hex) {
     b = parseInt(hex.slice(5, 7), 16);
     a = parseInt(hex.slice(7, 9), 16) / 255;
   }
-  return { r, g, b, a: parseFloat(a.toFixed(2)) }; // Ensure alpha is limited to two decimal places
+  return { r, g, b, a: parseFloat(a.toFixed(2)) };
 }
 
 function hslToRgb(h, s, l) {
+  h = Number(h);
+  s = Number(s);
+  l = Number(l);
   let r, g, b;
-
   if (s === 0) {
     r = g = b = l;
   } else {
@@ -741,7 +761,6 @@ function hslToRgb(h, s, l) {
       if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
       return p;
     }
-
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
     h /= 360;
@@ -753,77 +772,31 @@ function hslToRgb(h, s, l) {
 }
 
 function hslToRgba({ h, s, l, a = 1 }) {
-  s /= 100;
-  l /= 100;
+  s = Number(s) / 100;
+  l = Number(l) / 100;
   const [r, g, b] = hslToRgb(h, s, l);
-  return { r, g, b, a };
+  return { r, g, b, a: parseFloat(a) };
 }
 
 function rgbaToHex(r, g, b, a = 1) {
-  return (
-    "#" +
-    [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("") +
-    (a < 1
-      ? Math.round(a * 255)
-          .toString(16)
-          .padStart(2, "0")
-      : "")
-  );
+  r = Math.round(r); g = Math.round(g); b = Math.round(b);
+  let hex = "#" +
+    [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+  if (a < 1) {
+    hex += Math.round(a * 255).toString(16).padStart(2, "0");
+  }
+  return hex;
 }
 
-// function rgbToHsl(r, g, b, a = 1) {
-//   r /= 255;
-//   g /= 255;
-//   b /= 255;
-//   let max = Math.max(r, g, b),
-//     min = Math.min(r, g, b);
-//   let h = 0,
-//     s,
-//     l = (max + min) / 2;
-
-//   if (max === min) {
-//     h = s = 0; // achromatic
-//   } else {
-//     let d = max - min;
-//     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-//     switch (max) {
-//       case r:
-//         h = (g - b) / d + (g < b ? 6 : 0);
-//         break;
-//       case g:
-//         h = (b - r) / d + 2;
-//         break;
-//       case b:
-//         h = (r - g) / d + 4;
-//         break;
-//     }
-//     h /= 6;
-//     h = h < 0 ? h + 1 : h; // Ensure h is not negative
-//   }
-
-//   return [
-//     (h * 360).toFixed(1), // Hue with one decimal place
-//     (s * 100).toFixed(1), // Saturation with one decimal place
-//     (l * 100).toFixed(1), // Lightness with one decimal place
-//     a.toFixed(2), // Alpha with two decimal places
-//   ];
-// }
-
 function rgbToHsl(r, g, b) {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-
-  var max = Math.max(r, g, b);
-  var min = Math.min(r, g, b);
-  var h = 0,
-    s = 0,
-    l = (max + min) / 2;
-  var c = max - min;
-
+  r = Number(r) / 255;
+  g = Number(g) / 255;
+  b = Number(b) / 255;
+  let max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  let c = max - min;
   if (c !== 0) {
     s = l > 0.5 ? c / (2 - max - min) : c / (max + min);
-
     switch (max) {
       case r:
         h = (g - b) / c + (g < b ? 6 : 0);
@@ -837,10 +810,9 @@ function rgbToHsl(r, g, b) {
     }
     h /= 6;
   }
-
   return [
-    (h * 360).toFixed(2), // Hue with two decimal places
-    (s * 100).toFixed(2), // Saturation with two decimal places
-    (l * 100).toFixed(2), // Lightness with two decimal places
+    (h * 360).toFixed(2),
+    (s * 100).toFixed(2),
+    (l * 100).toFixed(2)
   ];
 }

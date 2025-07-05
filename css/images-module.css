@@ -16,16 +16,16 @@
 
 .body.dark-mode .imageTab{
   background-color: #1d2125;
-  border: 1px solid #4083F1;
+  border: 1px solid #6467f2;
 }
 
 .imageTabActive {
   color: white;
-  background-color: #007bff;
+  background-color: #6467f2;
 }
 
 .body.dark-mode .imageTabActive{
-  background-color: #007bff;
+  background-color: #6467f2;
   border: 1px solid #738496;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .addImage:hover button {
-  background: #007bff;
+  background: #6467f2;
   color: #fff;
 }
 
@@ -76,8 +76,8 @@
 .fileSelectImage {
   margin-top: 12px;
   background-color: white;
-  color: #007bff;
-  border: 1px solid #007bff;
+  color: #6467f2;
+  border: 1px solid #6467f2;
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 13px;
@@ -122,18 +122,14 @@
   box-sizing: border-box;
   border: 1px solid lightgray;
   border-radius: 8px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
 .imageWidthHeightContainer div input:first-child {
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0;
+ 
 }
 
 .imageWidthHeightContainer div input:first-child + input:last-child {
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0;
+  
 }
 
 .body.dark-mode .imageWidthHeightContainer div input:first-child {
@@ -161,7 +157,7 @@
   font-weight: 500;
   font-size: 16px;
   color: white;
-  background-color: #4083f1;
+  background-color: #6467f2;
   width: 100%;
 }
 

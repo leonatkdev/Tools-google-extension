@@ -21,9 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('copy-text').addEventListener('click', copyToClipboard);
     document.getElementById('clear-text').addEventListener('click', clearText);
 
-    document.getElementById('textTransformerUndo').addEventListener('click', undo);
-    document.getElementById('textTransformerRedo').addEventListener('click', redo);
-
     document.getElementById('texttArea').addEventListener('input', updateTextMetrics);
 });
 
@@ -106,29 +103,4 @@ function updateTextMetrics() {
     document.getElementById('wordCountTextt').innerText = `${wordCount} Words`;
     document.getElementById('sentenceTextt').innerText = `${sentenceCount} Sentences`;
     document.getElementById('lineTextt').innerText = `${lineCount} Lines`;
-}
-
-let undoStack = [];
-let redoStack = [];
-
-document.getElementById('texttArea').addEventListener('input', () => {
-    undoStack.push(document.getElementById('texttArea').value);
-    redoStack = [];
-});
-
-function undo() {
-    if (undoStack.length > 1) {
-        redoStack.push(undoStack.pop());
-        document.getElementById('texttArea').value = undoStack[undoStack.length - 1];
-        updateTextMetrics();
-    }
-}
-
-function redo() {
-    if (redoStack.length > 0) {
-        const value = redoStack.pop();
-        undoStack.push(value);
-        document.getElementById('texttArea').value = value;
-        updateTextMetrics();
-    }
 }

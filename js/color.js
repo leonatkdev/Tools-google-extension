@@ -442,7 +442,7 @@ function setupCopyColorInputButton() {
     if (!colorInput) return;
     colorInput.select();
     colorInput.setSelectionRange(0, 99999);
-    copyColorBtn.style.backgroundColor = "#007bff";
+    copyColorBtn.style.backgroundColor = "#6467f2";
     const img = copyColorBtn.querySelector("img");
     if (img) img.style.filter = "invert(1)";
     try {

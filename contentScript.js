@@ -585,7 +585,7 @@
         border: "none",
         borderRadius: "8px",
         cursor: "pointer",
-        backgroundColor: "#007bff",
+        backgroundColor: "#6467f2",
         color: "white",
         fontSize: "15px",
         fontWeight: "500",

@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     const selectedButton = document.getElementById(format + 'Format');
     if(selectedButton){
-    selectedButton.style.background = '#4083F1';
+    selectedButton.style.background = '#6467f2';
     selectedButton.style.color = 'white';
     }
   }

@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const resetCopyButton = () => {
     copyBtn.classList.remove("copyButtonAnimation");
-    copyBtn.innerHTML = 'Copy <img src="images/copy.svg" alt="Copy Icon" />';
+    copyBtn.innerHTML = ' <img src="images/copy.svg" alt="Copy Icon" /> Copy Generated Text';
   };
 
     // Update the text area and metrics
@@ -247,9 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  document.getElementById("scrollTopBtn").addEventListener("click", () => {
-    document.getElementById("loremArea").scrollTop = 0;
-  });
 
   document.getElementById("loremArea").addEventListener("input", () => {
     updateTextMetrics();

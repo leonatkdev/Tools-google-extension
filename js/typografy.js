@@ -120,7 +120,7 @@ color: ${color};`;
   navigator.clipboard.writeText(text).then(() => {
     // Optionally, provide user feedback here
     console.log("CSS copied to clipboard!");
-    CopyBTN.style.background = "#007bff"
+    CopyBTN.style.background = "#6467f2"
       CopyBTN.style.color = "#fff"
         CopyBTN.style.border = "1px solid #fff "
   }).catch(err => {

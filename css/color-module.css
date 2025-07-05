@@ -10,7 +10,7 @@
     font-weight: 500;
     font-size: 13px;
     color: white;
-    background-color: #007bff;
+    background-color: #6467f2;
   } */
 
 .gradient-border {
@@ -210,7 +210,7 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
 }
 
 .activeType {
-  background-color: #007bff;
+  background-color: #6467f2;
   padding: 5.5px 14px;
   /* border-radius: 8px; */
   color: white;
@@ -308,7 +308,7 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
 .selectFavColor {
   font-size: 12.5px;
   font-weight: 500;
-  color: #007bff;
+  color: #6467f2;
   margin-left: auto;
   padding-right: 6px;
   cursor: pointer;
@@ -317,7 +317,7 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
 #resetRecent{
   font-size: 12.5px;
   font-weight: 500;
-  color: #007bff;
+  color: #6467f2;
   margin-left: auto;
   padding-right: 6px;
   cursor: pointer;
@@ -346,7 +346,7 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
   text-align: center;
   height: 38px;
 
-  background: #007bff;
+  background: #6467f2;
   color: white;
   border: unset;
 
@@ -402,10 +402,10 @@ background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
   border-radius: 8px;
   min-width: 40px;
   height: 38px;
-  border-bottom: 1px solid #007bff;
-  border-top: 1px solid #007bff;
-  border-right: 1px solid #007bff;
-  border-left: 1px solid #007bff;
+  border-bottom: 1px solid #6467f2;
+  border-top: 1px solid #6467f2;
+  border-right: 1px solid #6467f2;
+  border-left: 1px solid #6467f2;
   cursor: pointer;
 }
 

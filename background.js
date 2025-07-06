@@ -130,14 +130,14 @@ const staticParagraphs = {
 };
 
 chrome.runtime.onInstalled.addListener(() => {
-  // Create the main "DesignSuite" menu
+  // Create the main "DevKit" menu
   chrome.contextMenus.create({
     id: "toolkitPro",
-    title: "DesignSuite - Generate Lorem Ipsum",
+    title: "DevKit - Generate Lorem Ipsum",
     contexts: ["editable"],
   });
 
-  // Add options for words under "DesignSuite"
+  // Add options for words under "DevKit"
   chrome.contextMenus.create({
     id: "5Words",
     parentId: "toolkitPro",
@@ -166,7 +166,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["editable"],
   });
 
-  // Add options for words with Link under "DesignSuite"
+  // Add options for words with Link under "DevKit"
   chrome.contextMenus.create({
     id: "5WordsLink",
     parentId: "toolkitPro",
@@ -195,7 +195,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["editable"],
   });
 
-  // Add options for paragraphs under "DesignSuite"
+  // Add options for paragraphs under "DevKit"
   chrome.contextMenus.create({
     id: "1Paragraph",
     parentId: "toolkitPro",
@@ -333,7 +333,7 @@ chrome.runtime.onInstalled.addListener(() => {
   // Create main menu for image conversion
   chrome.contextMenus.create({
     id: "imageConverter",
-    title: "DesignSuite - Image Save Converter",
+    title: "DevKit - Image Save Converter",
     contexts: ["image"],
   });
 

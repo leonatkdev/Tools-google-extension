@@ -1,7 +1,7 @@
-# This is DesignSuite Google Extension 💻
+# This is DevKit Google Extension 💻
 
 ## Google Extension Link: 
-### https://chromewebstore.google.com/detail/designsuite/jcadgngfdgcjoebncmimnhhgofocpeeh
+### https://chromewebstore.google.com/detail/DevKit/jcadgngfdgcjoebncmimnhhgofocpeeh
 
 ## Features:
 
@@ -12,7 +12,7 @@
 ### - Text transformation.
 
 
-DesignSuite is a power  ful, multi-functional tool designed to streamline the workflow of both developers and designers. This extension provides a variety of essential utilities aimed at improving productivity and efficiency in design and development projects. With a focus on ease of use and versatility, the toolkit brings together tools like a color picker, lorem ipsum generator, typography analyzer, and image resizer/converter in one convenient interface.
+DevKit is a power  ful, multi-functional tool designed to streamline the workflow of both developers and designers. This extension provides a variety of essential utilities aimed at improving productivity and efficiency in design and development projects. With a focus on ease of use and versatility, the toolkit brings together tools like a color picker, lorem ipsum generator, typography analyzer, and image resizer/converter in one convenient interface.
 
 ## Features:
 ### Color Picker:

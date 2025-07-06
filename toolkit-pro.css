@@ -19,7 +19,7 @@
   --color-header-dark: #1d2125;
   --color-ref-dark: #738496;
   --color-ref-hover: lightgray;
-  --gradient-colors: linear-gradient(to right,#f87171 , #facc15 , #c084fc);
+  --gradient-colors: linear-gradient(to left,  #ec38bc, #7303c0);
   --gradient-lorem: linear-gradient(to right, #94a3b8 , #475569);
   --gradient-images: linear-gradient(to right, #38bdf8 , #2563eb);
   --gradient-typografy: linear-gradient(to right, #374151 , #111827);
@@ -74,6 +74,11 @@ body.dark-mode {
   padding: 16px;
 }
 
+.landingTopSection{
+  display: flex;
+  justify-content: center;
+}
+
 .landingContent {
   grid-column: 1 / -1;
   text-align: center;
@@ -86,6 +91,7 @@ body.dark-mode {
   color: var(--color-primary);
   margin-top: 0px;
   margin-bottom: 4px;
+  margin: auto;
 }
 
 .landingSubtitle {

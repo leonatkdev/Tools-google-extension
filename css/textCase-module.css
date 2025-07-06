@@ -1,6 +1,6 @@
 #texttArea {
   resize: none;
-  border: 1px solid lightgray;
+  border: 1px solid var(--color-border-light);
   min-height: 200px;
   font-size: 14px;
   border-radius: 10px;
@@ -9,12 +9,13 @@
 }
 
 .body.dark-mode #texttArea {
-  background-color: #1d2125;
-  color: white;
+  background-color: var(--color-background-dark);
+  border-color: var(--color-border-dark);
+  color: var(--color-text-dark);
 }
 
 .textTransformerArea {
-  color: #71717a;
+  color: var(--color-subtitle);
   font-size: 12px;
   display: flex;
   align-self: center;
@@ -22,21 +23,11 @@
   align-items: center;
   padding-top: 12px;
   text-align: center;
-  text-align: center;
-}
-
-body.dark-mode .textTransformerArea {
-
-}
-
-.textTransformerArea span {
-  
 }
 
 body.dark-mode .textTransformerArea span {
-  color: white;
+  color: #94a3b8;
 }
-
 
 .textTransformerActions {
   display: flex;
@@ -45,38 +36,37 @@ body.dark-mode .textTransformerArea span {
   width: 100%;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #e4e4e7;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 body.dark-mode .textTransformerActions {
-  background-color: #282e33;
+  border-color: var(--color-border-dark);
 }
 
 .textTransformerActions button {
-  border: none;
+  border: 1px solid var(--color-border-light);
   padding: 8px 12px;
-  background: transparent;
-  color: #020817;
+  color: var(--color-text-light);
+  background-color: var(--color-card-light);
   border-radius: 10px;
-  background-color: #fff;
-  border: 1px solid #e4e4e7;
   font-size: 12px;
   cursor: pointer;
   width: 22.5%;
 }
 
-.textTransformerActions button:nth-child(n+5) {
-   width: 31%;
+body.dark-mode .textTransformerActions button {
+  background-color: #030918;
+  border-color: var(--color-border-dark);
+  color: var(--color-text-dark);
 }
 
-/* body.dark-mode .textTransformerActions button {
-  color: white;
-} */
-
+.textTransformerActions button:nth-child(n+5) {
+  width: 31%;
+}
 
 .textActionActive {
   color: white !important;
-  background: #6467f2 !important;
+  background: var(--color-btn-primary) !important;
   font-size: 14px !important;
   border: none !important;
 }
@@ -86,28 +76,29 @@ body.dark-mode .textTransformerActions {
   gap: 8px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #e4e4e7;
+  border-top: 1px solid var(--color-border-light);
+}
+
+body.dark-mode .textTransformerBottom {
+  border-color: var(--color-border-dark);
 }
 
 .textTransformerBottom button {
   border-radius: 10px;
-  background: white;
+  background: var(--color-card-light);
   padding: 10px 12px;
   width: 100%;
   cursor: pointer;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--color-border-light);
 }
 
-body.dark-mode .textTransformerBottom button  {
-  background: #1d2125;
-}
-
-.ttDownload {
-
+body.dark-mode .textTransformerBottom button {
+  background: var(--color-background-dark);
+  color: var(--color-text-dark);
+  border-color: var(--color-border-dark);
 }
 
 .ttCopy {
-  background: #6467f2 !important;
-  color: #fff !important;
+  background: var(--color-btn-primary) !important;
+  color: white !important;
 }
-

@@ -124,17 +124,11 @@
   border-radius: 8px;
 }
 
-.imageWidthHeightContainer div input:first-child {
- 
-}
 
-.imageWidthHeightContainer div input:first-child + input:last-child {
-  
-}
-
-.body.dark-mode .imageWidthHeightContainer div input:first-child {
-  background-color: #22272b;
-  color: white;
+.body.dark-mode .imageWidthHeightContainer div input {
+  background-color: var(--color-background-dark);
+  border-color: var(--color-card-dark);
+  color: var(--color-text-dark);
 }
 
 #resize-button {
@@ -268,8 +262,9 @@ body.dark-mode .inputContainerFormat button {
 }
 
 .body.dark-mode .linkContainerStyle {
-  background: #22272b !important;
-  color: white;
+  background-color: var(--color-background-dark) !important;
+  border-color: var(--color-card-dark) !important;
+  color: var(--color-text-dark) !important;
 }
 
 
@@ -295,6 +290,12 @@ body.dark-mode .inputContainerFormat button {
   box-sizing: border-box;
   border: 1px solid lightgray;
   border-radius: 8px;
+}
+
+.body.dark-mode .fileFormat{
+  background-color: var(--color-background-dark);
+  border-color: var(--color-card-dark);
+  color: var(--color-text-dark);
 }
 
 .body.dark-mode .fileFormat{

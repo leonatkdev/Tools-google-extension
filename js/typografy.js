@@ -48,8 +48,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 action: "activateTypography",
                 fontData: fontData,
               });
-              // Close the extension popup
-              window.close();
+              
+              // Show quit button and hide activate button
+              document.getElementById("quitButtonContainer").style.display = "block";
+              activateButton.style.display = "none";
+              
+              // Don't close the popup immediately, let user see the quit button
+              // window.close();
             }
           }
         );
@@ -65,10 +70,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", init);
 
+// Listen for messages from background script
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "typographyQuitFromPage") {
+    // Update UI when typography mode is quit from the page
+    document.getElementById("quitButtonContainer").style.display = "none";
+    document.getElementById("activateButton").style.display = "flex";
+    document.getElementById("activateButton").style.background = "";
+  }
+});
+
 function init() {
   loadFontDataFromStorage();
   setupResetButton();
   setupCopyButton();
+  setupQuitButton();
+  checkTypographyModeStatus();
 }
 
 const NodeHTMLElement = document.getElementById("htmlTag");
@@ -137,5 +154,56 @@ function setupCopyButton() {
       LineHeightinput.value,
       ColorInput.value
     );
+  });
+}
+
+function setupQuitButton() {
+  const quitButton = document.getElementById("quitButton");
+  quitButton.addEventListener("click", function () {
+    // Send message to content script to quit typography mode
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      const tab = tabs[0];
+      if (!tab.url.startsWith("chrome://")) {
+        chrome.tabs.sendMessage(tab.id, {
+          action: "quitTypography",
+        });
+        
+        // Hide quit button and show activate button
+        document.getElementById("quitButtonContainer").style.display = "none";
+        document.getElementById("activateButton").style.display = "flex";
+        
+        // Reset activate button background
+        document.getElementById("activateButton").style.background = "";
+      }
+    });
+  });
+}
+
+function checkTypographyModeStatus() {
+  // Check if typography mode is active on the current tab
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    const tab = tabs[0];
+    if (!tab.url.startsWith("chrome://")) {
+      chrome.tabs.sendMessage(tab.id, {
+        action: "checkTypographyStatus",
+      }, function(response) {
+        if (chrome.runtime.lastError) {
+          // Content script might not be loaded, default to showing activate button
+          document.getElementById("quitButtonContainer").style.display = "none";
+          document.getElementById("activateButton").style.display = "flex";
+          return;
+        }
+        
+        if (response && response.isActive) {
+          // Show quit button and hide activate button
+          document.getElementById("quitButtonContainer").style.display = "block";
+          document.getElementById("activateButton").style.display = "none";
+        } else {
+          // Show activate button and hide quit button
+          document.getElementById("quitButtonContainer").style.display = "none";
+          document.getElementById("activateButton").style.display = "flex";
+        }
+      });
+    }
   });
 }

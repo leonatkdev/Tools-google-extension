@@ -99,6 +99,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "saveFontData") {
     chrome.storage.local.set({ fontData: message.fontData }, function () {});
   }
+  
+  if (message.action === "typographyQuitFromPage") {
+    // This message is sent when typography mode is quit from the page
+    // We can use this to update any extension state if needed
+    console.log("Typography mode quit from page");
+  }
 });
 
 //Lorem right click

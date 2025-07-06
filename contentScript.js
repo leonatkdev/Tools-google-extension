@@ -379,6 +379,11 @@
           document.removeEventListener("click", handleClick, true);
           removeAllModals();
           button.remove();
+          
+          // Send message to extension to update UI
+          chrome.runtime.sendMessage({
+            action: "typographyQuitFromPage"
+          });
         });
       }
 
@@ -434,7 +439,7 @@
           <div class="ModalTypographyTopPart">
             <span>${fontData.elementSelectedTag}</span>
             <button id="closeButton">
-              <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;">
+              <svg stroke="#000" fill="#000" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;">
                 <path d="m289.94 256 95-95A24 24 0 0 0 351 127l-95 95-95-95a24 24 0 0 0-34 34l95 95-95 95a24 24 0 1 0 34 34l95-95 95 95a24 24 0 0 0 34-34z"></path>
               </svg>
             </button>
@@ -537,6 +542,22 @@
           window.typographyMode = true;
           document.addEventListener("click", handleClick, true);
           createQuitButton();
+          sendResponse({ status: "typography activated" });
+        }
+        
+        if (message.action === "quitTypography") {
+          window.typographyMode = false;
+          document.removeEventListener("click", handleClick, true);
+          removeAllModals();
+          const quitButton = document.getElementById("quitTypographyButton");
+          if (quitButton) {
+            quitButton.remove();
+          }
+          sendResponse({ status: "typography deactivated" });
+        }
+        
+        if (message.action === "checkTypographyStatus") {
+          sendResponse({ isActive: window.typographyMode || false });
         }
       });
 
